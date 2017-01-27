@@ -4,7 +4,8 @@ source("/media/aurore/KINGSTON/stage LBBE/Phylter-R/Fonctions1.R")
 
 #création du jeu de données aléatoire: 80 arbres de 60 espèces, avec 15 espèce outlier et 12 genes outliers
 trees = gen.trees(Ntrees=50, Ntiptotal=30, Nspmove=8, NbweirdGenes=8)
-add.outliers(trees$trees, 5)
+outcell<-add.outliers(trees$trees, 3)
+trees$trees<-outcell$trees
 matrices = trees2matrices.Distatis(trees$trees, distance ="nodal",bvalue=0)
 #matrices = gestion.mat(matrices)
 
