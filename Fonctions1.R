@@ -50,6 +50,87 @@ trees2matrices.Distatis<-function(trees, distance="nodal",bvalue=0) {
   return(TRS)
 }
 
+##----Gestion des données manquantes dans les matrices----
+#Fonction modifiée à partir de celle de pMCOA
+gestion.mat.Distatis<-function(matrices) {
+  ##progress bar
+  print ("Estimation of the quality of the dataset...")
+  pb<-txtProgressBar(style=3, char=".")
+  progress<-c(0,1:(length(matrices)-1)/(length(matrices)-1))
+  qual<-0
+  listsp<-colnames(matrices[[1]])
+  for (i in 2:length(matrices)) {
+    setTxtProgressBar(pb, progress[i])    
+    listsp<-union(listsp,colnames(matrices[[i]]))
+  }
+  length.indiv<-unlist(lapply(lapply(matrices, colnames), length))
+  tmp<-rep(1,length(length.indiv))
+  testqual<-tmp[(length.indiv==length(listsp))==FALSE]
+  if (length(testqual)>0) qual<-1  
+  close(pb)
+  if (qual==1) {
+    pb<-txtProgressBar(style=3, char=".")
+    listsp<-colnames(matrices[[1]])
+    for (i in 2:length(matrices)) {
+      setTxtProgressBar(pb, progress[i])    
+      listsp<-union(listsp,colnames(matrices[[i]]))
+    }
+    close(pb)
+    pb<-txtProgressBar(style=3, char=".")
+    newcol<-list()
+    for (i in 1:length(matrices)) {
+      ##print(i)
+      setTxtProgressBar(pb, progress[i])    
+      newcol[[i]]<-setdiff(listsp,colnames(matrices[[i]]))
+      matrices[[i]]<-cbind(matrices[[i]], matrix(ncol=length(newcol[[i]]), nrow=nrow(matrices[[i]]),dimnames=list(colnames(matrices[[i]]),newcol[[i]])))
+      matrices[[i]]<-rbind(matrices[[i]], matrix(ncol=ncol(matrices[[i]]), nrow=length(newcol[[i]]),dimnames=list(newcol[[i]],colnames(matrices[[i]]))))
+    }
+    close(pb)
+  }
+  mat1 <- matrices[[1]]
+  species1 <- row.names(mat1)      
+  len2<-length(species1)
+  ALL<- list()
+  ALL[[1]]<-mat1
+  pb<-txtProgressBar(style=3, char=".")  
+  for(i in 2:length(matrices)){
+    setTxtProgressBar(pb, progress[i])    
+    mati <- matrices[[i]]
+    speciesi <- row.names(mati)
+    indice <- (1:len2)[species1[1] == speciesi]
+    for(j in 2:len2){
+      indice[j] <- (1:len2)[species1[j] == speciesi]
+    }
+    mati <- mati[indice,]
+    mati <- mati[, indice]
+    ALL[[i]] <- mati
+  }
+  if (qual==1) {
+    TEST<-unlist(ALL)
+    nbcase<-nrow(ALL[[1]])*nrow(ALL[[1]])
+    Nbt<-length(ALL)
+    allcase<-0:(Nbt-1)
+    MEANS<-array()
+    for (i in 1:nbcase) {
+      MEANS[i]<-mean(TEST[i+allcase*nbcase],na.rm=TRUE)
+    }
+    MEANMAT<-matrix(MEANS,nrow=nrow(ALL[[1]]), ncol=ncol(ALL[[1]]))
+    rownames(MEANMAT)<-colnames(MEANMAT)<-colnames(ALL[[1]])
+    MEANMAT[is.na(MEANMAT)]<-mean(MEANMAT, na.rm=TRUE)
+    for (i in 1:length(ALL)) {      
+      if (length(newcol[[i]])>0) {
+        ALL[[i]][,newcol[[i]]]<-MEANMAT[,newcol[[i]]]
+        ALL[[i]][newcol[[i]],]<-MEANMAT[newcol[[i]],]
+      }
+    }
+  }
+  close(pb)
+  ###On attribut ici de numéro d'un arbre à chaque élément de la liste. (Utile pour la fonction mat2Dist)
+  ###A TESTER AVEC UN JEU DE DONNEES A TROUS
+  names(ALL)<-names(matrices)
+  return(ALL)
+}
+
 ##----mat2Dist applique distatis sur une liste de matrice de distance----
 #En premier lieu, la liste de matrice est changée en cube
 mat2Dist <-function(matrices){

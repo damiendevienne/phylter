@@ -1,13 +1,13 @@
 library(DistatisR)
 source("/media/aurore/KINGSTON/stage LBBE/pmcoa.R")
-source("/media/aurore/KINGSTON/stage LBBE/Phylter-R/Fonctions1.R")
+source("/home/aurore/Documents/Phylter/Fonctions1.R")
 
 #création du jeu de données aléatoire: 80 arbres de 60 espèces, avec 15 espèce outlier et 12 genes outliers
 trees = gen.trees(Ntrees=50, Ntiptotal=30, Nspmove=8, NbweirdGenes=8)
 outcell<-add.outliers(trees$trees, 3)
 trees$trees<-outcell$trees
 matrices = trees2matrices.Distatis(trees$trees, distance ="nodal",bvalue=0)
-#matrices = gestion.mat(matrices)
+matrices = gestion.mat.Distatis(matrices)
 
 #-------------------------------------------------------------------------------------------------------
 #PHYLOMCOA
@@ -44,7 +44,7 @@ CompleteOutlierDist$outsp
 TREESwithoutCompleteOutlierDist<-rm.gene.and.species.Distatis(trees$trees, CompleteOutlierDist$outsp, CompleteOutlierDist$outgn)
 
 matrices2 = trees2matrices.Distatis(TREESwithoutCompleteOutlierDist, distance ="nodal",bvalue=0)
-#matrices2 = gestion.mat(matrices2)
+matrices2 = gestion.mat.Distatis(matrices2)
 testDistatis2 <- mat2Dist(matrices2)
 Mat2WRDist2 = Dist2WR(testDistatis2)
 plot.2WR(Mat2WRDist)
