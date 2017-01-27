@@ -6,8 +6,10 @@ source("/home/aurore/Documents/Phylter/Fonctions1.R")
 trees = gen.trees(Ntrees=50, Ntiptotal=30, Nspmove=8, NbweirdGenes=8)
 outcell<-add.outliers(trees$trees, 3)
 trees$trees<-outcell$trees
-matrices = trees2matrices.Distatis(trees$trees, distance ="nodal",bvalue=0)
-matrices = gestion.mat.Distatis(matrices)
+RES <-Fylter(trees, distance="nodal",bvalue=0, k=1, thres=0.5, quiet=TRUE)
+RES$Complete$outgn
+RES$Complete$outsp
+RES$CellByCell$outcell
 
 #-------------------------------------------------------------------------------------------------------
 #PHYLOMCOA

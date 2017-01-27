@@ -235,3 +235,33 @@ rm.gene.and.species.Distatis<-function(trees, sp2rm, gn2rm) {
   return(trees2)
 }
 
+##-------Fonction qui fait tout-----
+Fylter <-function(trees, distance="nodal",bvalue=0, k=1, thres=0.5, quiet=TRUE){
+  matrices <- trees2matrices.Distatis(trees$trees, distance="nodal",bvalue=0)
+  matrices <- gestion.mat.Distatis(matrices)
+  Dist <- mat2Dist(matrices)
+  WR <- Dist2WR(Dist)
+  CompOutl <- detect.complete.outliers(WR, k, thres)
+  RES <- NULL
+  if (length(CompOutl$outsp)>0 || length(CompOutl$outgn)>0) {
+    TREESwithoutCompleteOutlierDist<-rm.gene.and.species.Distatis(trees$trees, CompOutl$outsp, CompOutl$outgn)
+    matrices2 = trees2matrices.Distatis(TREESwithoutCompleteOutlierDist, distance ="nodal",bvalue=0)
+    matrices2 = gestion.mat.Distatis(matrices2)
+    Dist2 <- mat2Dist(matrices2)
+    WR2 = Dist2WR(Dist2)
+    CellOutl2 <- detect.cell.outliers(WR2, k, quiet)
+    RES$Complete <- CompOutl
+    RES$CellByCell <- CellOutl2
+  }
+  else{
+    CellOutl2 <- detect.cell.outliers(WR2, k, quiet)
+    RES$Complete <- "No Complete Outliers Detected"
+    RES$CellByCell <- CellOutl2
+  }
+  return(RES)
+}
+
+
+
+
+
