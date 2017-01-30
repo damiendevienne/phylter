@@ -39,53 +39,17 @@ mat2Dist <-function(matrices){
 
 ###----créé la matrice 2WR à partir des résultats de distatis----
 Dist2WR <-function(testDistatis2){
-  #Dist.TL = Matrice gène/espèce
-  Dist.TL = matrix(,dim(testDistatis2$res4Splus$PartialF)[3]*nrow(testDistatis2$res4Splus$PartialF),2)
-  colnames(Dist.TL)=c("T","L")
-  #Dist.TLi = Matrice des coordonnées dans les différents axes de tous les couples gène/espèce
-  Dist.TLi = matrix(,dim(testDistatis2$res4Splus$PartialF)[3]*nrow(testDistatis2$res4Splus$PartialF),ncol(testDistatis2$res4Splus$PartialF))
-  colnames(Dist.TLi)=colnames(testDistatis2$res4Splus$PartialF)
-  ListRowNames = list()
-  #Remplissage des 2 matrices Dist.TL et Dist.TLi
-  j=1
-  for (i in 1:dim(testDistatis2$res4Splus$PartialF)[3]) {
-    if (j < nrow(Dist.TLi)+1) {
-      for (j2 in 1:nrow(testDistatis2$res4Splus$PartialF)){
-        a=rownames(testDistatis2$res4Splus$PartialF[,,i])[j2]
-        b=dimnames(testDistatis2$res4Splus$PartialF)[[3]][i]
-        ListRowNames[[j]] <- paste(a,b,sep=".GEN")
-        Dist.TL[j,1]=b
-        Dist.TL[j,2]=a
-        for (k in 1:ncol(testDistatis2$res4Splus$PartialF[,,i])) {
-          Dist.TLi[j,k]=testDistatis2$res4Splus$PartialF[j2,k,i]
-        }
-        j=j+1
-      }
+  matrixWR2 = matrix(nrow= length(dimnames(testDistatis2$res4Splus$PartialF)[[1]]) ,ncol=length(dimnames(testDistatis2$res4Splus$PartialF)[[3]]))
+  colnames(matrixWR2)=dimnames(testDistatis2$res4Splus$PartialF)[[3]]
+  rownames(matrixWR2)=dimnames(testDistatis2$res4Splus$PartialF)[[1]]
+  
+  for (i in 1:length(dimnames(testDistatis2$res4Splus$PartialF)[[3]])){
+    for (j in 1: length(dimnames(testDistatis2$res4Splus$PartialF)[[1]])){
+      x = (testDistatis2$res4Splus$PartialF[dimnames(testDistatis2$res4Splus$PartialF)[[1]][j],,dimnames(testDistatis2$res4Splus$PartialF)[[3]][i]]-testDistatis2$res4Splus$F[dimnames(testDistatis2$res4Splus$PartialF)[[1]][j],])^2
+      matrixWR2[dimnames(testDistatis2$res4Splus$PartialF)[[1]][j],dimnames(testDistatis2$res4Splus$PartialF)[[3]][i]] = sqrt(sum(x))
     }
   }
-  rownames(Dist.TLi) = ListRowNames
-  Dist.TLi=as.data.frame(Dist.TLi)  
-  Dist.TL=as.data.frame(Dist.TL) 
-  ##Création de la matrice 2WR
-  matrixWR<-matrix(ncol=dim(testDistatis2$res4Splus$PartialF)[3], nrow=nrow(testDistatis2$res4Splus$PartialF))
-  rownames(matrixWR)=rownames(testDistatis2$res4Splus$PartialF)
-  array.vector<-array()
-  ##MatrixDif est la matrice des difference au carré entre les coordonnées de chaque couple gène/espèce et les coordonnées moyenne du gène
-  matrixDif<-matrix(ncol=ncol(Dist.TLi), nrow=nrow(Dist.TLi))
-  for (i in 1:nrow(matrixDif)){
-    matrixDif[i,]<-(Dist.TLi[i,]-testDistatis2$res4Splus$F[as.character(Dist.TL[i,2]),])^2
-    ##On fait la racine carré de la somme de toutes les différences au carré pour chaque couple gène/espèce et ont les met toutes dans le vecteur suivant
-    array.vector[i]<-sqrt(sum(matrixDif[i,]))
-  }
-  #Remplissage de la matrice 2WR avec les données du vecteurs
-  colnamesMatrixWR=list()
-  for (i in 1:ncol(matrixWR)) {
-    matrixWR[,i]<-array.vector[as.character(Dist.TL[,1])==as.character(dimnames(testDistatis2$res4Splus$PartialF)[[3]][i])]
-    #On retrouve le numéro de chaque gène correspondant à chaque distance
-    colnamesMatrixWR[[i]]=dimnames(testDistatis2$res4Splus$PartialF)[[3]][i]
-  }
-  colnames(matrixWR)=colnamesMatrixWR
-  return(matrixWR)
+  return(matrixWR2)
 }
 
 ###-----Suppression des complete outiers dans les arbres du départ pour ensuite faire la détection des cell outliers-----
