@@ -1,134 +1,21 @@
 
 ##----trees2matrices.Distatis change un arbre en liste de matrices----
-#Fonction modifiée à partir de celle de pMCOA
-trees2matrices.Distatis<-function(trees, distance="nodal",bvalue=0) {
-  ##progress bar
-  print("Conversion from trees to matrices:")
-  pb<-txtProgressBar(style=3, char=".")
-  progress<-c(0,1:(length(trees)-1)/(length(trees)-1))
+trees2matrices.Distatis<-function(trees, distance="nodal") {
   list.trees<-list()  
   for (i in 1:length(trees)) {
-    setTxtProgressBar(pb, progress[i])    
     tree<-trees[[i]]
     if (distance=="nodal") {
-      if (bvalue!=0) {
-        if (!is.null(tree$node.label)) { 
-          l<-1:Nnode(tree)
-          indices.nodes<-l[as.numeric(tree$node.label)<bvalue]+Ntip(tree)
-          if (length(indices.nodes)>0) {
-            for (j in 1:length(indices.nodes)) {
-              tree$edge.length[tree$edge[,1]==indices.nodes[j]]<-1e-10
-            }   
-          }
-          tree<-di2multi(tree, tol=1e-9)
-        }
-        else {
-          tree<-di2multi(tree, tol=bvalue)              
-        }
-      }
-      tree.brlen <- compute.brlen(tree, 1)
+          tree.brlen <- compute.brlen(tree, 1)
     }
     else if (distance=="patristic") {
-      if (bvalue!=0) {
-        l<-1:Nnode(tree)
-        indices.nodes<-l[as.numeric(tree$node.label)<bvalue]+Ntip(tree)
-        if (length(indices.nodes)>0) {
-          for (j in 1:length(indices.nodes)) {
-            tree$edge.length[tree$edge[,1]==indices.nodes[j]]<-1e-10
-          }   
-        }
-        tree<-di2multi(tree, tol=1e-9)
-      }
-      tree.brlen<-tree
+          tree.brlen<-tree
     }
     list.trees[[i]]<- tree.brlen
   }
-  close(pb)
   TRS<-lapply(list.trees, cophenetic)
 ###On attribut ici de numéro d'un arbre à chaque élément de la liste. (Utile pour la fonction mat2Dist)
   names(TRS)<-as.list(labels(trees))
   return(TRS)
-}
-
-##----Gestion des données manquantes dans les matrices----
-#Fonction modifiée à partir de celle de pMCOA
-gestion.mat.Distatis<-function(matrices) {
-  ##progress bar
-  print ("Estimation of the quality of the dataset...")
-  pb<-txtProgressBar(style=3, char=".")
-  progress<-c(0,1:(length(matrices)-1)/(length(matrices)-1))
-  qual<-0
-  listsp<-colnames(matrices[[1]])
-  for (i in 2:length(matrices)) {
-    setTxtProgressBar(pb, progress[i])    
-    listsp<-union(listsp,colnames(matrices[[i]]))
-  }
-  length.indiv<-unlist(lapply(lapply(matrices, colnames), length))
-  tmp<-rep(1,length(length.indiv))
-  testqual<-tmp[(length.indiv==length(listsp))==FALSE]
-  if (length(testqual)>0) qual<-1  
-  close(pb)
-  if (qual==1) {
-    pb<-txtProgressBar(style=3, char=".")
-    listsp<-colnames(matrices[[1]])
-    for (i in 2:length(matrices)) {
-      setTxtProgressBar(pb, progress[i])    
-      listsp<-union(listsp,colnames(matrices[[i]]))
-    }
-    close(pb)
-    pb<-txtProgressBar(style=3, char=".")
-    newcol<-list()
-    for (i in 1:length(matrices)) {
-      ##print(i)
-      setTxtProgressBar(pb, progress[i])    
-      newcol[[i]]<-setdiff(listsp,colnames(matrices[[i]]))
-      matrices[[i]]<-cbind(matrices[[i]], matrix(ncol=length(newcol[[i]]), nrow=nrow(matrices[[i]]),dimnames=list(colnames(matrices[[i]]),newcol[[i]])))
-      matrices[[i]]<-rbind(matrices[[i]], matrix(ncol=ncol(matrices[[i]]), nrow=length(newcol[[i]]),dimnames=list(newcol[[i]],colnames(matrices[[i]]))))
-    }
-    close(pb)
-  }
-  mat1 <- matrices[[1]]
-  species1 <- row.names(mat1)      
-  len2<-length(species1)
-  ALL<- list()
-  ALL[[1]]<-mat1
-  pb<-txtProgressBar(style=3, char=".")  
-  for(i in 2:length(matrices)){
-    setTxtProgressBar(pb, progress[i])    
-    mati <- matrices[[i]]
-    speciesi <- row.names(mati)
-    indice <- (1:len2)[species1[1] == speciesi]
-    for(j in 2:len2){
-      indice[j] <- (1:len2)[species1[j] == speciesi]
-    }
-    mati <- mati[indice,]
-    mati <- mati[, indice]
-    ALL[[i]] <- mati
-  }
-  if (qual==1) {
-    TEST<-unlist(ALL)
-    nbcase<-nrow(ALL[[1]])*nrow(ALL[[1]])
-    Nbt<-length(ALL)
-    allcase<-0:(Nbt-1)
-    MEANS<-array()
-    for (i in 1:nbcase) {
-      MEANS[i]<-mean(TEST[i+allcase*nbcase],na.rm=TRUE)
-    }
-    MEANMAT<-matrix(MEANS,nrow=nrow(ALL[[1]]), ncol=ncol(ALL[[1]]))
-    rownames(MEANMAT)<-colnames(MEANMAT)<-colnames(ALL[[1]])
-    MEANMAT[is.na(MEANMAT)]<-mean(MEANMAT, na.rm=TRUE)
-    for (i in 1:length(ALL)) {      
-      if (length(newcol[[i]])>0) {
-        ALL[[i]][,newcol[[i]]]<-MEANMAT[,newcol[[i]]]
-        ALL[[i]][newcol[[i]],]<-MEANMAT[newcol[[i]],]
-      }
-    }
-  }
-  close(pb)
-  ###On attribut ici de numéro d'un arbre à chaque élément de la liste. (Utile pour la fonction mat2Dist)
-  ###A TESTER AVEC UN JEU DE DONNEES A TROUS
-  names(ALL)<-names(matrices)
-  return(ALL)
 }
 
 ##----mat2Dist applique distatis sur une liste de matrice de distance----
@@ -236,32 +123,49 @@ rm.gene.and.species.Distatis<-function(trees, sp2rm, gn2rm) {
 }
 
 ##-------Fonction qui fait tout-----
-Fylter <-function(trees, distance="nodal",bvalue=0, k=1, thres=0.5, quiet=TRUE){
-  matrices <- trees2matrices.Distatis(trees$trees, distance="nodal",bvalue=0)
-  matrices <- gestion.mat.Distatis(matrices)
-  Dist <- mat2Dist(matrices)
-  WR <- Dist2WR(Dist)
-  CompOutl <- detect.complete.outliers(WR, k, thres)
+Phylter <-function(trees, method = "distatis", distance="nodal", k=1.2, thres=0.4, quiet=TRUE){
   RES <- NULL
-  if (length(CompOutl$outsp)>0 || length(CompOutl$outgn)>0) {
-    TREESwithoutCompleteOutlierDist<-rm.gene.and.species.Distatis(trees$trees, CompOutl$outsp, CompOutl$outgn)
-    matrices2 = trees2matrices.Distatis(TREESwithoutCompleteOutlierDist, distance ="nodal",bvalue=0)
-    matrices2 = gestion.mat.Distatis(matrices2)
-    Dist2 <- mat2Dist(matrices2)
-    WR2 = Dist2WR(Dist2)
-    CellOutl2 <- detect.cell.outliers(WR2, k, quiet)
-    RES$Complete <- CompOutl
-    RES$CellByCell <- CellOutl2
+  matrices <- trees2matrices.Distatis(trees, distance=distance)
+  if (method == "distatis"){
+    Dist <- mat2Dist(matrices)
+    WR <- Dist2WR(Dist)
+    CompOutl <- detect.complete.outliers(WR, k=k, thres=thres)
+    if (length(CompOutl$outsp)>0 || length(CompOutl$outgn)>0) {
+      TREESwithoutCompleteOutlierDist<-rm.gene.and.species.Distatis(trees, CompOutl$outsp, CompOutl$outgn)
+      matrices2 = trees2matrices.Distatis(TREESwithoutCompleteOutlierDist, distance=distance)
+      Dist2 <- mat2Dist(matrices2)
+      WR2 = Dist2WR(Dist2)
+      CellOutl2 <- detect.cell.outliers(WR2, k=k, quiet=quiet)
+      RES$Complete <- CompOutl
+      RES$CellByCell <- CellOutl2
+    }
+    else{
+      CellOutl2 <- detect.cell.outliers(WR,  k=k, quiet=quiet)
+      RES$Complete <- CompOutl
+      RES$CellByCell <- CellOutl2
+    }
   }
-  else{
-    CellOutl2 <- detect.cell.outliers(WR2, k, quiet)
-    RES$Complete <- "No Complete Outliers Detected"
-    RES$CellByCell <- CellOutl2
+  else if (method == "pmcoa"){
+    mcoa1 = mat2mcoa(matrices, wtts=NULL, scannf=TRUE, nf="auto")
+    WR = mcoa2WRmat(mcoa1)
+    colnamesWR = list()
+    for (i in 1:length(trees)){
+      colnamesWR[[i]]=labels(trees)[[i]]
+    }
+    colnames(WR)<-colnamesWR
+    CompOutl <- detect.complete.outliers(WR, k=k, thres=thres)
+    if (length(CompOutl$outsp)>0 || length(CompOutl$outgn)>0) {
+      TREESwithoutCompleteOutlierDist<-rm.gene.and.species.Distatis(trees, CompOutl$outsp, CompOutl$outgn)
+      newgenenames<-names(TREESwithoutCompleteOutlierDist)
+      CellOutl2<-pMCOA(TREESwithoutCompleteOutlierDist, gene.names=newgenenames, distance=distance, bvalue=0, wtts=NULL, scannf=TRUE, nf="auto")
+      RES$Complete <- CompOutl
+      RES$CellByCell <- CellOutl2
+    }
+    else{
+      CellOutl2 <- detect.cell.outliers(WR, k=k, quiet=quiet)
+      RES$Complete <- CompOutl
+      RES$CellByCell <- CellOutl2
+    }
   }
   return(RES)
 }
-
-
-
-
-
