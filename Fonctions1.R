@@ -31,22 +31,70 @@ mat2Dist <-function(matrices){
 	rownames(TheVeryBigCube) <- rownames(matrices[[i]])
 	colnames(TheVeryBigCube) <- colnames(matrices[[i]])
 	#On applique distatis sur le cube obtenu
-  testDistatis1 <- distatis(TheVeryBigCube)
+  Distatis <- distatis(TheVeryBigCube)
   #On fait suivre le numéro de chaque élement de la matrice de départ aux résultats qui nous interressent
-  dimnames(testDistatis1$res4Splus$PartialF)[[3]] = names(matrices)
-  return(testDistatis1)
+  dimnames(Distatis$res4Splus$PartialF)[[3]] = names(matrices)
+  return(Distatis)
+}
+
+##-----Gestion des données manquantes
+gestion.matrice<-function(matrices) {
+  x = 0
+  grandeMatrice=matrix()
+  geneNames=list()
+  #Création d'une matrice ayant la taille maximale à remplir pour les gènes ayant des espèces manquantes
+  for (i in 1: length(matrices)){
+   if (nrow(matrices[[i]])>x){
+     x=nrow(matrices[[i]])
+     grandeMatrice=matrix(nrow=nrow(matrices[[i]]), ncol= ncol(matrices[[i]]), dimnames = dimnames(matrices[[i]]))
+   }
+  }
+  #Création d'une liste contenant les noms des matrices avec des espèces manquantes
+  j=1
+  for (i in 1: length(matrices)){
+    if (nrow(matrices[[i]])<nrow(grandeMatrice)){
+      geneNames[[j]]=names(matrices)[[i]]
+      j=j+1
+    }
+  }
+  if (length(geneNames)!=0){
+  #Pour chaque arbre avec des espèces manquantes, remplissage de la grande matrice avec les données existantes ....
+    for (i in 1: length(geneNames)){
+      grandeMatrice2 <- grandeMatrice
+      for (j in 1: nrow(matrices[[geneNames[[i]]]])){
+        for (k in 1: ncol(matrices[[geneNames[[i]]]])){
+         grandeMatrice2[j,k]<-matrices[[geneNames[[i]]]][rownames(matrices[[geneNames[[i]]]])[j],colnames(matrices[[geneNames[[i]]]])[k]] 
+       }
+     }
+    # ... puis calcul de la moyenne de tous les arbres complets pour chaque couple gène-espèce manquant
+      Inter = setdiff(1:length(matrices),geneNames)
+      for (j in 1: nrow(grandeMatrice2)){
+       for (k in 1: ncol(grandeMatrice2)){
+          if (is.na(grandeMatrice2[j,k])){
+           array = array()
+            for (w in 1:length(matrices[Inter])){
+              array[[w]] = matrices[Inter][[w]][j,k]
+            }
+            grandeMatrice2[j,k]=mean(array)
+          }
+        }
+     }
+     matrices[[geneNames[[i]]]]=grandeMatrice2
+    }
+  }
+  return(matrices)
 }
 
 ###----créé la matrice 2WR à partir des résultats de distatis----
-Dist2WR <-function(testDistatis2){
-  matrixWR2 = matrix(nrow= length(dimnames(testDistatis2$res4Splus$PartialF)[[1]]) ,ncol=length(dimnames(testDistatis2$res4Splus$PartialF)[[3]]))
-  colnames(matrixWR2)=dimnames(testDistatis2$res4Splus$PartialF)[[3]]
-  rownames(matrixWR2)=dimnames(testDistatis2$res4Splus$PartialF)[[1]]
+Dist2WR <-function(Distatis){
+  matrixWR2 = matrix(nrow= length(dimnames(Distatis$res4Splus$PartialF)[[1]]) ,ncol=length(dimnames(Distatis$res4Splus$PartialF)[[3]]))
+  colnames(matrixWR2)=dimnames(Distatis$res4Splus$PartialF)[[3]]
+  rownames(matrixWR2)=dimnames(Distatis$res4Splus$PartialF)[[1]]
   
-  for (i in 1:length(dimnames(testDistatis2$res4Splus$PartialF)[[3]])){
-    for (j in 1: length(dimnames(testDistatis2$res4Splus$PartialF)[[1]])){
-      x = (testDistatis2$res4Splus$PartialF[dimnames(testDistatis2$res4Splus$PartialF)[[1]][j],,dimnames(testDistatis2$res4Splus$PartialF)[[3]][i]]-testDistatis2$res4Splus$F[dimnames(testDistatis2$res4Splus$PartialF)[[1]][j],])^2
-      matrixWR2[dimnames(testDistatis2$res4Splus$PartialF)[[1]][j],dimnames(testDistatis2$res4Splus$PartialF)[[3]][i]] = sqrt(sum(x))
+  for (i in 1:length(dimnames(Distatis$res4Splus$PartialF)[[3]])){
+    for (j in 1: length(dimnames(Distatis$res4Splus$PartialF)[[1]])){
+      x = (Distatis$res4Splus$PartialF[dimnames(Distatis$res4Splus$PartialF)[[1]][j],,dimnames(Distatis$res4Splus$PartialF)[[3]][i]]-Distatis$res4Splus$F[dimnames(Distatis$res4Splus$PartialF)[[1]][j],])^2
+      matrixWR2[dimnames(Distatis$res4Splus$PartialF)[[1]][j],dimnames(Distatis$res4Splus$PartialF)[[3]][i]] = sqrt(sum(x))
     }
   }
   return(matrixWR2)
@@ -87,9 +135,10 @@ rm.gene.and.species.Distatis<-function(trees, sp2rm, gn2rm) {
 }
 
 ##-------Fonction qui fait tout-----
-Phylter <-function(trees, method = "distatis", distance="nodal", k=1.2, thres=0.4, quiet=TRUE){
+Phylter <-function(trees, method = "distatis", distance="nodal", k=1.2, thres=0.5, quiet=TRUE){
   RES <- NULL
   matrices <- trees2matrices.Distatis(trees, distance=distance)
+  matrices=gestion.matrice(matrices)
   if (method == "distatis"){
     Dist <- mat2Dist(matrices)
     WR <- Dist2WR(Dist)
@@ -97,6 +146,7 @@ Phylter <-function(trees, method = "distatis", distance="nodal", k=1.2, thres=0.
     if (length(CompOutl$outsp)>0 || length(CompOutl$outgn)>0) {
       TREESwithoutCompleteOutlierDist<-rm.gene.and.species.Distatis(trees, CompOutl$outsp, CompOutl$outgn)
       matrices2 = trees2matrices.Distatis(TREESwithoutCompleteOutlierDist, distance=distance)
+      matrices2=gestion.matrice(matrices2)
       Dist2 <- mat2Dist(matrices2)
       WR2 = Dist2WR(Dist2)
       CellOutl2 <- detect.cell.outliers(WR2, k=k, quiet=quiet)
@@ -133,3 +183,13 @@ Phylter <-function(trees, method = "distatis", distance="nodal", k=1.2, thres=0.
   }
   return(RES)
 }
+
+
+
+
+
+
+
+
+
+
