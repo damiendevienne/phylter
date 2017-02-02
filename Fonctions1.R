@@ -1,6 +1,6 @@
 
 ##----trees2matrices.Distatis change un arbre en liste de matrices----
-trees2matrices.Distatis<-function(trees, distance="nodal") {
+trees2matrices.Distatis<-function(trees, distance="nodal", gene.names = NULL) {
   list.trees<-list()  
   for (i in 1:length(trees)) {
     tree<-trees[[i]]
@@ -16,6 +16,14 @@ trees2matrices.Distatis<-function(trees, distance="nodal") {
 ###On attribut ici de numéro d'un arbre à chaque élément de la liste. (Utile pour la fonction mat2Dist)
   names(TRS)<-as.list(labels(trees))
   return(TRS)
+}
+
+#Permet à l'utilisateur d'ajouter des noms de gènes sous forme de liste à la matrice de distance
+rename.genes <-function(trees, gene.names=NULL){
+  if(is.null(gene.names)==FALSE){
+    names(trees)=gene.names
+  }
+  return(trees)
 }
 
 ##----mat2Dist applique distatis sur une liste de matrice de distance----
@@ -67,7 +75,7 @@ gestion.matrice<-function(matrices) {
        }
      }
     # ... puis calcul de la moyenne de tous les arbres complets pour chaque couple gène-espèce manquant
-      Inter = setdiff(1:length(matrices),geneNames)
+      Inter = setdiff(names(matrices),geneNames)
       for (j in 1: nrow(grandeMatrice2)){
        for (k in 1: ncol(grandeMatrice2)){
           if (is.na(grandeMatrice2[j,k])){
@@ -134,10 +142,16 @@ rm.gene.and.species.Distatis<-function(trees, sp2rm, gn2rm) {
   return(trees2)
 }
 
+
 ##-------Fonction qui fait tout-----
-Phylter <-function(trees, method = "distatis", distance="nodal", k=1.2, thres=0.5, quiet=TRUE){
+Phylter <-function(trees, method = "distatis", distance="nodal", k=2, thres=0.5, quiet=TRUE, gene.names=NULL){
+  if (is.null(gene.names)==FALSE){
+    trees=rename.genes(trees, gene.names=gene.names)
+  }
   RES <- NULL
   matrices <- trees2matrices.Distatis(trees, distance=distance)
+  #matrices[[1]] = matrices[[1]][1:3,1:3]
+  #matrices[[3]] = matrices[[3]][2:5,2:5]
   matrices=gestion.matrice(matrices)
   if (method == "distatis"){
     Dist <- mat2Dist(matrices)
