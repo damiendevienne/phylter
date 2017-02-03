@@ -6,28 +6,23 @@ source("/home/aurore/Documents/Phylter/Fonctions1.R")
 trees = gen.trees(Ntrees=20, Ntiptotal=20, Nspmove=3, NbweirdGenes=3)
 #write.tree(phy=trees$trees, file="home/aurore/Documents/Phylter/trees")
 
+trees = read.tree(file="/media/aurore/KINGSTON/stage LBBE/Phylter-R/trees/Aguileta-et-al-2008_TREES.txt")
+
 #ajout d'outliers
 outcell<-add.outliers(trees$trees,3)
-#trees$trees<-outcell$trees
+trees$trees<-outcell$trees
 
 gene.names=c("gene1", "gene2", "gene3","gene4","gene5","gene6","gene7","gene8","gene9","gene10", "gene11", "gene12", "gene13","gene14","gene15","gene16","gene17","gene18","gene19","gene20")
 
  
 #Simulation de données manquantes
-matrices[[1]] = matrices[[1]][1:3,1:3]
-matrices[[3]] = matrices[[3]][2:5,2:5]
 Sys1 <- Sys.time()
 matrices = gestion.matrice(matrices)
 Sys2 <- Sys.time()
 Sys1 -Sys2
 
 Sys1 <- Sys.time()
-RESdist <-Phylter(trees$trees, method="distatis", distance="nodal", k=2, thres=0.5, quiet=TRUE, gene.names)
-Sys2 <- Sys.time()
-Sys1 -Sys2
-
-Sys1 <- Sys.time()
-RESpmcoa <-Phylter(trees$trees, method="pmcoa", distance="nodal", k=2, thres=0.5, quiet=TRUE)
+RESdist <-Phylter(trees$trees, distance="patristic", k=2, thres=0.5, quiet=TRUE, gene.names)
 Sys2 <- Sys.time()
 Sys1 -Sys2
 

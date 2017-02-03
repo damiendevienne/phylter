@@ -13,12 +13,12 @@ trees2matrices.Distatis<-function(trees, distance="nodal", gene.names = NULL) {
     list.trees[[i]]<- tree.brlen
   }
   TRS<-lapply(list.trees, cophenetic)
-###On attribut ici de numéro d'un arbre à chaque élément de la liste. (Utile pour la fonction mat2Dist)
+###On attribut ici de nom d'un arbre à chaque élément de la liste. (Utile pour la fonction mat2Dist)
   names(TRS)<-as.list(labels(trees))
   return(TRS)
 }
 
-#Permet à l'utilisateur d'ajouter des noms de gènes sous forme de liste à la matrice de distance
+#Permet à l'utilisateur d'ajouter des noms de gènes (sous forme de liste) aux arbres
 rename.genes <-function(trees, gene.names=NULL){
   if(is.null(gene.names)==FALSE){
     names(trees)=gene.names
@@ -26,7 +26,7 @@ rename.genes <-function(trees, gene.names=NULL){
   return(trees)
 }
 
-##----mat2Dist applique distatis sur une liste de matrice de distance----
+##----mat2Dist applique distatis sur une liste de matrices de distance----
 #En premier lieu, la liste de matrice est changée en cube
 mat2Dist <-function(matrices){
   genesNumber=length(matrices)
@@ -142,9 +142,8 @@ rm.gene.and.species.Distatis<-function(trees, sp2rm, gn2rm) {
   return(trees2)
 }
 
-
 ##-------Fonction qui fait tout-----
-Phylter <-function(trees, method = "distatis", distance="nodal", k=2, thres=0.5, quiet=TRUE, gene.names=NULL){
+Phylter <-function(trees, distance="nodal", k=2, thres=0.5, quiet=TRUE, gene.names=NULL){
   if (is.null(gene.names)==FALSE){
     trees=rename.genes(trees, gene.names=gene.names)
   }
@@ -153,57 +152,23 @@ Phylter <-function(trees, method = "distatis", distance="nodal", k=2, thres=0.5,
   #matrices[[1]] = matrices[[1]][1:3,1:3]
   #matrices[[3]] = matrices[[3]][2:5,2:5]
   matrices=gestion.matrice(matrices)
-  if (method == "distatis"){
-    Dist <- mat2Dist(matrices)
-    WR <- Dist2WR(Dist)
-    CompOutl <- detect.complete.outliers(WR, k=k, thres=thres)
-    if (length(CompOutl$outsp)>0 || length(CompOutl$outgn)>0) {
-      TREESwithoutCompleteOutlierDist<-rm.gene.and.species.Distatis(trees, CompOutl$outsp, CompOutl$outgn)
-      matrices2 = trees2matrices.Distatis(TREESwithoutCompleteOutlierDist, distance=distance)
-      matrices2=gestion.matrice(matrices2)
-      Dist2 <- mat2Dist(matrices2)
-      WR2 = Dist2WR(Dist2)
-      CellOutl2 <- detect.cell.outliers(WR2, k=k, quiet=quiet)
-      RES$Complete <- CompOutl
-      RES$CellByCell <- CellOutl2
-    }
-    else{
-      CellOutl2 <- detect.cell.outliers(WR,  k=k, quiet=quiet)
-      RES$Complete <- CompOutl
-      RES$CellByCell <- CellOutl2
-    }
+  Dist <- mat2Dist(matrices)
+  WR <- Dist2WR(Dist)
+  CompOutl <- detect.complete.outliers(WR, k=k, thres=thres)
+  if (length(CompOutl$outsp)>0 || length(CompOutl$outgn)>0) {
+    TREESwithoutCompleteOutlierDist<-rm.gene.and.species.Distatis(trees, CompOutl$outsp, CompOutl$outgn)
+    matrices2 = trees2matrices.Distatis(TREESwithoutCompleteOutlierDist, distance=distance)
+    matrices2=gestion.matrice(matrices2)
+    Dist2 <- mat2Dist(matrices2)
+    WR2 = Dist2WR(Dist2)
+    CellOutl2 <- detect.cell.outliers(WR2, k=k, quiet=quiet)
+    RES$Complete <- CompOutl
+    RES$CellByCell <- CellOutl2
   }
-  else if (method == "pmcoa"){
-    mcoa1 = mat2mcoa(matrices, wtts=NULL, scannf=TRUE, nf="auto")
-    WR = mcoa2WRmat(mcoa1)
-    colnamesWR = list()
-    for (i in 1:length(trees)){
-      colnamesWR[[i]]=labels(trees)[[i]]
-    }
-    colnames(WR)<-colnamesWR
-    CompOutl <- detect.complete.outliers(WR, k=k, thres=thres)
-    if (length(CompOutl$outsp)>0 || length(CompOutl$outgn)>0) {
-      TREESwithoutCompleteOutlierDist<-rm.gene.and.species.Distatis(trees, CompOutl$outsp, CompOutl$outgn)
-      newgenenames<-names(TREESwithoutCompleteOutlierDist)
-      CellOutl2<-pMCOA(TREESwithoutCompleteOutlierDist, gene.names=newgenenames, distance=distance, bvalue=0, wtts=NULL, scannf=TRUE, nf="auto")
-      RES$Complete <- CompOutl
-      RES$CellByCell <- CellOutl2
-    }
-    else{
-      CellOutl2 <- detect.cell.outliers(WR, k=k, quiet=quiet)
-      RES$Complete <- CompOutl
-      RES$CellByCell <- CellOutl2
-    }
+  else{
+     CellOutl2 <- detect.cell.outliers(WR,  k=k, quiet=quiet)
+     RES$Complete <- CompOutl
+     RES$CellByCell <- CellOutl2
   }
   return(RES)
 }
-
-
-
-
-
-
-
-
-
-
