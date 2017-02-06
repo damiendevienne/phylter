@@ -4,9 +4,25 @@ source("/home/aurore/Documents/Phylter/Fonctions1.R")
 
 #création du jeu de données aléatoire: 80 arbres de 60 espèces, avec 15 espèce outlier et 12 genes outliers
 trees = gen.trees(Ntrees=20, Ntiptotal=20, Nspmove=3, NbweirdGenes=3)
-#write.tree(phy=trees$trees, file="home/aurore/Documents/Phylter/trees")
 
+trees <-read.tree(file="/home/aurore/Téléchargements/Seq-Gen.v1.3.3/seqtrees.dat_phyml_tree")
 trees = read.tree(file="/media/aurore/KINGSTON/stage LBBE/Phylter-R/trees/Aguileta-et-al-2008_TREES.txt")
+
+####################################
+ListTrees = list()
+for (i in 1:100){
+  ListTrees[[i]] = trees[[10]]
+}
+ListTrees[[2]]$edge.length[4]=ListTrees[[2]]$edge.length[4]*2
+ListTrees[[45]]$edge.length[9]=ListTrees[[45]]$edge.length[9]/2
+ListTrees[[16]]$edge.length[16]=ListTrees[[2]]$edge.length[16]*3
+ListTrees[[28]]$edge.length[12]=ListTrees[[45]]$edge.length[12]/2
+######################################
+
+RES = AnalyseBranche(trees)
+RES$Complete$outgn
+RES$Complete$outsp
+RES$CellByCell$outcell
 
 #ajout d'outliers
 outcell<-add.outliers(trees$trees,3)
@@ -14,6 +30,8 @@ trees$trees<-outcell$trees
 
 gene.names=c("gene1", "gene2", "gene3","gene4","gene5","gene6","gene7","gene8","gene9","gene10", "gene11", "gene12", "gene13","gene14","gene15","gene16","gene17","gene18","gene19","gene20")
 
+matrices= trees2matrices.Distatis(trees, distance="nodal")
+matrices=gestion.matrice(matrices)
  
 #Simulation de données manquantes
 Sys1 <- Sys.time()
@@ -22,7 +40,7 @@ Sys2 <- Sys.time()
 Sys1 -Sys2
 
 Sys1 <- Sys.time()
-RESdist <-Phylter(trees$trees, distance="patristic", k=2, thres=0.5, quiet=TRUE, gene.names)
+RESdist <-Phylter(trees, distance="patristic", k=1.5, thres=0.4, quiet=TRUE)
 Sys2 <- Sys.time()
 Sys1 -Sys2
 

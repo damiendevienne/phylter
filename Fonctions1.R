@@ -26,6 +26,23 @@ rename.genes <-function(trees, gene.names=NULL){
   return(trees)
 }
 
+#Création de la matrice Branche/gènes. Necessite une topologie commune de tous les arbres.
+trees2branchMatrices <- function(ListTrees){
+  BrancheMatrice <- matrix(nrow=nrow(ListTrees[[1]]$edge), ncol=length(ListTrees)) 
+  colnames(BrancheMatrice)=labels(ListTrees)
+  rowNamesBranche = list()
+  for (j in 1:nrow(BrancheMatrice)){
+    a=ListTrees[[1]]$edge[j,1]
+    b=ListTrees[[1]]$edge[j,2]
+    rowNamesBranche[j] = paste(a,b,sep="-")
+  }
+  rownames(BrancheMatrice)= rowNamesBranche
+  for (i in 1:ncol(BrancheMatrice)){
+      BrancheMatrice[,i]=ListTrees[[i]]$edge.length
+  }
+  return(BrancheMatrice)
+}
+
 ##----mat2Dist applique distatis sur une liste de matrices de distance----
 #En premier lieu, la liste de matrice est changée en cube
 mat2Dist <-function(matrices){
@@ -172,3 +189,25 @@ Phylter <-function(trees, distance="nodal", k=2, thres=0.5, quiet=TRUE, gene.nam
   }
   return(RES)
 }
+
+#fonction qui sort les outliers en analysant les branches de l'arbre
+AnalyseBranche <- function(trees, k=2, thres=0.5, quiet=TRUE){
+  RES = NULL
+  MatBranche<-trees2branchMatrices(trees)
+  CompOutl <- detect.complete.outliers(MatBranche, k=k, thres=thres)
+  if (length(CompOutl$outsp)>0 || length(CompOutl$outgn)>0) {
+    TREESwithoutCompleteOutlierDist<-rm.gene.and.species.Distatis(trees, CompOutl$outsp, CompOutl$outgn)
+    MatBranche2<-trees2branchMatrices(TREESwithoutCompleteOutlierDist)
+    CellOutl2 <- detect.cell.outliers(MatBranche2, k=k, quiet=quiet)
+    RES$Complete <- CompOutl
+    RES$CellByCell <- CellOutl2
+  }
+  else{
+    CellOutl2 <- detect.cell.outliers(MatBranche,  k=k, quiet=quiet)
+    RES$Complete <- CompOutl
+    RES$CellByCell <- CellOutl2
+  }
+  return(RES)
+}
+
+
