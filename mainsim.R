@@ -21,7 +21,14 @@ ListTrees = ListTrees2
 
 Tree <- ListTrees[[15]]
 
-Treethgt <- HGT(Tree,14)
-plot(Tree)
+Treethgt <- HGT(tree,14)
+plot(tree)
 plot(Treethgt)
 
+treeHGTgn = HGToutgn(tree,15)
+plot(tree)
+plot(treeHGTgn)
+
+ListTreesHGTsp=HGToutsp(ListTrees2, branche=16)
+RES <-Phylter(ListTreesHGTsp, distance="patristic", k=2, thres=0.5, quiet=TRUE)
+RES$Complete$outsp
