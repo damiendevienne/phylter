@@ -32,3 +32,17 @@ plot(treeHGTgn)
 ListTreesHGTsp=HGToutsp(ListTrees2, branche=16)
 RES <-Phylter(ListTreesHGTsp, distance="patristic", k=2, thres=0.5, quiet=TRUE)
 RES$Complete$outsp
+
+TreeBrLg = BrLength(tree, branche=16, ratio =0.2)
+plot(tree)
+plot(TreeBrLg)
+
+TreeBrLgGN = BrLengthGn(tree)
+plot(tree)
+plot(TreeBrLgGN)
+
+TreeBrLgSP = BrLengthSp(ListTrees2, branche=16)
+plot(TreeBrLgSP[[5]])
+plot(ListTrees2[[5]])
+
+

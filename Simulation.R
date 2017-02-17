@@ -91,3 +91,35 @@ HGT <-  function(Tree, branche = sample(1:nrow(Tree$edge),1)){
       return(treebinded)
 }
 
+#--------------------------Longueur de Branche---------------------------------------------------
+
+##Fonction qui permet de changer la longueur d'une branche donnée dans un arbre donné
+BrLength <- function(Tree, branche = sample(1:nrow(Tree$edge),1), ratio = 2){
+  Tree2 = Tree
+  Tree2$edge.length[branche]=Tree2$edge.length[branche]*ratio
+  return(Tree2)
+}
+
+##Fonction qui permet de changer aléatoirement la longueur d'une branche donnée dans tous les arbres d'une liste -> outsp
+BrLengthSp <- function(ListTrees, branche, ratioMin = 0.1, ratioMax = 10){
+  ListTrees2=list()
+  for (t in 1:length(ListTrees)){
+    ratio = runif(1,ratioMin,ratioMax)
+    Tree2 = BrLength(ListTrees[[t]], branche, ratio)
+    ListTrees2[[t]]=Tree2
+  }
+  return(ListTrees2)
+}
+
+##Fonction qui permet de changer aléatoirement la longueur d'un certain nombre de branches d'un arbre -> outgn
+BrLengthGn <- function(Tree, n=10, ratioMin = 0.1, ratioMax = 10){
+  Tree2=Tree
+  for (i in 1:n){
+    branche = sample(1:nrow(Tree2$edge),1)
+    ratio = runif(1,ratioMin,ratioMax)
+    Tree2 = BrLength(Tree2, branche, ratio)
+  }
+  return(Tree2)
+}
+
+
