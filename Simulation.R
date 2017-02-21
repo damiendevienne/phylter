@@ -11,12 +11,12 @@ HGToutgn <- function(Tree, n=10){
 
 ##Fonction qui change dans tous les arbres la même espèce (ou le groupe d'espèce selon la branche choisie) mais pas au même endroit --> outsp
 HGToutsp <- function(ListTrees, branche){
-  ListTree2=list()
-  for (t in 1:length(ListTrees)){
+  ListTrees2=ListTrees
+  for (T in 1:length(ListTrees)){
     treeHGT = HGT(ListTrees[[T]], branche)
-    ListTree2[[T]]=treeHGT
+    ListTrees2[[T]]=treeHGT
   }
-  return(ListTrees)
+  return(ListTrees2)
 }
 
 ##Cette fonction permet d'effectuer un transfert dans un arbre en choisissant sur quelle branche se fait la coupure au départ. 
@@ -102,7 +102,7 @@ BrLength <- function(Tree, branche = sample(1:nrow(Tree$edge),1), ratio = 2){
 
 ##Fonction qui permet de changer aléatoirement la longueur d'une branche donnée dans tous les arbres d'une liste -> outsp
 BrLengthSp <- function(ListTrees, branche, ratioMin = 0.1, ratioMax = 10){
-  ListTrees2=list()
+  ListTrees2=ListTrees
   for (t in 1:length(ListTrees)){
     ratio = runif(1,ratioMin,ratioMax)
     Tree2 = BrLength(ListTrees[[t]], branche, ratio)
