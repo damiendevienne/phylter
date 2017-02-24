@@ -178,12 +178,12 @@ Phylter <-function(trees, distance="nodal", k=2, thres=0.5, quiet=TRUE, gene.nam
     matrices2=gestion.matrice(matrices2)
     Dist2 <- mat2Dist(matrices2)
     WR2 = Dist2WR(Dist2)
-    CellOutl2 <- detect.cell.outliers(WR2, k=k, quiet=quiet)
+    CellOutl2 <- detect.cell.outliers(WR2, k=k+2, quiet=quiet)
     RES$Complete <- CompOutl
     RES$CellByCell <- CellOutl2
   }
   else{
-     CellOutl2 <- detect.cell.outliers(WR,  k=k, quiet=quiet)
+     CellOutl2 <- detect.cell.outliers(WR,  k=k+2, quiet=quiet)
      RES$Complete <- CompOutl
      RES$CellByCell <- CellOutl2
   }
@@ -198,12 +198,12 @@ AnalyseBranche <- function(trees, k=2, thres=0.5, quiet=TRUE){
   if (length(CompOutl$outsp)>0 || length(CompOutl$outgn)>0) {
     TREESwithoutCompleteOutlierDist<-rm.gene.and.species.Distatis(trees, CompOutl$outsp, CompOutl$outgn)
     MatBranche2<-trees2branchMatrices(TREESwithoutCompleteOutlierDist)
-    CellOutl2 <- detect.cell.outliers(MatBranche2, k=k, quiet=quiet)
+    CellOutl2 <- detect.cell.outliers(MatBranche2, k=k+2, quiet=quiet)
     RES$Complete <- CompOutl
     RES$CellByCell <- CellOutl2
   }
   else{
-    CellOutl2 <- detect.cell.outliers(MatBranche,  k=k, quiet=quiet)
+    CellOutl2 <- detect.cell.outliers(MatBranche,  k=k+2, quiet=quiet)
     RES$Complete <- CompOutl
     RES$CellByCell <- CellOutl2
   }
