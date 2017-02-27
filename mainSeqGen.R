@@ -7,6 +7,7 @@ source("/home/aurore/Documents/Phylter/Simulation.R")
 setwd(dir="/home/aurore/Documents/Phylter/trees/seqgen/")
 
 tree = rtree(30,rooted = TRUE)
+#tree = read.tree("arbre.tree")
 write.tree(tree, file = "arbre.tree")
 
 ## Narmol
@@ -38,7 +39,7 @@ ListTreesOutSp2 = list()
 for (i in 1:20){
  treeHGT <-HGT(tree,14)
  write.tree(treeHGT, file = "arbreHGT.tree")
-  system("/home/aurore/Téléchargements/Seq-Gen.v1.3.3/source/seq-gen -mGTR -n1 -s0.5 < arbre.tree > seqtrees.dat")
+  system("/home/aurore/Téléchargements/Seq-Gen.v1.3.3/source/seq-gen -mGTR -n1 -d1 < arbre.tree > seqtrees.dat")
   system("phyml -i seqtrees.dat -n 1 -o lr -u arbre.tree --quiet")
   ListTreesOutSp2[[i]]= read.tree(file="seqtrees.dat_phyml_tree")
 }
@@ -108,7 +109,7 @@ RES$CellByCell$outcell
 
 ########################################""""
 
-ListOut = SimOutliersHGT(15,15,2,2)
+ListOut = SimOutliersHGT(10,10,1,1)
 RES <-Phylter(ListOut, distance="patristic", k=2, thres=0.5, quiet=TRUE)
 RES$Complete$outgn
 RES$Complete$outsp
@@ -118,7 +119,7 @@ ListOutC = HGToutCell(ListOut, n=1)
 RES <-Phylter(ListOutC, distance="patristic", k=2, thres=0.5, quiet=TRUE)
 RES$CellByCell$outcell
 
-ListOut2 = SimOutliersLg(15,15,2,2)
+ListOut2 = SimOutliersLg(20,20,2,2)
 RES <-Phylter(ListOut2, distance="patristic", k=2, thres=0.5, quiet=TRUE)
 RES$Complete$outgn
 RES$Complete$outsp

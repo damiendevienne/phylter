@@ -1,33 +1,47 @@
-###Fonction qui génère une liste d'arbre de nbgn gènes avec nbsp espèces contenant des outliers gènes (Outgn) et espèces (Outsp) générés
-###en générant des HGT
-SimOutliersHGT <-function(nbsp = 30, nbgn = 30, OutSp = 1, Outgn= 1){
+###Fonction qui génère une liste d'arbre de nbgn gènes avec nbsp espèces contenant des outliers gènes (Outgn) et espèces (Outsp) générés par HGT
+#nbsp = nombre d'espèces dans l'arbre / nbgn = nombre d'arbres / Outgn = nb d'outlier gènes /Outsp = nb d'oulier sp 
+#sp = "f" si on ne veut que les HGT (sp) ne se fasse que sur les branches externes (sinon ne rien mettre)
+SimOutliersHGT <-function(nbsp = 30, nbgn = 30, Outgn= 1, Outsp = 1, sp = "f"){
   tree=rtree(nbsp,rooted = TRUE)
   write.tree(tree, file = "arbre.tree")
   ListOutGnTree =list()
-  for (i in 1:nbgn){
+  "multiPhylo"->class(ListOutGnTree)
+  for (i in 1:nbgn){ # n fois le même arbre qui va evoluer différement
     ListOutGnTree[[i]]=tree
   }
-  if(OutSp!=0){
-    ## outspe = seulement les feuilles
-    samp = sample(1:nbsp,OutSp)
-    for (s in 1:length(samp)){
-      for (j in 1:nrow(tree$edge)){ 
-        if (tree$edge[j,2]==samp[[s]]){
-          ListOutGnTree = HGToutsp(ListOutGnTree, j)
+  if(Outsp!=0){
+    ## outspe = seulement les branches externes
+    if(sp == "f"){
+      s=1
+      while (s <= Outsp){
+        samp = sample(1:nbsp,1)
+        for (j in 1:nrow(tree$edge)){ 
+          if (tree$edge[j,2]==samp){
+            ListOutGnTree = HGToutsp(ListOutGnTree, j)
+            s=s+1
+          }
         }
+      }
+    }
+    ## outspe = toutes les branches sont considérées
+    else{
+      samp = sample(1:nrow(tree$edge),Outsp)
+      for (s in 1:Outsp){
+        ListOutGnTree = HGToutsp(ListOutGnTree, samp[[s]])
       }
     }
   }
   if (Outgn !=0){
     samp = sample(1:nbgn,Outgn)
     for (i in 1:length(samp)){
-      ListOutGnTree[[samp[i]]] = HGT1gn(ListOutGnTree[[samp[i]]], n=30)
+      ListOutGnTree[[samp[i]]] = HGT1gn(ListOutGnTree[[samp[i]]], n=nbsp)
     }
   }
   ListTreesOut=list()
-  for  (i in 1: length(ListOutGnTree)){
+  "multiPhylo"->class(ListTreesOut)
+  for  (i in 1:length(ListOutGnTree)){
     write.tree(ListOutGnTree[[i]], file = "arbreHGT.tree")
-    system("/home/aurore/Téléchargements/Seq-Gen.v1.3.3/source/seq-gen -mGTR -n1 -s0.5 < arbreHGT.tree > seqtrees.dat")
+    system("/home/aurore/Téléchargements/Seq-Gen.v1.3.3/source/seq-gen -mHKY85 -n1 -d1 < arbreHGT.tree > seqtrees.dat")
     system("phyml -i seqtrees.dat -n 1 -o lr -u arbre.tree --quiet")
     ListTreesOut[[i]]= read.tree(file="seqtrees.dat_phyml_tree")
   }
@@ -36,34 +50,52 @@ SimOutliersHGT <-function(nbsp = 30, nbgn = 30, OutSp = 1, Outgn= 1){
 
 ###Fonction qui génère une liste d'arbre de nbgn gènes avec nbsp espèces contenant des outliers gènes (Outgn) et espèces (Outsp) générés
 ###en modifiant les longueurs de branches
+#nbsp = nombre d'espèces dans l'arbre / nbgn = nombre d'arbres / Outgn = nb d'outlier gènes /Outsp = nb d'oulier sp 
 SimOutliersLg <-function(nbsp = 30, nbgn = 30, OutSp = 1, Outgn= 1){
   tree=rtree(nbsp,rooted = TRUE)
   write.tree(tree, file = "arbre.tree")
   ListOutGnTree =list()
+  "multiPhylo"->class(ListOutGnTree)
   for (i in 1:nbgn){
     ListOutGnTree[[i]]=tree
   }
-  if(OutSp!=0){
-    ## outspe = seulement les feuilles
-    samp = sample(1:nbsp,OutSp)
-    for (s in 1:length(samp)){
-      for (j in 1:nrow(tree$edge)){ 
-        if (tree$edge[j,2]==samp[[s]]){
-          ListOutGnTree = BrLengthSp(ListOutGnTree, j, ratiomin = 0.1, ratiomax=10)
+  
+  if(Outsp!=0){ 
+    ## outspe = seulement les branches externes
+    if(sp == "f"){
+      s=1
+      while (s <= Outsp){
+        samp = sample(1:nbsp,1)
+        for (j in 1:nrow(tree$edge)){ 
+          if (tree$edge[j,2]==samp){
+            ListOutGnTree = BrLengthSp(ListOutGnTree, j, ratiomin = 0.1, ratiomax=10)
+            s=s+1
+          }
         }
+      }
+    }
+    ## outspe = toutes les branches sont considérées
+    else{
+      samp = sample(1:nrow(tree$edge),Outsp)
+      for (s in 1:Outsp){
+        ListOutGnTree =  BrLengthSp(ListOutGnTree, samp[[s]], ratiomin = 0.1, ratiomax=10)
       }
     }
   }
   if (Outgn !=0){
     samp = sample(1:nbgn,Outgn)
-    ListOutGnTree = BrLengthGn(ListOutGnTree,n=30,Listgn=samp, ratio=3)
+    ListOutGnTree = BrLengthGn(ListOutGnTree,n=30,Listgn=samp, ratio=5)
   }
   ListTreesOut=list()
+  "multiPhylo"->class(ListTreesOut)
+  system("/home/aurore/Téléchargements/Seq-Gen.v1.3.3/source/seq-gen -mHKY85 -n1 < arbre.tree > seqtrees.dat")
+  system("echo '1' > 1.txt")
   for  (i in 1: length(ListOutGnTree)){
     write.tree(ListOutGnTree[[i]], file = "arbreHGT.tree")
-    system("/home/aurore/Téléchargements/Seq-Gen.v1.3.3/source/seq-gen -mGTR -n1 -s0.5 < arbreHGT.tree > seqtrees.dat")
-    system("phyml -i seqtrees.dat -n 1 -o lr -u arbre.tree --quiet")
-    ListTreesOut[[i]]= read.tree(file="seqtrees.dat_phyml_tree")
+    system("cat seqtrees.dat 1.txt arbreHGT.tree > output")
+    system("/home/aurore/Téléchargements/Seq-Gen.v1.3.3/source/seq-gen -mHKY85 -n1 -k1 < output > seqtreesout.dat")
+    system("phyml -i seqtreesout.dat -n 1 -o lr -u arbre.tree --quiet")
+    ListTreesOut[[i]]= read.tree(file="seqtreesout.dat_phyml_tree")
   }
   return(ListTreesOut)
 }
@@ -71,27 +103,28 @@ SimOutliersLg <-function(nbsp = 30, nbgn = 30, OutSp = 1, Outgn= 1){
 
 #--------------------------HGT----------------------------------------------------
 
-##Fonction qui effectue n transfert horizontaux aléatoire dans un arbre de gène --> outgn
-HGT1gn <- function(Tree, n=15){
+##Fonction qui effectue n transfert horizontaux aléatoires dans un arbre de gène --> outgn
+HGT1gn <- function(Tree, n=30){
   Tree2 = Tree
+  listBranche = sample(1:nrow(Tree$edge),n)
   for (i in 1:n){
-    Tree2 = HGT(Tree,branche = sample(1:nrow(Tree$edge),1))
+    Tree2 = HGT(Tree,branche = listBranche[[i]])
   }
   return(Tree2)
 }
 
-##--> OutCell
-HGToutCell <- function(ListTrees, n=1){
+##--> créé k OutCell dans une liste d'arbres
+HGToutCell <- function(ListTrees, k=1){
   ListTrees2 = ListTrees
-  samp= sample(1:length(ListTrees),n)
-  for (i in 1:n){
+  samp= sample(1:length(ListTrees),k)
+  for (i in 1:k){
     ListTrees2[[samp[[i]]]] = HGT(ListTrees[[samp[[i]]]])
   }
   return(ListTrees2)
 }
 
 ##Fonction qui créés des outliers gènes dans une liste d'arbre --> outgn
-HGToutgn <- function(ListTrees, n=15, k=1, Listgn = NULL){
+HGToutgn <- function(ListTrees, n=30, k=1, Listgn = NULL){
   ListTrees2 = ListTrees
   if (is.null(Listgn)){
     samp= sample(1:length(ListTrees),k)
