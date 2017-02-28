@@ -109,7 +109,7 @@ RES$CellByCell$outcell
 
 ########################################""""
 
-ListOut = SimOutliersHGT(10,10,1,1)
+ListOut = SimOutliersHGT(20,20,2,2)
 RES <-Phylter(ListOut, distance="patristic", k=2, thres=0.5, quiet=TRUE)
 RES$Complete$outgn
 RES$Complete$outsp

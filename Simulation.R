@@ -37,21 +37,21 @@ SimOutliersHGT <-function(nbsp = 30, nbgn = 30, Outgn= 1, Outsp = 1, sp = "f"){
       ListOutGnTree[[samp[i]]] = HGT1gn(ListOutGnTree[[samp[i]]], n=nbsp)
     }
   }
-  ListTreesOut=list()
-  "multiPhylo"->class(ListTreesOut)
-  for(i in 1:length(ListOutGnTree)){
-    write.tree(ListOutGnTree[[i]], file = "arbreHGT.tree")
-    system("/home/aurore/Téléchargements/Seq-Gen.v1.3.3/source/seq-gen -mHKY85 -n1 -d1 < arbreHGT.tree > seqtrees.dat")
-    system("phyml -i seqtrees.dat -n 1 -o lr -u arbre.tree --quiet")
-    ListTreesOut[[i]]= read.tree(file="seqtrees.dat_phyml_tree")
-  }
-  return(ListTreesOut)
+  #ListTreesOut=list()
+  #"multiPhylo"->class(ListTreesOut)
+  #for(i in 1:length(ListOutGnTree)){
+    #write.tree(ListOutGnTree[[i]], file = "arbreHGT.tree")
+    #system("/home/aurore/Téléchargements/Seq-Gen.v1.3.3/source/seq-gen -mHKY85 -n1 -d1 < arbreHGT.tree > seqtrees.dat")
+    #system("phyml -i seqtrees.dat -n 1 -o lr -u arbre.tree --quiet")
+    #ListTreesOut[[i]]= read.tree(file="seqtrees.dat_phyml_tree")
+  #}
+  return(ListOutGnTree)
 }
 
 ###Fonction qui génère une liste d'arbre de nbgn gènes avec nbsp espèces contenant des outliers gènes (Outgn) et espèces (Outsp) générés
 ###en modifiant les longueurs de branches
 #nbsp = nombre d'espèces dans l'arbre / nbgn = nombre d'arbres / Outgn = nb d'outlier gènes /Outsp = nb d'oulier sp 
-SimOutliersLg <-function(nbsp = 30, nbgn = 30, Outsp = 1, Outgn= 1){
+SimOutliersLg <-function(nbsp = 10, nbgn = 10, Outsp = 1, Outgn= 1, sp="f"){
   tree=rtree(nbsp,rooted = TRUE)
   write.tree(tree, file = "arbre.tree")
   ListOutGnTree =list()
@@ -67,7 +67,7 @@ SimOutliersLg <-function(nbsp = 30, nbgn = 30, Outsp = 1, Outgn= 1){
         samp = sample(1:nbsp,1)
         for (j in 1:nrow(tree$edge)){ 
           if (tree$edge[j,2]==samp){
-            ListOutGnTree = BrLengthSp(ListOutGnTree, j, ratiomin = 0.1, ratiomax=10)
+            ListOutGnTree = BrLengthSp(ListOutGnTree, j, ratiomin = 0.1, ratiomax=5)
             s=s+1
           }
         }
@@ -77,28 +77,29 @@ SimOutliersLg <-function(nbsp = 30, nbgn = 30, Outsp = 1, Outgn= 1){
     else{
       samp = sample(1:nrow(tree$edge),Outsp)
       for (s in 1:Outsp){
-        ListOutGnTree =  BrLengthSp(ListOutGnTree, samp[[s]], ratiomin = 0.1, ratiomax=10)
+        ListOutGnTree =  BrLengthSp(ListOutGnTree, samp[[s]], ratiomin = 0.1, ratiomax=5)
       }
     }
   }
   if (Outgn !=0){
     samp = sample(1:nbgn,Outgn)
-    ListOutGnTree = BrLengthGn(ListOutGnTree, n=nbsp, Listgn=samp, ratio=5)
+    ListOutGnTree = BrLengthGn(ListOutGnTree, n=nbsp, Listgn=samp, ratiomin = 0.1, ratiomax=5)
   }
-  ListTreesOut=list()
-  "multiPhylo"->class(ListTreesOut)
-  system("/home/aurore/Téléchargements/Seq-Gen.v1.3.3/source/seq-gen -mHKY85 -n1 < arbre.tree > seqtrees.dat")
-  system("echo '1' > 1.txt")
-  for  (i in 1: length(ListOutGnTree)){
-    write.tree(ListOutGnTree[[i]], file = "arbreHGT.tree")
-    system("cat seqtrees.dat 1.txt arbreHGT.tree > output")
-    system("/home/aurore/Téléchargements/Seq-Gen.v1.3.3/source/seq-gen -mHKY85 -n1 -k1 < output > seqtreesout.dat")
-    system("phyml -i seqtreesout.dat -n 1 -o lr -u arbre.tree --quiet")
-    ListTreesOut[[i]]= read.tree(file="seqtreesout.dat_phyml_tree")
-  }
-  return(ListTreesOut)
+  #ListTreesOut=list()
+ # "multiPhylo"->class(ListTreesOut)
+  #system("echo '' >output")
+  #for  (i in 1: length(ListOutGnTree)){
+  #  write.tree(ListOutGnTree[[i]], file = "arbreHGT.tree")
+  #  p=1000/nbgn
+  #  system("echo '[100]' > partition")
+  #  system('echo "$(cat partition)$(cat arbreHGT.tree)" >> output')
+ # }
+ # system("/home/aurore/Téléchargements/Seq-Gen.v1.3.3/source/seq-gen -mHKY85 -l1000 -n1 -p10 < output > seqtrees.dat")
+ # system("phyml -i seqtrees.dat -n 10 -o lr -u arbre.tree --quiet")
+ # ListTreesOut= read.tree(file="seqtrees.dat_phyml_tree")
+ # return(ListTreesOut)
+  return(ListOutGnTree)
 }
-
 
 #--------------------------HGT----------------------------------------------------
 
@@ -227,14 +228,14 @@ HGT <-  function(Tree, branche = sample(1:nrow(Tree$edge),1)){
 #--------------------------Longueur de Branche---------------------------------------------------
 
 ##Fonction qui permet de changer la longueur d'une branche donnée dans un arbre donné en multipliant sa longeur par un ratio
-BrLength <- function(Tree, branche = sample(1:nrow(Tree$edge),1), ratio=5){
+BrLength <- function(Tree, branche = sample(1:nrow(Tree$edge),1), ratio=3){
   Tree2 = Tree
   Tree2$edge.length[branche]=Tree$edge.length[branche]*ratio
   return(Tree2)
 }
 
 ##Fonction qui permet d'insérer des outliers cells dans une liste d'arbres
-BrLengthOutCell <- function(ListTrees, k=1, ratio=5){
+BrLengthOutCell <- function(ListTrees, k=1, ratio=3){
   ListTrees2=ListTrees
   samp= sample(1:length(ListTrees),k)
   for (T in 1:k){
@@ -244,7 +245,7 @@ BrLengthOutCell <- function(ListTrees, k=1, ratio=5){
 }
 
 ##Fonction qui permet de changer aléatoirement la longueur d'une branche donnée dans tous les arbres d'une liste -> outsp
-BrLengthSp <- function(ListTrees, branche, ratiomin = 0.1, ratiomax=10){
+BrLengthSp <- function(ListTrees, branche, ratiomin = 0.1, ratiomax=5){
   ListTrees2=ListTrees
   for (t in 1:length(ListTrees)){
     ratio=runif(1,ratiomin,ratiomax)
@@ -255,9 +256,10 @@ BrLengthSp <- function(ListTrees, branche, ratiomin = 0.1, ratiomax=10){
 }
 
 ##Fonction qui permet de changer aléatoirement la longueur d'un certain nombre de branches d'un arbre -> outgn
-BrLGn <- function(Tree, n=20, ratio=5){
+BrLGn <- function(Tree, n=30, ratiomin = 0.1, ratiomax=5){
   branche = sample(1:nrow(Tree$edge),n)
   for (i in 1:n){
+    ratio = runif(1,ratiomin,ratiomax)
     Tree2 = BrLength(Tree, branche[[i]], ratio)
   }
   return(Tree2)
@@ -265,17 +267,17 @@ BrLGn <- function(Tree, n=20, ratio=5){
 
 ##Changer la longueur d'un certain nombre de branche de plusieurs arbres dans une liste
 ##n = nombre de hgt dans un arbre, k = nombre d'arbres modifiés, Listgn = liste ciblée des arbres qu'on veut modifier
-BrLengthGn <- function(ListTrees, n=20, k, Listgn=NULL, ratio=5){
+BrLengthGn <- function(ListTrees, n=20, k, Listgn=NULL, ratiomin = 0.1, ratiomax=5){
   ListTrees2 = ListTrees
   if (is.null(Listgn)){
       samp= sample(1:length(ListTrees),k)
       for (j in 1:k){
-        ListTrees2[[samp[[j]]]] =  BrLGn(ListTrees[[samp[[j]]]], n, ratio)
+        ListTrees2[[samp[[j]]]] =  BrLGn(ListTrees[[samp[[j]]]], n, ratiomin, ratiomax)
       }
   }
   else{
     for (i in 1:length(Listgn)){
-      ListTrees2[[Listgn[[i]]]] =  BrLGn(ListTrees[[Listgn[[i]]]],n, ratio)
+      ListTrees2[[Listgn[[i]]]] =  BrLGn(ListTrees[[Listgn[[i]]]],n, ratiomin, ratiomax)
     }
   }
   return(ListTrees2)
