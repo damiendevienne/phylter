@@ -39,7 +39,7 @@ SimOutliersHGT <-function(nbsp = 30, nbgn = 30, Outgn= 1, Outsp = 1, sp = "f"){
   }
   ListTreesOut=list()
   "multiPhylo"->class(ListTreesOut)
-  for  (i in 1:length(ListOutGnTree)){
+  for(i in 1:length(ListOutGnTree)){
     write.tree(ListOutGnTree[[i]], file = "arbreHGT.tree")
     system("/home/aurore/Téléchargements/Seq-Gen.v1.3.3/source/seq-gen -mHKY85 -n1 -d1 < arbreHGT.tree > seqtrees.dat")
     system("phyml -i seqtrees.dat -n 1 -o lr -u arbre.tree --quiet")
@@ -51,7 +51,7 @@ SimOutliersHGT <-function(nbsp = 30, nbgn = 30, Outgn= 1, Outsp = 1, sp = "f"){
 ###Fonction qui génère une liste d'arbre de nbgn gènes avec nbsp espèces contenant des outliers gènes (Outgn) et espèces (Outsp) générés
 ###en modifiant les longueurs de branches
 #nbsp = nombre d'espèces dans l'arbre / nbgn = nombre d'arbres / Outgn = nb d'outlier gènes /Outsp = nb d'oulier sp 
-SimOutliersLg <-function(nbsp = 30, nbgn = 30, OutSp = 1, Outgn= 1){
+SimOutliersLg <-function(nbsp = 30, nbgn = 30, Outsp = 1, Outgn= 1){
   tree=rtree(nbsp,rooted = TRUE)
   write.tree(tree, file = "arbre.tree")
   ListOutGnTree =list()
@@ -59,7 +59,6 @@ SimOutliersLg <-function(nbsp = 30, nbgn = 30, OutSp = 1, Outgn= 1){
   for (i in 1:nbgn){
     ListOutGnTree[[i]]=tree
   }
-  
   if(Outsp!=0){ 
     ## outspe = seulement les branches externes
     if(sp == "f"){
@@ -84,7 +83,7 @@ SimOutliersLg <-function(nbsp = 30, nbgn = 30, OutSp = 1, Outgn= 1){
   }
   if (Outgn !=0){
     samp = sample(1:nbgn,Outgn)
-    ListOutGnTree = BrLengthGn(ListOutGnTree,n=30,Listgn=samp, ratio=5)
+    ListOutGnTree = BrLengthGn(ListOutGnTree, n=nbsp, Listgn=samp, ratio=5)
   }
   ListTreesOut=list()
   "multiPhylo"->class(ListTreesOut)
@@ -103,9 +102,8 @@ SimOutliersLg <-function(nbsp = 30, nbgn = 30, OutSp = 1, Outgn= 1){
 
 #--------------------------HGT----------------------------------------------------
 
-##Fonction qui effectue n transfert horizontaux aléatoires dans un arbre de gène --> outgn
+##Fonction qui effectue n transferts horizontaux aléatoires dans un arbre de gène --> outgn
 HGT1gn <- function(Tree, n=30){
-  Tree2 = Tree
   listBranche = sample(1:nrow(Tree$edge),n)
   for (i in 1:n){
     Tree2 = HGT(Tree,branche = listBranche[[i]])
@@ -123,7 +121,7 @@ HGToutCell <- function(ListTrees, k=1){
   return(ListTrees2)
 }
 
-##Fonction qui créés des outliers gènes dans une liste d'arbre --> outgn
+##Fonction qui créés des outliers gènes dans une liste d'arbres --> outgn
 HGToutgn <- function(ListTrees, n=30, k=1, Listgn = NULL){
   ListTrees2 = ListTrees
   if (is.null(Listgn)){
@@ -162,14 +160,14 @@ HGT <-  function(Tree, branche = sample(1:nrow(Tree$edge),1)){
         matricePos[i,j]=dist.nodes(Tree)[Tree$edge[i,j],nbSpTot+1]
       }
     }
-    #Il faut qu'il y ai au moins deux point de coupure à un temps t pour réaliser un déplacement (un acctepeur et un donneur):
+    #Il faut qu'il y ai au moins deux points de coupure à un temps t pour réaliser un déplacement (un accepteur et un donneur):
     Boo = FALSE
     while (Boo == FALSE){
       ListNumBranche <- list()
       N <- runif(1, min = matricePos[branche,1], max= matricePos[branche,2]) #Choix d'un temps N aléatoire sur la branche choisie
       for (i in 1:nrow(matricePos)){
         if((matricePos[i,1] < N) & (matricePos[i,2] > N) & (!(i%in%ListNumBranche))){
-          ListNumBranche[length(ListNumBranche)+1] <- i #Est ce qu'une autre branche dans l'arbre comprend ce temps N
+          ListNumBranche[length(ListNumBranche)+1] <- i #Est ce qu'une autre branche dans l'arbre comprend ce temps N?
         }
       }
       if (length(ListNumBranche) > 1){
@@ -228,18 +226,18 @@ HGT <-  function(Tree, branche = sample(1:nrow(Tree$edge),1)){
 
 #--------------------------Longueur de Branche---------------------------------------------------
 
-##Fonction qui permet de changer la longueur d'une branche donnée dans un arbre donné
+##Fonction qui permet de changer la longueur d'une branche donnée dans un arbre donné en multipliant sa longeur par un ratio
 BrLength <- function(Tree, branche = sample(1:nrow(Tree$edge),1), ratio=5){
   Tree2 = Tree
-  Tree2$edge.length[branche]=Tree2$edge.length[branche]*ratio
+  Tree2$edge.length[branche]=Tree$edge.length[branche]*ratio
   return(Tree2)
 }
 
 ##Fonction qui permet d'insérer des outliers cells dans une liste d'arbres
-BrLengthOutCell <- function(ListTrees, n=1, ratio=5){
+BrLengthOutCell <- function(ListTrees, k=1, ratio=5){
   ListTrees2=ListTrees
-  samp= sample(1:length(ListTrees),n)
-  for (T in 1:n){
+  samp= sample(1:length(ListTrees),k)
+  for (T in 1:k){
       ListTrees2[[samp[[T]]]] = BrLength(ListTrees[[samp[[T]]]],ratio)
   }
   return(ListTrees2)
@@ -258,20 +256,20 @@ BrLengthSp <- function(ListTrees, branche, ratiomin = 0.1, ratiomax=10){
 
 ##Fonction qui permet de changer aléatoirement la longueur d'un certain nombre de branches d'un arbre -> outgn
 BrLGn <- function(Tree, n=20, ratio=5){
-  Tree2=Tree
+  branche = sample(1:nrow(Tree$edge),n)
   for (i in 1:n){
-    branche = sample(1:nrow(Tree2$edge),1)
-    Tree2 = BrLength(Tree2, branche, ratio)
+    Tree2 = BrLength(Tree, branche[[i]], ratio)
   }
   return(Tree2)
 }
 
 ##Changer la longueur d'un certain nombre de branche de plusieurs arbres dans une liste
+##n = nombre de hgt dans un arbre, k = nombre d'arbres modifiés, Listgn = liste ciblée des arbres qu'on veut modifier
 BrLengthGn <- function(ListTrees, n=20, k, Listgn=NULL, ratio=5){
   ListTrees2 = ListTrees
   if (is.null(Listgn)){
       samp= sample(1:length(ListTrees),k)
-      for (j in 1:length(samp)){
+      for (j in 1:k){
         ListTrees2[[samp[[j]]]] =  BrLGn(ListTrees[[samp[[j]]]], n, ratio)
       }
   }
@@ -282,6 +280,3 @@ BrLengthGn <- function(ListTrees, n=20, k, Listgn=NULL, ratio=5){
   }
   return(ListTrees2)
 }
-
-
-
