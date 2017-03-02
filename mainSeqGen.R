@@ -6,7 +6,7 @@ source("/home/aurore/Documents/Phylter/Simulation.R")
 
 setwd(dir="/home/aurore/Documents/Phylter/trees/seqgen/")
 
-tree = rtree(30,rooted = TRUE)
+tree = rtree(10,rooted = TRUE,min=1,max=10)
 #tree = read.tree("arbre.tree")
 write.tree(tree, file = "arbre.tree")
 
@@ -15,11 +15,31 @@ system("/home/aurore/Téléchargements/Seq-Gen.v1.3.3/source/seq-gen -mGTR -n20 
 system("phyml -i seqtrees.dat -n 20 -o lr -u arbre.tree --quiet")
 ListTrees = read.tree(file="seqtrees.dat_phyml_tree", tree.names = NULL, keep.multi = TRUE)
 
-plot(ListTrees)
-
 RES <-Phylter(ListTrees, distance="patristic", k=2.8, thres=0.5, quiet=TRUE)
 RES$Complete$outgn
 RES$Complete$outsp
+RES$CellByCell$outcell
+
+########################################""""
+
+ListOut = SimOutliersHGT(nbsp = 10, nbgn = 10, Outgn= 0, Outsp = 1, sp = "f")
+RES <-Phylter(ListOut, distance="patristic", k=2, thres=0.5, quiet=TRUE)
+RES$Complete$outgn
+RES$Complete$outsp
+RES$CellByCell$outcell
+
+ListOutC = HGToutCell(ListOut, n=1)
+RES <-Phylter(ListOutC, distance="patristic", k=2, thres=0.5, quiet=TRUE)
+RES$CellByCell$outcell
+
+ListOut2 = SimOutliersLg(nbsp = 30, nbgn = 30, Outgn= 3, Outsp = 3, sp = "f")
+RES <-Phylter(ListOut2, distance="patristic", k=2, thres=0.5, quiet=TRUE)
+RES$Complete$outgn
+RES$Complete$outsp
+RES$CellByCell$outcell
+
+ListOut2C <- BrLengthOutCell(ListOut2, n=1)
+RES <-Phylter(ListOut2C, distance="patristic", k=2, thres=0.5, quiet=TRUE)
 RES$CellByCell$outcell
 
 ##--------------------- Outlier sp-------------------------------------------------------------------------------------------------
@@ -105,26 +125,4 @@ ListTreesLoutcell = BrLengthOutCell(ListTrees, n=1, ratio=3)
 RES <-Phylter(ListTreesLoutcell, distance="patristic", k=2, thres=0.5, quiet=TRUE)
 RES$Complete$outgn
 RES$Complete$outsp
-RES$CellByCell$outcell
-
-########################################""""
-
-ListOut = SimOutliersHGT(20,20,2,2)
-RES <-Phylter(ListOut, distance="patristic", k=2, thres=0.5, quiet=TRUE)
-RES$Complete$outgn
-RES$Complete$outsp
-RES$CellByCell$outcell
-
-ListOutC = HGToutCell(ListOut, n=1)
-RES <-Phylter(ListOutC, distance="patristic", k=2, thres=0.5, quiet=TRUE)
-RES$CellByCell$outcell
-
-ListOut2 = SimOutliersLg(20,20,2,2)
-RES <-Phylter(ListOut2, distance="patristic", k=2, thres=0.5, quiet=TRUE)
-RES$Complete$outgn
-RES$Complete$outsp
-RES$CellByCell$outcell
-
-ListOut2C <- BrLengthOutCell(ListOut2, n=1)
-RES <-Phylter(ListOut2C, distance="patristic", k=2, thres=0.5, quiet=TRUE)
 RES$CellByCell$outcell
