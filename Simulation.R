@@ -1,7 +1,7 @@
-###Fonction qui génère une liste d'arbre de nbgn gènes avec nbsp espèces contenant des outliers gènes (Outgn) et espèces (Outsp) générés par HGT
-#nbsp = nombre d'espèces dans l'arbre / nbgn = nombre d'arbres / Outgn = nb d'outlier gènes /Outsp = nb d'oulier sp 
+###Fonction qui génère une liste d'arbres de nbgn gènes avec nbsp espèces contenant des outliers gènes (outgn) et espèces (outsp) générés par HGT
+#nbsp = nombre d'espèces dans l'arbre / nbgn = nombre d'arbres / outgn = nb d'outlier gènes /outsp = nb d'oulier sp 
 #sp = "f" si on ne veut que les HGT (sp) ne se fasse que sur les branches externes (sinon ne rien mettre)
-SimOutliersHGT <-function(nbsp, nbgn, Outgn, Outsp, sp = "f"){
+SimOutliersHGT <-function(nbsp=10, nbgn=10, outgn=1, outsp=1){
   tree=rtree(nbsp,rooted = TRUE,min=1,max=5)
   write.tree(tree, file = "arbre.tree")
   ListOutGnTree =list()
@@ -9,49 +9,33 @@ SimOutliersHGT <-function(nbsp, nbgn, Outgn, Outsp, sp = "f"){
   for (i in 1:nbgn){ # n fois le même arbre qui va evoluer différement
     ListOutGnTree[[i]]=tree
   }
-  if(Outsp!=0){
-    ## outspe = seulement les branches externes
-    if(sp == "f"){
-      s=1
-      while (s <= Outsp){
-        samp = sample(1:nbsp,1)
-        for (j in 1:nrow(tree$edge)){ 
-          if (tree$edge[j,2]==samp){
-            ListOutGnTree = HGToutsp(ListOutGnTree, j)
-            s=s+1
+  if(outsp!=0){
+    ## On ne fait des hgt que sur les branches externes (pour pouvoir contrôler le nombre d'espèces outliers)
+    s=1
+    while (s <= outsp){
+      samp = sample(tree$tip.label,1)
+      for (j in 1:length(tree$tip.label)){
+        if (tree$tip.label[j]==samp){
+          for (l in 1:nrow(tree$edge)){
+            if (tree$edge[l,2]==j){
+              ListOutGnTree = HGToutsp(ListOutGnTree, l)
+              s=s+1
+            }
           }
         }
       }
     }
-    ## outspe = toutes les branches sont considérées
-    else{
-      samp = sample(1:nrow(tree$edge),Outsp)
-      for (s in 1:Outsp){
-        ListOutGnTree = HGToutsp(ListOutGnTree, samp[[s]])
-      }
-    }
   }
-  if (Outgn !=0){
-    samp = sample(1:nbgn,Outgn)
-    for (i in 1:length(samp)){
-      ListOutGnTree[[samp[i]]] = HGT1gn(ListOutGnTree[[samp[i]]], n=nbsp)
-    }
+  if (outgn !=0){
+    ListOutGnTree = HGToutgn(ListOutGnTree,n=nrow(tree$edge),k=outgn) #autant d'hgt que de branches par arbre
   }
-  #ListTreesOut=list()
-  #"multiPhylo"->class(ListTreesOut)
-  #for(i in 1:length(ListOutGnTree)){
-    #write.tree(ListOutGnTree[[i]], file = "arbreHGT.tree")
-    #system("/home/aurore/Téléchargements/Seq-Gen.v1.3.3/source/seq-gen -mHKY85 -n1 -d1 < arbreHGT.tree > seqtrees.dat")
-    #system("phyml -i seqtrees.dat -n 1 -o lr -u arbre.tree --quiet")
-    #ListTreesOut[[i]]= read.tree(file="seqtrees.dat_phyml_tree")
-  #}
   return(ListOutGnTree)
 }
 
-###Fonction qui génère une liste d'arbre de nbgn gènes avec nbsp espèces contenant des outliers gènes (Outgn) et espèces (Outsp) générés
+###Fonction qui génère une liste d'arbres de nbgn gènes avec nbsp espèces contenant des outliers gènes (outgn) et espèces (outsp) générés
 ###en modifiant les longueurs de branches
-#nbsp = nombre d'espèces dans l'arbre / nbgn = nombre d'arbres / Outgn = nb d'outlier gènes /Outsp = nb d'oulier sp 
-SimOutliersLg <-function(nbsp, nbgn, Outsp, Outgn, sp="f"){
+#nbsp = nombre d'espèces dans l'arbre / nbgn = nombre d'arbres / outgn = nb d'outliers gènes /outsp = nb d'ouliers sp 
+SimOutliersLg <-function(nbsp, nbgn, outsp, outgn, sp="f"){
   tree=rtree(nbsp,rooted = TRUE, min=1,max=5)
   write.tree(tree, file = "arbre.tree")
   ListOutGnTree =list()
@@ -59,11 +43,11 @@ SimOutliersLg <-function(nbsp, nbgn, Outsp, Outgn, sp="f"){
   for (i in 1:nbgn){
     ListOutGnTree[[i]]=tree
   }
-  if(Outsp!=0){ 
+  if(outsp!=0){ 
     ## outspe = seulement les branches externes
     if(sp == "f"){
       s=1
-      while (s <= Outsp){
+      while (s <= outsp){
         samp = sample(1:nbsp,1)
         for (j in 1:nrow(tree$edge)){ 
           if (tree$edge[j,2]==samp){
@@ -73,30 +57,17 @@ SimOutliersLg <-function(nbsp, nbgn, Outsp, Outgn, sp="f"){
         }
       }
     }
-    ## outspe = toutes les branches sont considérées
+    ## outspe = toutes les branches sont considérées et pas seulement les branches externes
     else{
-      samp = sample(1:nrow(tree$edge),Outsp)
-      for (s in 1:Outsp){
+      samp = sample(1:nrow(tree$edge),outsp)
+      for (s in 1:outsp){
         ListOutGnTree =  BrLengthSp(ListOutGnTree, samp[[s]])
       }
     }
   }
-  if (Outgn !=0){
-    ListOutGnTree = BrLengthGn(ListOutGnTree, b=nbsp, k=Outgn)
+  if (outgn !=0){
+    ListOutGnTree = BrLengthGn(ListOutGnTree, b=nrow(tree$edge), k=outgn) #autant de changements de longueur que de branches par arbre
   }
-  #ListTreesOut=list()
- # "multiPhylo"->class(ListTreesOut)
-  #system("echo '' >output")
-  #for  (i in 1: length(ListOutGnTree)){
-  #  write.tree(ListOutGnTree[[i]], file = "arbreHGT.tree")
-  #  p=1000/nbgn
-  #  system("echo '[100]' > partition")
-  #  system('echo "$(cat partition)$(cat arbreHGT.tree)" >> output')
- # }
- # system("/home/aurore/Téléchargements/Seq-Gen.v1.3.3/source/seq-gen -mHKY85 -l1000 -n1 -p10 < output > seqtrees.dat")
- # system("phyml -i seqtrees.dat -n 10 -o lr -u arbre.tree --quiet")
- # ListTreesOut= read.tree(file="seqtrees.dat_phyml_tree")
- # return(ListTreesOut)
   return(ListOutGnTree)
 }
 
@@ -121,7 +92,8 @@ HGToutCell <- function(ListTrees, k=1){
   return(ListTrees2)
 }
 
-##Fonction qui créés des outliers gènes dans une liste d'arbres --> outgn
+##Fonction qui créés k outliers gènes dans une liste d'arbres --> outgn
+##n est le nombre de HGT par arbre (ne doit pas dépasser le nombre de branche de l'arbre)
 HGToutgn <- function(ListTrees, n=30, k=1){
   ListTrees2 = ListTrees
   samp= sample(1:length(ListTrees),k)
@@ -131,7 +103,7 @@ HGToutgn <- function(ListTrees, n=30, k=1){
   return(ListTrees2)
 }
 
-##Fonction qui change dans tous les arbres la même espèce (ou le groupe d'espèce selon la branche choisie) mais pas au même endroit --> outsp
+##Fonction qui change dans tous les arbres la même espèce (ou le groupe d'espèces selon la branche choisie) mais pas au même endroit --> outsp
 HGToutsp <- function(ListTrees, branche){
   ListTrees2=ListTrees
   for (T in 1:length(ListTrees)){
@@ -145,7 +117,6 @@ HGToutsp <- function(ListTrees, branche){
 ##(numéro de la branche = numéro de la ligne dans tree$edge).
 ##Le branchement du sous-arbre coupé se fera sur une autre branche (mais au même temps relatif)
 HGT <-  function(Tree, branche = sample(1:nrow(Tree$edge),1)){
-  branche = sample(1:nrow(Tree$edge),1)
     nbSpTot = length(Tree$tip.label)
     matricePos = matrix(nrow=nrow(Tree$edge), ncol=ncol(Tree$edge))
     for (i in 1:nrow(Tree$edge)){
@@ -167,7 +138,7 @@ HGT <-  function(Tree, branche = sample(1:nrow(Tree$edge),1)){
         Boo = TRUE
       }
     }  
-      out = as.integer(sample(ListNumBranche,1)) 
+      out = as.integer(branche)
       noeudOut=Tree$edge[out,2] ## noeud donneur
       ins = as.integer(sample(ListNumBranche[ListNumBranche!=as.integer(out)],1))
       noeudIns=Tree$edge[ins,2] ## noeud receveur

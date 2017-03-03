@@ -22,7 +22,7 @@ RES$CellByCell$outcell
 
 ########################################""""
 
-ListOut = SimOutliersHGT(nbsp = 10, nbgn = 10, Outgn= 0, Outsp = 1, sp = "f")
+ListOut = SimOutliersHGT(nbsp = 10, nbgn = 10, outgn= 0, outsp = 1)
 RES <-Phylter(ListOut, distance="patristic", k=2, thres=0.5, quiet=TRUE)
 RES$Complete$outgn
 RES$Complete$outsp
@@ -32,7 +32,7 @@ ListOutC = HGToutCell(ListOut, n=1)
 RES <-Phylter(ListOutC, distance="patristic", k=2, thres=0.5, quiet=TRUE)
 RES$CellByCell$outcell
 
-ListOut2 = SimOutliersLg(nbsp = 30, nbgn = 30, Outgn= 3, Outsp = 3, sp = "f")
+ListOut2 = SimOutliersLg(nbsp = 30, nbgn = 30, outgn= 3, outsp = 3, sp = "f")
 RES <-Phylter(ListOut2, distance="patristic", k=2, thres=0.5, quiet=TRUE)
 RES$Complete$outgn
 RES$Complete$outsp
@@ -114,15 +114,3 @@ RES$Complete$outgn
 RES$Complete$outsp
 RES$CellByCell$outcell
 
-##--------------------- Outliercell-------------------------------------------------------------------------------------------------
-##HGT
-
-
-
-##longueur
-
-ListTreesLoutcell = BrLengthOutCell(ListTrees, n=1, ratio=3)
-RES <-Phylter(ListTreesLoutcell, distance="patristic", k=2, thres=0.5, quiet=TRUE)
-RES$Complete$outgn
-RES$Complete$outsp
-RES$CellByCell$outcell
