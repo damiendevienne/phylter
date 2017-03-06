@@ -1,35 +1,32 @@
+##load required packages
+require(ape)
+
 ###Fonction qui génère une liste d'arbres de nbgn gènes avec nbsp espèces contenant des outliers gènes (outgn) et espèces (outsp) générés par HGT
-#nbsp = nombre d'espèces dans l'arbre / nbgn = nombre d'arbres / outgn = nb d'outlier gènes /outsp = nb d'oulier sp 
-#sp = "f" si on ne veut que les HGT (sp) ne se fasse que sur les branches externes (sinon ne rien mettre)
+##nbsp = nombre d'espèces dans l'arbre / nbgn = nombre d'arbres / outgn = nb d'outlier gènes /outsp = nb d'oulier sp 
+##sp = "f" si on ne veut que les HGT (sp) ne se fasse que sur les branches externes (sinon ne rien mettre)
 SimOutliersHGT <-function(nbsp=10, nbgn=10, outgn=1, outsp=1){
-  tree=rtree(nbsp,rooted = TRUE,min=1,max=5)
-  write.tree(tree, file = "arbre.tree")
-  ListOutGnTree =list()
-  "multiPhylo"->class(ListOutGnTree)
-  for (i in 1:nbgn){ # n fois le même arbre qui va evoluer différement
-    ListOutGnTree[[i]]=tree
-  }
-  if(outsp!=0){
-    ## On ne fait des hgt que sur les branches externes (pour pouvoir contrôler le nombre d'espèces outliers)
-    s=1
-    while (s <= outsp){
-      samp = sample(tree$tip.label,1)
-      for (j in 1:length(tree$tip.label)){
-        if (tree$tip.label[j]==samp){
-          for (l in 1:nrow(tree$edge)){
-            if (tree$edge[l,2]==j){
-              ListOutGnTree = HGToutsp(ListOutGnTree, l)
-              s=s+1
-            }
-          }
-        }
-      }
+    tree<-rtree(nbsp,rooted = TRUE,min=1,max=5)
+    write.tree(tree, file = "arbre.tree")
+    ListOutGnTree =list()
+    "multiPhylo"->class(ListOutGnTree)
+    for (i in 1:nbgn){ # n fois le même arbre qui va evoluer différement
+        ListOutGnTree[[i]]=tree
     }
-  }
-  if (outgn !=0){
-    ListOutGnTree = HGToutgn(ListOutGnTree,n=nrow(tree$edge),k=outgn) #autant d'hgt que de branches par arbre
-  }
-  return(ListOutGnTree)
+    if(outsp!=0){
+        ## On ne fait des hgt que sur les branches externes (pour pouvoir contrôler le nombre d'espèces outliers)
+        s=1
+        while (s <= outsp){
+            samp = sample(tree$tip.label,1)
+            ##on peut simplifier ça !
+            j<-which(tree$tip.label==samp)
+            l<-which(tree$edge[,2]==j)
+            ListOutGnTree = HGToutsp(ListOutGnTree, l)
+        }
+    }
+    if (outgn !=0){
+        ListOutGnTree = HGToutgn(ListOutGnTree,n=nrow(tree$edge),k=outgn) #autant d'hgt que de branches par arbre
+    }
+    return(ListOutGnTree)
 }
 
 ###Fonction qui génère une liste d'arbres de nbgn gènes avec nbsp espèces contenant des outliers gènes (outgn) et espèces (outsp) générés
@@ -117,14 +114,15 @@ HGToutsp <- function(ListTrees, branche){
 ##(numéro de la branche = numéro de la ligne dans tree$edge).
 ##Le branchement du sous-arbre coupé se fera sur une autre branche (mais au même temps relatif)
 HGT <-  function(Tree, branche = sample(1:nrow(Tree$edge),1)){
-    nbSpTot = length(Tree$tip.label)
+    nbSpTot = Ntip(Tree)
     matricePos = matrix(nrow=nrow(Tree$edge), ncol=ncol(Tree$edge))
+    distnodes<-dist.nodes(Tree) ##on ne le calcule qu'une seule fois.
     for (i in 1:nrow(Tree$edge)){
       for (j in 1:ncol(Tree$edge)){
-        matricePos[i,j]=dist.nodes(Tree)[Tree$edge[i,j],nbSpTot+1]
+        matricePos[i,j]<-distnodes[Tree$edge[i,j],nbSpTot+1]
       }
     }
-    #Il faut qu'il y ai au moins deux points de coupure à un temps t pour réaliser un déplacement (un accepteur et un donneur):
+    #Il faut qu'il y ait au moins deux points de coupure à un temps t pour réaliser un déplacement (un accepteur et un donneur):
     Boo = FALSE
     while (Boo == FALSE){
       ListNumBranche <- list()
