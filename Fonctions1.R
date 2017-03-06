@@ -166,8 +166,6 @@ Phylter <-function(trees, distance="nodal", k=2, thres=0.5, quiet=TRUE, gene.nam
   }
   RES <- NULL
   matrices <- trees2matrices.Distatis(trees, distance=distance)
-  #matrices[[1]] = matrices[[1]][1:3,1:3]
-  #matrices[[3]] = matrices[[3]][2:5,2:5]
   matrices=gestion.matrice(matrices)
   Dist <- mat2Dist(matrices)
   WR <- Dist2WR(Dist)

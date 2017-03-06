@@ -3,7 +3,7 @@ require(ape)
 
 ###Fonction qui génère une liste d'arbres de nbgn gènes avec nbsp espèces contenant des outliers gènes (outgn) et espèces (outsp) générés par HGT
 ##nbsp = nombre d'espèces dans l'arbre / nbgn = nombre d'arbres / outgn = nb d'outlier gènes /outsp = nb d'oulier sp 
-SimOutliersHGT <-function(nbsp=10, nbgn=10, outgn=1, outsp=1){
+SimOutliersHGT <-function(nbsp=10, nbgn=10, outgn=1, outsp=1, sp = "f"){
     tree<-rtree(nbsp,rooted = TRUE,min=1,max=5)
     ListOutGnTree =list()
     "multiPhylo"->class(ListOutGnTree)
@@ -11,15 +11,22 @@ SimOutliersHGT <-function(nbsp=10, nbgn=10, outgn=1, outsp=1){
         ListOutGnTree[[i]]=tree
     }
     if(outsp!=0){
+      if(sp == "f"){
         ## On ne fait des hgt que sur les branches externes (pour pouvoir contrôler le nombre d'espèces outliers)
         s=1
         while (s <= outsp){
             samp = sample(tree$tip.label,1)
-            ##on peut simplifier ça !
-            j<-which(tree$tip.label==samp)
-            l<-which(tree$edge[,2]==j)
-            ListOutGnTree = HGToutsp(ListOutGnTree, l)
+            ListOutGnTree = HGToutsp(ListOutGnTree, samp)
+            s=s+1
         }
+      }
+      else{
+        s=1
+        while (s <= outsp){
+          ListOutGnTree = HGToutsp(ListOutGnTree)
+          s=s+1
+        }
+      }
     }
     if (outgn !=0){
         ListOutGnTree = HGToutgn(ListOutGnTree,n=nrow(tree$edge),k=outgn) #autant d'hgt que de branches par arbre
@@ -44,12 +51,10 @@ SimOutliersLg <-function(nbsp, nbgn, outsp, outgn, sp="f"){
       s=1
       while (s <= outsp){
         samp = sample(1:nbsp,1)
-        for (j in 1:nrow(tree$edge)){ 
-          if (tree$edge[j,2]==samp){
-            ListOutGnTree = BrLengthSp(ListOutGnTree, j)
-            s=s+1
-          }
-        }
+        j<-which(tree$tip.label==samp)
+        l<-which(tree$edge[,2]==j)
+        ListOutGnTree = BrLengthSp(ListOutGnTree, j)
+        s=s+1
       }
     }
     ## outspe = toutes les branches sont considérées et pas seulement les branches externes
@@ -70,9 +75,9 @@ SimOutliersLg <-function(nbsp, nbgn, outsp, outgn, sp="f"){
 
 ##Fonction qui effectue n transferts horizontaux aléatoires dans un arbre de gène --> outgn
 HGT1gn <- function(Tree, n=30){
-  listBranche = sample(1:nrow(Tree$edge),n)
+  Tree2=Tree
   for (i in 1:n){
-    Tree2 = HGT(Tree,branche = listBranche[[i]])
+    Tree2 = HGT2(Tree2)
   }
   return(Tree2)
 }
@@ -82,7 +87,7 @@ HGToutCell <- function(ListTrees, k=1){
   ListTrees2 = ListTrees
   samp= sample(1:length(ListTrees),k)
   for (i in 1:k){
-    ListTrees2[[samp[[i]]]] = HGT(ListTrees[[samp[[i]]]])
+    ListTrees2[[samp[[i]]]] = HGT2(ListTrees[[samp[[i]]]])
   }
   return(ListTrees2)
 }
@@ -91,7 +96,7 @@ HGToutCell <- function(ListTrees, k=1){
 ##n est le nombre de HGT par arbre (ne doit pas dépasser le nombre de branche de l'arbre)
 HGToutgn <- function(ListTrees, n=30, k=1){
   ListTrees2 = ListTrees
-  samp= sample(1:length(ListTrees),k)
+  samp = sample(1:length(ListTrees),k)
   for (j in 1:length(samp)){
      ListTrees2[[samp[j]]] =  HGT1gn(ListTrees2[[samp[j]]], n)
   }
@@ -99,10 +104,10 @@ HGToutgn <- function(ListTrees, n=30, k=1){
 }
 
 ##Fonction qui change dans tous les arbres la même espèce (ou le groupe d'espèces selon la branche choisie) mais pas au même endroit --> outsp
-HGToutsp <- function(ListTrees, branche){
+HGToutsp <- function(ListTrees, species = NULL){
   ListTrees2=ListTrees
   for (T in 1:length(ListTrees)){
-    treeHGT = HGT(ListTrees[[T]], branche)
+    treeHGT = HGT2(ListTrees[[T]], species)
     ListTrees2[[T]]=treeHGT
   }
   return(ListTrees2)
@@ -189,26 +194,42 @@ HGT <-  function(Tree, branche = sample(1:nrow(Tree$edge),1)){
 ## je propose que la fonction fasse les transferts en fonction d'une espèce ou d'un groupe d'espèces
 ## plutôt qu'a partir d'un numéro de branche 
 HGT2 <-  function(Tree, species=NULL){
+  nbSpTot = Ntip(Tree)
+  distnodes<-dist.nodes(Tree)[,nbSpTot+1] ##on ne le calcule qu'une seule fois et on ne garde que la colonne intéressante (distance à la racine)
+  matricePos = cbind(distnodes[Tree$edge[,1]], distnodes[Tree$edge[,2]]) 
+  rownames(matricePos)<-NULL
+  if (!is.null(species)){
     if (length(species)==1) branche<-which(Tree$edge[,2]==which(Tree$tip.label==species))
     else branche<-which(Tree$edge[,2]==getMRCA(Tree, species))
-
-    nbSpTot = Ntip(Tree)
-    distnodes<-dist.nodes(Tree)[,nbSpTot+1] ##on ne le calcule qu'une seule fois et on ne garde que la colonne intéressante (distance à la racine)
-    matricePos = cbind(distnodes[Tree$edge[,1]], distnodes[Tree$edge[,2]]) 
-    rownames(matricePos)<-NULL
-
     ##moment de la coupure
     N <- runif(1, min = matricePos[branche,1], max= matricePos[branche,2]) #Choix d'un temps N aléatoire sur la branche choisie
     ##Branches coupées à N:
     ListNumBranche<-which(((matricePos[,1]<=N)&(matricePos[,2]>=N)))
-
-    if (length(ListNumBranche)==1) {return(Tree)}
-    else {        
+  }
+  #Si aucune espèce ou liste d'espèces n'est proposée, la coupure se fait aléatoirement dans le temps
+  else{
+    ##moment de la coupure
+    N <- runif(1, min = min(distnodes), max= max(distnodes))
+    ##Branches coupées à N:
+    ListNumBranche<-which(((matricePos[,1]<=N)&(matricePos[,2]>=N)))
+    branche = as.integer(sample(ListNumBranche,1))
+  }
+  if (length(ListNumBranche)==1) {
+      return(Tree)
+  }
+  else {  
+    if (length(ListNumBranche)==2) {
+      out = as.integer(branche)
+      noeudOut=Tree$edge[out,2] ## noeud donneur
+      ins = as.integer(ListNumBranche[ListNumBranche!=as.integer(out)])
+      noeudIns=Tree$edge[ins,2] ## noeud receveur
+    }
+    else {
         out = as.integer(branche)
         noeudOut=Tree$edge[out,2] ## noeud donneur
         ins = as.integer(sample(ListNumBranche[ListNumBranche!=as.integer(out)],1))
-        
         noeudIns=Tree$edge[ins,2] ## noeud receveur
+    }   
         ##création du sous-arbre qui va bouger
         b=rtree(2)
         tiplab<-c("branch", "out")
@@ -246,7 +267,7 @@ HGT2 <-  function(Tree, species=NULL){
                 }
             }
         }
-                                        #On ne modifie pas l'arbre de départ
+        #On ne modifie pas l'arbre de départ
         tree3<-Tree
         tree3$tip.label<-Names
         treebinded <- bind.tree(tree3, bindedBranch, where=noeudIns, position = dist.nodes(Tree)[noeudIns,nbSpTot+1]-N)
@@ -255,8 +276,7 @@ HGT2 <-  function(Tree, species=NULL){
         return(treebinded)
     }
 }
-    
-    
+ 
     
 #--------------------------Longueur de Branche---------------------------------------------------
 

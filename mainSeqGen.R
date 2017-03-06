@@ -1,5 +1,6 @@
 library(DistatisR)
 library(phangorn)
+
 source("/media/aurore/KINGSTON/stageLBBE/pmcoa.R")
 source("/home/aurore/Documents/Phylter/Fonctions1.R")
 source("/home/aurore/Documents/Phylter/Simulation.R")
@@ -22,7 +23,7 @@ RES$CellByCell$outcell
 
 ########################################""""
 
-ListOut = SimOutliersHGT(nbsp = 10, nbgn = 10, outgn= 0, outsp = 1)
+ListOut = SimOutliersHGT(nbsp = 30, nbgn = 30, outgn= 2, outsp = 2)
 RES <-Phylter(ListOut, distance="patristic", k=2, thres=0.5, quiet=TRUE)
 RES$Complete$outgn
 RES$Complete$outsp
