@@ -3,10 +3,8 @@ require(ape)
 
 ###Fonction qui génère une liste d'arbres de nbgn gènes avec nbsp espèces contenant des outliers gènes (outgn) et espèces (outsp) générés par HGT
 ##nbsp = nombre d'espèces dans l'arbre / nbgn = nombre d'arbres / outgn = nb d'outlier gènes /outsp = nb d'oulier sp 
-##sp = "f" si on ne veut que les HGT (sp) ne se fasse que sur les branches externes (sinon ne rien mettre)
 SimOutliersHGT <-function(nbsp=10, nbgn=10, outgn=1, outsp=1){
     tree<-rtree(nbsp,rooted = TRUE,min=1,max=5)
-    write.tree(tree, file = "arbre.tree")
     ListOutGnTree =list()
     "multiPhylo"->class(ListOutGnTree)
     for (i in 1:nbgn){ # n fois le même arbre qui va evoluer différement
@@ -95,7 +93,7 @@ HGToutgn <- function(ListTrees, n=30, k=1){
   ListTrees2 = ListTrees
   samp= sample(1:length(ListTrees),k)
   for (j in 1:length(samp)){
-     ListTrees2[[samp[[j]]]] =  HGT1gn(ListTrees2[[samp[[j]]]], n)
+     ListTrees2[[samp[j]]] =  HGT1gn(ListTrees2[[samp[j]]], n)
   }
   return(ListTrees2)
 }
@@ -186,6 +184,80 @@ HGT <-  function(Tree, branche = sample(1:nrow(Tree$edge),1)){
       return(treebinded)
 }
 
+
+## NOUVELLE TENTATIVE. Je ne modifie pas ta fonction pour ne pas trop mettre le bazarre.
+## je propose que la fonction fasse les transferts en fonction d'une espèce ou d'un groupe d'espèces
+## plutôt qu'a partir d'un numéro de branche 
+HGT2 <-  function(Tree, species=NULL){
+    if (length(species)==1) branche<-which(Tree$edge[,2]==which(Tree$tip.label==species))
+    else branche<-which(Tree$edge[,2]==getMRCA(Tree, species))
+
+    nbSpTot = Ntip(Tree)
+    distnodes<-dist.nodes(Tree)[,nbSpTot+1] ##on ne le calcule qu'une seule fois et on ne garde que la colonne intéressante (distance à la racine)
+    matricePos = cbind(distnodes[Tree$edge[,1]], distnodes[Tree$edge[,2]]) 
+    rownames(matricePos)<-NULL
+
+    ##moment de la coupure
+    N <- runif(1, min = matricePos[branche,1], max= matricePos[branche,2]) #Choix d'un temps N aléatoire sur la branche choisie
+    ##Branches coupées à N:
+    ListNumBranche<-which(((matricePos[,1]<=N)&(matricePos[,2]>=N)))
+
+    if (length(ListNumBranche)==1) {return(Tree)}
+    else {        
+        out = as.integer(branche)
+        noeudOut=Tree$edge[out,2] ## noeud donneur
+        ins = as.integer(sample(ListNumBranche[ListNumBranche!=as.integer(out)],1))
+        
+        noeudIns=Tree$edge[ins,2] ## noeud receveur
+        ##création du sous-arbre qui va bouger
+        b=rtree(2)
+        tiplab<-c("branch", "out")
+        b$tip.label=tiplab
+        ##Si la branche coupée est une banche interne
+        if(noeudOut>nbSpTot){
+            b$edge.length=c(dist.nodes(Tree)[noeudOut,nbSpTot+1]-N,0) #Longueur de la branche choisie après avoir été coupée
+            treeex <- extract.clade(Tree,noeudOut)
+            bindedBranch = bind.tree(b, treeex, where = 1)
+            Names = list()
+            for (i in 1: length(Tree$tip.label)){
+                if (is.element(Tree$tip.label[i], treeex$tip.label)){
+                    Names[i] <- "ancienNoeud"
+                }
+                else {
+                    Names[i] <- Tree$tip.label[i]
+                }
+            }
+        }
+        ##Si la branche coupée est une banche contenant une feuille à son extrémité (branche terminale)
+        if(noeudOut<=nbSpTot){
+            b$edge.length=c(0,0)
+            c=rtree(2)
+            tiplab2<-c(Tree$tip.label[noeudOut], "out")
+            c$tip.label=tiplab2
+            c$edge.length=c(dist.nodes(Tree)[noeudOut,nbSpTot+1]-N,0) #Longueur de la branche choisie après avoir été coupée
+            bindedBranch = bind.tree(b, c, where = 1)
+            Names = list()
+            for (i in 1: length(Tree$tip.label)){
+                if (Tree$tip.label[[i]]==Tree$tip.label[[noeudOut]]){
+                    Names[i] <- "ancienNoeud"
+                }
+                else {
+                    Names[i] <- Tree$tip.label[i]
+                }
+            }
+        }
+                                        #On ne modifie pas l'arbre de départ
+        tree3<-Tree
+        tree3$tip.label<-Names
+        treebinded <- bind.tree(tree3, bindedBranch, where=noeudIns, position = dist.nodes(Tree)[noeudIns,nbSpTot+1]-N)
+        treebinded <- drop.tip(treebinded,"out")
+        treebinded <- drop.tip(treebinded,"ancienNoeud")
+        return(treebinded)
+    }
+}
+    
+    
+    
 #--------------------------Longueur de Branche---------------------------------------------------
 
 ##Fonction qui permet de changer la longueur d'une branche donnée dans un arbre donné en multipliant sa longeur par un ratio
