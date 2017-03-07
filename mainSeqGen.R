@@ -21,97 +21,30 @@ RES$Complete$outgn
 RES$Complete$outsp
 RES$CellByCell$outcell
 
-########################################""""
+########################################
 
-ListOut = SimOutliersHGT(nbsp = 30, nbgn = 30, outgn= 2, outsp = 2)
+ListOut = SimOutliersHGT(nbsp = 5, nbgn = 3, outgn= 0, outsp = 1)
 RES <-Phylter(ListOut, distance="patristic", k=2, thres=0.5, quiet=TRUE)
+plot.2WR(RES$Complete$mat2WR)
+#RES <-pMCOA.complete(ListOut, distance="patristic", k=1.5, thres=0.5, quiet=TRUE)
 RES$Complete$outgn
 RES$Complete$outsp
 RES$CellByCell$outcell
 
-ListOutC = HGToutCell(ListOut, n=1)
+ListOutC = HGToutCell(ListOut, k=1)
 RES <-Phylter(ListOutC, distance="patristic", k=2, thres=0.5, quiet=TRUE)
 RES$CellByCell$outcell
 
-ListOut2 = SimOutliersLg(nbsp = 30, nbgn = 30, outgn= 3, outsp = 3, sp = "f")
+ListOut2 = SimOutliersLg(nbsp = 20, nbgn = 20, outgn= 2, outsp = 2, sp=1)
 RES <-Phylter(ListOut2, distance="patristic", k=2, thres=0.5, quiet=TRUE)
+plot.2WR(RES$Complete$mat2WR)
+#RES <-pMCOA.complete(ListOut2, distance="patristic", k=1.5, thres=0.5, quiet=TRUE)
 RES$Complete$outgn
 RES$Complete$outsp
 RES$CellByCell$outcell
 
-ListOut2C <- BrLengthOutCell(ListOut2, n=1)
+ListOut2C <- BrLengthOutCell(ListOut2, k=1, ratio=1.5)
 RES <-Phylter(ListOut2C, distance="patristic", k=2, thres=0.5, quiet=TRUE)
 RES$CellByCell$outcell
 
-##--------------------- Outlier sp-------------------------------------------------------------------------------------------------
-##HGT
-#1
-ListTreesOutSp = HGToutsp(ListTrees,14)
-RES <-Phylter(ListTreesOutSp, distance="patristic", k=2.8, thres=0.5, quiet=TRUE)
-RES$Complete$outgn
-RES$Complete$outsp
-RES$CellByCell$outcell
-
-ListTrees[[1]]$edge
-
-#2 
-tree$edge
-ListTreesOutSp2 = list()
-for (i in 1:20){
- treeHGT <-HGT(tree,14)
- write.tree(treeHGT, file = "arbreHGT.tree")
-  system("/home/aurore/Téléchargements/Seq-Gen.v1.3.3/source/seq-gen -mGTR -n1 -d1 < arbre.tree > seqtrees.dat")
-  system("phyml -i seqtrees.dat -n 1 -o lr -u arbre.tree --quiet")
-  ListTreesOutSp2[[i]]= read.tree(file="seqtrees.dat_phyml_tree")
-}
-for (i in 1:length(ListTreesOutSp2)){
-  plot(ListTreesOutSp2[[i]])
-}
-
-RES <-Phylter(ListTreesOutSp2, distance="patristic", k=2.8, thres=0.5, quiet=TRUE)
-RES$Complete$outgn
-RES$Complete$outsp
-RES$CellByCell$outcell
-
-##longueur
-
-#1
-ListTreesSpLg = BrLengthSp(ListTrees,16)
-RES <-Phylter(ListTreesSpLg, distance="patristic", k=2, thres=0.5, quiet=TRUE)
-RES$Complete$outgn
-RES$Complete$outsp
-RES$CellByCell$outcell
-
-#2
-#2 
-ListTreesOutSpLg2 = list()
-for (i in 1:20){
-  treeLG <-BrLength(tree,14, ratio=5)
-  write.tree(treeLG, file = "arbreHGT.tree")
-  system("/home/aurore/Téléchargements/Seq-Gen.v1.3.3/source/seq-gen -mGTR -n1 -s0.5 < arbre.tree > seqtrees.dat")
-  system("phyml -i seqtrees.dat -n 1 -o lr -u arbre.tree --quiet")
-  ListTreesOutSpLg2[[i]]= read.tree(file="seqtrees.dat_phyml_tree")
-}
-RES <-Phylter(ListTreesOutSpLg2, distance="patristic", k=2.8, thres=0.5, quiet=TRUE)
-RES$Complete$outgn
-RES$Complete$outsp
-RES$CellByCell$outcell
-
-##--------------------- Outliergn-------------------------------------------------------------------------------------------------
-##HGT
-
-ListTreesGpHGT = HGToutgn(ListTrees, k=3)
-RES <-Phylter(ListTreesGpHGT, distance="patristic", k=2, thres=0.5, quiet=TRUE)
-RES$Complete$outgn
-RES$Complete$outsp
-RES$CellByCell$outcell
-
-
-##longueur
-
-ListTreesLgn = BrLengthGn(ListTrees, Listgn=c(3,6,7), ratioMin = 5, ratioMax = 10)
-RES <-Phylter(ListTreesLgn, distance="patristic", k=2, thres=0.5, quiet=TRUE)
-RES$Complete$outgn
-RES$Complete$outsp
-RES$CellByCell$outcell
 

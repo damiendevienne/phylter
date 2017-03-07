@@ -3,7 +3,7 @@ require(ape)
 
 ###Fonction qui génère une liste d'arbres de nbgn gènes avec nbsp espèces contenant des outliers gènes (outgn) et espèces (outsp) générés par HGT
 ##nbsp = nombre d'espèces dans l'arbre / nbgn = nombre d'arbres / outgn = nb d'outlier gènes /outsp = nb d'oulier sp 
-SimOutliersHGT <-function(nbsp=10, nbgn=10, outgn=1, outsp=1, sp = "f"){
+SimOutliersHGT <-function(nbsp=10, nbgn=10, outgn=1, outsp=1, sp = NULL){
     tree<-rtree(nbsp,rooted = TRUE,min=1,max=5)
     ListOutGnTree =list()
     "multiPhylo"->class(ListOutGnTree)
@@ -11,11 +11,12 @@ SimOutliersHGT <-function(nbsp=10, nbgn=10, outgn=1, outsp=1, sp = "f"){
         ListOutGnTree[[i]]=tree
     }
     if(outsp!=0){
-      if(sp == "f"){
+      if(!is.null(sp)){
         ## On ne fait des hgt que sur les branches externes (pour pouvoir contrôler le nombre d'espèces outliers)
         s=1
         while (s <= outsp){
-            samp = sample(tree$tip.label,1)
+            samp = sample(tree$tip.label,1) ####Peut etre la même si on a plusieurs espèces out
+            cat(samp)
             ListOutGnTree = HGToutsp(ListOutGnTree, samp)
             s=s+1
         }
@@ -37,9 +38,8 @@ SimOutliersHGT <-function(nbsp=10, nbgn=10, outgn=1, outsp=1, sp = "f"){
 ###Fonction qui génère une liste d'arbres de nbgn gènes avec nbsp espèces contenant des outliers gènes (outgn) et espèces (outsp) générés
 ###en modifiant les longueurs de branches
 #nbsp = nombre d'espèces dans l'arbre / nbgn = nombre d'arbres / outgn = nb d'outliers gènes /outsp = nb d'ouliers sp 
-SimOutliersLg <-function(nbsp, nbgn, outsp, outgn, sp="f"){
-  tree=rtree(nbsp,rooted = TRUE, min=1,max=5)
-  write.tree(tree, file = "arbre.tree")
+SimOutliersLg <-function(nbsp, nbgn, outsp, outgn, sp = NULL){
+  tree=rtree(nbsp,rooted = TRUE, min=2,max=5)
   ListOutGnTree =list()
   "multiPhylo"->class(ListOutGnTree)
   for (i in 1:nbgn){
@@ -47,26 +47,24 @@ SimOutliersLg <-function(nbsp, nbgn, outsp, outgn, sp="f"){
   }
   if(outsp!=0){ 
     ## outspe = seulement les branches externes
-    if(sp == "f"){
-      s=1
-      while (s <= outsp){
-        samp = sample(1:nbsp,1)
-        j<-which(tree$tip.label==samp)
+    if(!is.null(sp)){
+      samp = sample(tree$tip.label,outsp)
+      for (i in 1:length(samp)){
+        j<-which(tree$tip.label==samp[i])
         l<-which(tree$edge[,2]==j)
-        ListOutGnTree = BrLengthSp(ListOutGnTree, j)
-        s=s+1
+        ListOutGnTree = BrLengthSp(ListOutGnTree, l)
       }
     }
     ## outspe = toutes les branches sont considérées et pas seulement les branches externes
     else{
       samp = sample(1:nrow(tree$edge),outsp)
       for (s in 1:outsp){
-        ListOutGnTree =  BrLengthSp(ListOutGnTree, samp[[s]])
+        ListOutGnTree =  BrLengthSp(ListOutGnTree, samp[s])
       }
     }
   }
   if (outgn !=0){
-    ListOutGnTree = BrLengthGn(ListOutGnTree, b=nrow(tree$edge), k=outgn) #autant de changements de longueur que de branches par arbre
+    ListOutGnTree = BrLengthGn(ListOutGnTree, b=nrow(tree$edge), k=outgn)
   }
   return(ListOutGnTree)
 }
@@ -117,6 +115,7 @@ HGToutsp <- function(ListTrees, species = NULL){
 ##(numéro de la branche = numéro de la ligne dans tree$edge).
 ##Le branchement du sous-arbre coupé se fera sur une autre branche (mais au même temps relatif)
 HGT <-  function(Tree, branche = sample(1:nrow(Tree$edge),1)){
+  branche = sample(1:nrow(Tree$edge),1)
     nbSpTot = Ntip(Tree)
     matricePos = matrix(nrow=nrow(Tree$edge), ncol=ncol(Tree$edge))
     distnodes<-dist.nodes(Tree) ##on ne le calcule qu'une seule fois.
@@ -224,7 +223,7 @@ HGT2 <-  function(Tree, species=NULL){
       ins = as.integer(ListNumBranche[ListNumBranche!=as.integer(out)])
       noeudIns=Tree$edge[ins,2] ## noeud receveur
     }
-    else {
+    else if (length(ListNumBranche)>2){
         out = as.integer(branche)
         noeudOut=Tree$edge[out,2] ## noeud donneur
         ins = as.integer(sample(ListNumBranche[ListNumBranche!=as.integer(out)],1))
@@ -290,9 +289,9 @@ BrLength <- function(Tree, branche = sample(1:nrow(Tree$edge),1), ratio){
 ##Fonction qui permet d'insérer des outliers cells dans une liste d'arbres
 BrLengthOutCell <- function(ListTrees, k=1, ratio){
   ListTrees2=ListTrees
-  samp= sample(1:length(ListTrees),k)
+  samp = sample(1:length(ListTrees),k)
   for (T in 1:k){
-      ListTrees2[[samp[[T]]]] = BrLength(ListTrees[[samp[[T]]]], branche = sample(1:nrow(Tree$edge),1),ratio)
+    ListTrees2[[samp[T]]] = BrLength(ListTrees[[samp[T]]], branche = sample(1:nrow(ListTrees[[samp[T]]]$edge),1),ratio)
   }
   return(ListTrees2)
 }
@@ -301,10 +300,11 @@ BrLengthOutCell <- function(ListTrees, k=1, ratio){
 BrLengthSp <- function(ListTrees, branche){
   ListTrees2=ListTrees
   for (t in 1:length(ListTrees)){
-    ratiomin = runif(1, 0.3, 0.7)
-    ratiomax = runif(1, 1.7, 2.3)
+    Tree2 = ListTrees[[t]]
+    ratiomin = runif(1, 0.1, 0.4)
+    ratiomax = runif(1, 1.6, 1.9)
     ratio = sample(c(ratiomin, ratiomax),1)
-    Tree2 = BrLength(ListTrees[[t]], branche, ratio)
+    Tree2 = BrLength(Tree2, branche, ratio)
     ListTrees2[[t]]=Tree2
   }
   return(ListTrees2)
@@ -313,12 +313,12 @@ BrLengthSp <- function(ListTrees, branche){
 ##Fonction qui permet de changer aléatoirement la longueur d'un certain nombre (b) de branches d'un arbre -> outgn
 BrLGn <- function(Tree, b){
   Tree2=Tree
-  branche = sample(1:nrow(Tree$edge),b)
   for (i in 1:b){
-    ratiomin = runif(1, 0.3, 0.7)
-    ratiomax = runif(1, 1.7, 2.3)
+    branche = sample(1:nrow(Tree$edge),1)
+    ratiomin = runif(1, 0.4, 0.7)
+    ratiomax = runif(1, 1.3, 1.6)
     ratio = sample(c(ratiomin, ratiomax),1)
-    Tree2 = BrLength(Tree2, branche[[i]], ratio)
+    Tree2 = BrLength(Tree2, branche, ratio)
   }
   return(Tree2)
 }
