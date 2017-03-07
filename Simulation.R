@@ -14,9 +14,9 @@ SimOutliersHGT <-function(nbsp=10, nbgn=10, outgn=1, outsp=1, sp = NULL){
       if(!is.null(sp)){
         ## On ne fait des hgt que sur les branches externes (pour pouvoir contrôler le nombre d'espèces outliers)
         s=1
-        while (s <= outsp){
+          while (s <= outsp){
             samp = sample(tree$tip.label,1) ####Peut etre la même si on a plusieurs espèces out
-            cat(samp)
+            print("jhjhjjh")
             ListOutGnTree = HGToutsp(ListOutGnTree, samp)
             s=s+1
         }
@@ -24,8 +24,11 @@ SimOutliersHGT <-function(nbsp=10, nbgn=10, outgn=1, outsp=1, sp = NULL){
       else{
         s=1
         while (s <= outsp){
-          ListOutGnTree = HGToutsp(ListOutGnTree)
-          s=s+1
+            br<-sample(1:nrow(tree$edge),1) ##une branche au hasard
+            br<-tree$edge[br,2]
+            samp<-tree$tip.label[Descendants(tree, br, "tips")[[1]]]
+            ListOutGnTree = HGToutsp(ListOutGnTree)
+            s=s+1
         }
       }
     }
@@ -210,8 +213,9 @@ HGT2 <-  function(Tree, species=NULL){
     ##moment de la coupure
     N <- runif(1, min = min(distnodes), max= max(distnodes))
     ##Branches coupées à N:
-    ListNumBranche<-which(((matricePos[,1]<=N)&(matricePos[,2]>=N)))
-    branche = as.integer(sample(ListNumBranche,1))
+      ListNumBranche<-which(((matricePos[,1]<=N)&(matricePos[,2]>=N)))
+      branche = as.integer(sample(ListNumBranche,1))
+      
   }
   if (length(ListNumBranche)==1) {
       return(Tree)
