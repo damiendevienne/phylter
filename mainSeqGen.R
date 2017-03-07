@@ -23,7 +23,7 @@ RES$CellByCell$outcell
 
 ########################################
 
-ListOut = SimOutliersHGT(nbsp = 5, nbgn = 3, outgn= 0, outsp = 1)
+ListOut = SimOutliersHGT(nbsp = 20, nbgn = 20, outgn= 0, outsp = 2, sp=1)
 RES <-Phylter(ListOut, distance="patristic", k=2, thres=0.5, quiet=TRUE)
 plot.2WR(RES$Complete$mat2WR)
 #RES <-pMCOA.complete(ListOut, distance="patristic", k=1.5, thres=0.5, quiet=TRUE)
