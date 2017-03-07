@@ -24,6 +24,7 @@ SimOutliersHGT <-function(nbsp=10, nbgn=10, outgn=1, outsp=1, sp = NULL){
       else{
         s=1
         while (s <= outsp){
+          samp = sample(tree$tip.label,1)
           ListOutGnTree = HGToutsp(ListOutGnTree)
           s=s+1
         }
@@ -102,7 +103,7 @@ HGToutgn <- function(ListTrees, n=30, k=1){
 }
 
 ##Fonction qui change dans tous les arbres la même espèce (ou le groupe d'espèces selon la branche choisie) mais pas au même endroit --> outsp
-HGToutsp <- function(ListTrees, species = NULL){
+HGToutsp <- function(ListTrees, species){ #ne pas laisser species = NULL sinon on a pas toujours la même branche qui bouge
   ListTrees2=ListTrees
   for (T in 1:length(ListTrees)){
     treeHGT = HGT2(ListTrees[[T]], species)
