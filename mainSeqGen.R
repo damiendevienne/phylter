@@ -23,8 +23,8 @@ RES$CellByCell$outcell
 
 ########################################
 
-ListOut = SimOutliersHGT(nbsp = 20, nbgn = 20, outgn= 0, outsp = 2, sp=1)
-RES <-Phylter(ListOut, distance="patristic", k=2, thres=0.5, quiet=TRUE)
+ListOut = SimOutliersHGT(nbsp = 20, nbgn = 20, outgn= 1, outsp = 1, sp=1)
+RES <-Phylter(ListOut, distance="patristic", k=4, thres=0.5, quiet=TRUE)
 plot.2WR(RES$Complete$mat2WR)
 #RES <-pMCOA.complete(ListOut, distance="patristic", k=1.5, thres=0.5, quiet=TRUE)
 RES$Complete$outgn
@@ -32,19 +32,23 @@ RES$Complete$outsp
 RES$CellByCell$outcell
 
 ListOutC = HGToutCell(ListOut, k=1)
-RES <-Phylter(ListOutC, distance="patristic", k=2, thres=0.5, quiet=TRUE)
+RES <-Phylter(ListOutC, distance="patristic", k=4, thres=0.5, quiet=TRUE)
+plot.2WR(RES$Complete$mat2WR)
+RES$Complete$outgn
+RES$Complete$outsp
 RES$CellByCell$outcell
 
-ListOut2 = SimOutliersLg(nbsp = 20, nbgn = 20, outgn= 2, outsp = 2, sp=1)
-RES <-Phylter(ListOut2, distance="patristic", k=2, thres=0.5, quiet=TRUE)
+ListOut2 = SimOutliersLg(nbsp = 20, nbgn = 20, outgn= 0, outsp = 1, sp=1)
+RES <-Phylter(ListOut2, distance="patristic", k=4, thres=0.5, quiet=TRUE)
 plot.2WR(RES$Complete$mat2WR)
 #RES <-pMCOA.complete(ListOut2, distance="patristic", k=1.5, thres=0.5, quiet=TRUE)
 RES$Complete$outgn
 RES$Complete$outsp
 RES$CellByCell$outcell
 
-ListOut2C <- BrLengthOutCell(ListOut2, k=1, ratio=1.5)
-RES <-Phylter(ListOut2C, distance="patristic", k=2, thres=0.5, quiet=TRUE)
+ListOut2C <- BrLengthOutCell(ListOut2, k=1, ratio=1.3)
+RES <-Phylter(ListOut2C, distance="patristic", k=4, thres=0.5, quiet=TRUE)
+plot.2WR(RES$Complete$mat2WR)
 RES$CellByCell$outcell
 
 

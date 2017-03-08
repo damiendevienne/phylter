@@ -22,8 +22,11 @@ SimOutliersHGT <-function(nbsp=10, nbgn=10, outgn=1, outsp=1, sp = NULL){
       }
       else{
         s=1
+        #dans le cas où outspe > 1, on peut prendre plusieurs fois la même branche.
+        #C'est également possible que deux branches différentes choisies comme outliers aient les mêmes espèces déscendantes
+        bra = c(1:nrow(tree$edge))
         while (s <= outsp){
-            br<-sample(1:nrow(tree$edge),1) ##une branche au hasard
+            br<-sample(bra,1) ##une branche au hasard 
             br<-tree$edge[br,2]
             samp<-tree$tip.label[Descendants(tree, br, "tips")[[1]]]
             print(samp)
@@ -52,6 +55,7 @@ SimOutliersLg <-function(nbsp, nbgn, outsp, outgn, sp = NULL){
     ## outspe = seulement les branches externes
     if(!is.null(sp)){
       samp = sample(tree$tip.label,outsp)
+      print(samp)
       for (i in 1:length(samp)){
         j<-which(tree$tip.label==samp[i])
         l<-which(tree$edge[,2]==j)
@@ -62,6 +66,8 @@ SimOutliersLg <-function(nbsp, nbgn, outsp, outgn, sp = NULL){
     else{
       samp = sample(1:nrow(tree$edge),outsp)
       for (s in 1:outsp){
+        br<-tree$edge[samp[s],2]
+        print(tree$tip.label[Descendants(tree, br, "tips")[[1]]])
         ListOutGnTree =  BrLengthSp(ListOutGnTree, samp[s])
       }
     }
@@ -88,7 +94,10 @@ HGToutCell <- function(ListTrees, k=1){
   ListTrees2 = ListTrees
   samp= sample(1:length(ListTrees),k)
   for (i in 1:k){
-    ListTrees2[[samp[[i]]]] = HGT2(ListTrees[[samp[[i]]]])
+    lab = sample(ListTrees[[samp[i]]]$tip.label,1)
+    print(samp[i])
+    print(lab[[1]])
+    ListTrees2[[samp[i]]] = HGT2(ListTrees[[samp[i]]],lab[[1]])
   }
   return(ListTrees2)
 }
@@ -295,7 +304,12 @@ BrLengthOutCell <- function(ListTrees, k=1, ratio){
   ListTrees2=ListTrees
   samp = sample(1:length(ListTrees),k)
   for (T in 1:k){
-    ListTrees2[[samp[T]]] = BrLength(ListTrees[[samp[T]]], branche = sample(1:nrow(ListTrees[[samp[T]]]$edge),1),ratio)
+    lab = sample(ListTrees[[samp[T]]]$tip.label,1)
+    print(samp[T])
+    print(lab)
+    j<-which(ListTrees[[samp[T]]]$tip.label==lab)
+    l<-which(ListTrees[[samp[T]]]$edge[,2]==j)
+    ListTrees2[[samp[T]]] = BrLength(ListTrees[[samp[T]]], l ,ratio)
   }
   return(ListTrees2)
 }
