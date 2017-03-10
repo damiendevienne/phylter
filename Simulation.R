@@ -4,7 +4,7 @@ require(phangorn)
 
 ###Fonction qui génère une liste d'arbres de nbgn gènes avec nbsp espèces contenant des outliers gènes (outgn) et espèces (outsp) générés par HGT
 ##nbsp = nombre d'espèces dans l'arbre / nbgn = nombre d'arbres / outgn = nb d'outlier gènes /outsp = nb d'oulier sp 
-SimOutliersHGT <-function(nbsp=10, nbgn=10, outgn=1, outsp=1, sp = NULL){
+SimOutliersHGT <-function(nbsp, nbgn, outgn, outsp, sp = NULL){
     tree<-rtree(nbsp,rooted = FALSE,min=2,max=5)
     write.tree(tree, file = "arbre.tree")
     ListOutGnTree =list()
@@ -26,38 +26,38 @@ SimOutliersHGT <-function(nbsp=10, nbgn=10, outgn=1, outsp=1, sp = NULL){
         #dans le cas où outspe > 1, on peut prendre plusieurs fois la même branche.
         #C'est également possible que deux branches différentes choisies comme outliers aient les mêmes espèces déscendantes
         bra = c(1:nrow(tree$edge))
-        while (s <= outsp){
-            br<-sample(bra,1) ##une branche au hasard 
-            br<-tree$edge[br,2]
-            samp<-tree$tip.label[Descendants(tree, br, "tips")[[1]]]
-            print(samp)
-            ListOutGnTree = HGToutsp(ListOutGnTree,samp)
-            s=s+1
+        br<-sample(bra,outsp)
+        for (B in 1:length(br)){
+          bran<-tree$edge[br[B],2]
+          samp<-tree$tip.label[Descendants(tree, bran, "tips")[[1]]]
+          print(samp)
+          ListOutGnTree = HGToutsp(ListOutGnTree,samp)
         }
       }
     }
     if (outgn !=0){
         ListOutGnTree = HGToutgn(ListOutGnTree,n=nrow(tree$edge),k=outgn) #autant d'hgt que de branches par arbre
     }
-  
     ListTreesOut=list()
     "multiPhylo"->class(ListTreesOut)
     for  (i in 1: length(ListOutGnTree)){
-      
+#rose    
       write.tree(ListOutGnTree[[i]], file = "arbreHGT.tree")
-      
       system(paste("perl WriteRose.pl -a arbreHGT.tree -p roseParam -l ", nbsp, sep=""))
       system("rose param.output")
-      system("phyml -i RoseTree.phy -n 1 -o lr -u arbre.tree --quiet")
+      system("phyml -i RoseTree.phy -m JC69 -n 1 -o tlr --quiet")
+      #system("phyml -i RoseTree.phy -m JC69 -n 1 -o lr -u arbre.tree --quiet")
       ListTreesOut[[i]]= read.tree(file="RoseTree.phy_phyml_tree")
-      
+ #seqgen     
       #system("/home/aurore/Téléchargements/Seq-Gen.v1.3.3/source/seq-gen -mHKY85 -n1 -l100 < arbreHGT.tree > seqtrees.dat")
       #system("phyml -i seqtrees.dat -n 1 -o lr -u arbre.tree --quiet")
       #ListTreesOut[[i]]= read.tree(file="seqtrees.dat_phyml_tree")
       
     }
-    #return(ListOutGnTree)
-    return(ListTreesOut)
+    RES=list()
+    RES$ListTrees = ListOutGnTree
+    RES$ListSim =ListTreesOut
+    return(RES)
 }
 
 ###Fonction qui génère une liste d'arbres de nbgn gènes avec nbsp espèces contenant des outliers gènes (outgn) et espèces (outsp) générés
@@ -112,8 +112,10 @@ SimOutliersLg <-function(nbsp, nbgn, outsp, outgn, sp = NULL){
     #ListTreesOut[[i]]= read.tree(file="seqtrees.dat_phyml_tree")
     
   }
-  #return(ListOutGnTree)
-  return(ListTreesOut)
+  RES=list()
+  RES$ListTrees = ListOutGnTree
+  RES$ListSim =ListTreesOut
+  return(RES)
 }
 
 #--------------------------HGT----------------------------------------------------
@@ -173,10 +175,13 @@ HGT2 <-  function(Tree, species=NULL){
   if (!is.null(species)){
     if (length(species)==1) branche<-which(Tree$edge[,2]==which(Tree$tip.label==species))
     else branche<-which(Tree$edge[,2]==getMRCA(Tree, species))
+    out = as.integer(branche)
+    noeudOut=Tree$edge[out,2] ## noeud donneur
     ##moment de la coupure
     N <- runif(1, min = matricePos[branche,1], max= matricePos[branche,2]) #Choix d'un temps N aléatoire sur la branche choisie
     ##Branches coupées à N:
     ListNumBranche<-which(((matricePos[,1]<=N)&(matricePos[,2]>=N)))
+    ListNumBranche2<-which(((matricePos[,1]<=N)))
   }
   #Si aucune espèce ou liste d'espèces n'est proposée, la coupure se fait aléatoirement dans le temps
   else{
@@ -184,32 +189,41 @@ HGT2 <-  function(Tree, species=NULL){
     N <- runif(1, min = min(distnodes), max= max(distnodes))
     ##Branches coupées à N:
       ListNumBranche<-which(((matricePos[,1]<=N)&(matricePos[,2]>=N)))
-      branche = as.integer(sample(ListNumBranche,1))
-      
-  }
-  if (length(ListNumBranche)==1) {
-      return(Tree)
-  }
-  else {  
-    if (length(ListNumBranche)==2) {
+      ListNumBranche2<-which(((matricePos[,1]<=N)))
+    if (length(ListNumBranche)==1) {
+      branche = ListNumBranche[[1]]
       out = as.integer(branche)
       noeudOut=Tree$edge[out,2] ## noeud donneur
-      ins = as.integer(ListNumBranche[ListNumBranche!=as.integer(out)])
-      noeudIns=Tree$edge[ins,2] ## noeud receveur
     }
-    else if (length(ListNumBranche)>2){
-        out = as.integer(branche)
-        noeudOut=Tree$edge[out,2] ## noeud donneur
-        ins = as.integer(sample(ListNumBranche[ListNumBranche!=as.integer(out)],1))
-        noeudIns=Tree$edge[ins,2] ## noeud receveur
-    }   
+    else {
+      branche = sample(ListNumBranche,1)
+      out = as.integer(branche)
+      noeudOut=Tree$edge[out,2] ## noeud donneur
+    }
+  }
+  if (length(ListNumBranche2)<=1) {
+    return(Tree)
+  }
+  else if (length(ListNumBranche2)==2) {
+    ins = as.integer(ListNumBranche2[ListNumBranche2!=as.integer(out)])
+    noeudIns=Tree$edge[ins,2] ## noeud receveur
+  }
+  else if (length(ListNumBranche2)>2){
+    ins = as.integer(sample(ListNumBranche2[ListNumBranche2!=as.integer(out)],1))
+    noeudIns=Tree$edge[ins,2] ## noeud receveur
+  }   
         ##création du sous-arbre qui va bouger
         b=rtree(2)
         tiplab<-c("branch", "out")
         b$tip.label=tiplab
+        Min = vector()
+        if (N > matricePos[ins,1]){Min[length(Min)+1]=N} 
+        if (matricePos[ins,2] > matricePos[ins,1]){Min[length(Min)+1]=matricePos[ins,2]} 
+        if (matricePos[out,2] > matricePos[ins,1]){Min[length(Min)+1]=matricePos[out,2]} 
+        N2=runif(1, min = matricePos[ins,1], max= min(Min))
         ##Si la branche coupée est une banche interne
         if(noeudOut>nbSpTot){
-            b$edge.length=c(dist.nodes(Tree)[noeudOut,nbSpTot+1]-N,0) #Longueur de la branche choisie après avoir été coupée
+            b$edge.length=c(dist.nodes(Tree)[noeudOut,nbSpTot+1]-N2,0) #Longueur de la branche choisie après avoir été coupée
             treeex <- extract.clade(Tree,noeudOut)
             bindedBranch = bind.tree(b, treeex, where = 1)
             Names = list()
@@ -228,7 +242,7 @@ HGT2 <-  function(Tree, species=NULL){
             c=rtree(2)
             tiplab2<-c(Tree$tip.label[noeudOut], "out")
             c$tip.label=tiplab2
-            c$edge.length=c(dist.nodes(Tree)[noeudOut,nbSpTot+1]-N,0) #Longueur de la branche choisie après avoir été coupée
+            c$edge.length=c(dist.nodes(Tree)[noeudOut,nbSpTot+1]-N2,0) #Longueur de la branche choisie après avoir été coupée
             bindedBranch = bind.tree(b, c, where = 1)
             Names = list()
             for (i in 1: length(Tree$tip.label)){
@@ -243,14 +257,12 @@ HGT2 <-  function(Tree, species=NULL){
         #On ne modifie pas l'arbre de départ
         tree3<-Tree
         tree3$tip.label<-Names
-        treebinded <- bind.tree(tree3, bindedBranch, where=noeudIns, position = dist.nodes(Tree)[noeudIns,nbSpTot+1]-N)
+        treebinded <- bind.tree(tree3, bindedBranch, where=noeudIns, position = dist.nodes(Tree)[noeudIns,nbSpTot+1]-N2)
         treebinded <- drop.tip(treebinded,"out")
         treebinded <- drop.tip(treebinded,"ancienNoeud")
         return(treebinded)
-    }
 }
  
-    
 #--------------------------Longueur de Branche---------------------------------------------------
 
 ##Fonction qui permet de changer la longueur d'une branche donnée dans un arbre donné en multipliant sa longeur par un ratio
