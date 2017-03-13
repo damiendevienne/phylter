@@ -45,8 +45,8 @@ SimOutliersHGT <-function(nbsp, nbgn, outgn, outsp, sp = NULL){
       write.tree(ListOutGnTree[[i]], file = "arbreHGT.tree")
       system(paste("perl WriteRose.pl -a arbreHGT.tree -p roseParam -l ", nbsp, sep=""))
       system("rose param.output")
-      system("phyml -i RoseTree.phy -m JC69 -n 1 -o tlr --quiet")
-      #system("phyml -i RoseTree.phy -m JC69 -n 1 -o lr -u arbre.tree --quiet")
+      #system("phyml -i RoseTree.phy -m JC69 -n 1 -o tlr --quiet")
+      system("phyml -i RoseTree.phy -m JC69 -n 1 -o lr -u arbre.tree --quiet")
       ListTreesOut[[i]]= read.tree(file="RoseTree.phy_phyml_tree")
  #seqgen     
       #system("/home/aurore/Téléchargements/Seq-Gen.v1.3.3/source/seq-gen -mHKY85 -n1 -l100 < arbreHGT.tree > seqtrees.dat")
@@ -93,7 +93,7 @@ SimOutliersLg <-function(nbsp, nbgn, outsp, outgn, sp = NULL){
     }
   }
   if (outgn !=0){
-    ListOutGnTree = BrLengthGn(ListOutGnTree, b=nrow(tree$edge), k=outgn)
+    ListOutGnTree = BrLengthGn(ListOutGnTree, b=nrow(tree$edge)*10, k=outgn)
   }
   
   ListTreesOut=list()
@@ -104,7 +104,8 @@ SimOutliersLg <-function(nbsp, nbgn, outsp, outgn, sp = NULL){
     
     system(paste("perl WriteRose.pl -a arbreHGT.tree -p roseParam -l ", nbsp, sep=""))
     system("rose param.output")
-    system("phyml -i RoseTree.phy -n 1 -o lr -u arbre.tree --quiet")
+    system("phyml -i RoseTree.phy -m JC69 -n 1 -o tlr --quiet")
+    #system("phyml -i RoseTree.phy -m JC69 -n 1 -o lr -u arbre.tree --quiet")
     ListTreesOut[[i]]= read.tree(file="RoseTree.phy_phyml_tree")
     
     #system("/home/aurore/Téléchargements/Seq-Gen.v1.3.3/source/seq-gen -mHKY85 -n1 -l100 < arbreHGT.tree > seqtrees.dat")
@@ -268,7 +269,9 @@ HGT2 <-  function(Tree, species=NULL){
 ##Fonction qui permet de changer la longueur d'une branche donnée dans un arbre donné en multipliant sa longeur par un ratio
 BrLength <- function(Tree, branche = sample(1:nrow(Tree$edge),1), ratio){
   Tree2 = Tree
-  Tree2$edge.length[branche]=Tree$edge.length[branche]*ratio
+  boo=sample(c(0,1),1)
+  if(boo==1){Tree2$edge.length[branche]=Tree$edge.length[branche]+Tree$edge.length[branche]*ratio}
+  else {Tree2$edge.length[branche]=Tree$edge.length[branche]-Tree$edge.length[branche]*ratio}
   return(Tree2)
 }
 
@@ -292,9 +295,7 @@ BrLengthSp <- function(ListTrees, branche){
   ListTrees2=ListTrees
   for (t in 1:length(ListTrees)){
     Tree2 = ListTrees[[t]]
-    ratiomin = runif(1, 0.1, 0.4)
-    ratiomax = runif(1, 1.6, 1.9)
-    ratio = sample(c(ratiomin, ratiomax),1)
+    ratio = runif(1, 0.1, 0.9)
     Tree2 = BrLength(Tree2, branche, ratio)
     ListTrees2[[t]]=Tree2
   }
@@ -306,9 +307,7 @@ BrLGn <- function(Tree, b){
   Tree2=Tree
   for (i in 1:b){
     branche = sample(1:nrow(Tree$edge),1)
-    ratiomin = runif(1, 0.4, 0.7)
-    ratiomax = runif(1, 1.3, 1.6)
-    ratio = sample(c(ratiomin, ratiomax),1)
+    ratio = runif(1, 0.1, 0.9)
     Tree2 = BrLength(Tree2, branche, ratio)
   }
   return(Tree2)

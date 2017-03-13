@@ -8,9 +8,9 @@ setwd(dir="/home/aurore/Documents/Phylter/trees/rose/")
 
 #write.tree(rtree(20),"arbreHGT.tree") 
 
-ListOut = SimOutliersHGT(nbsp = 50, nbgn = 10, outgn= 1, outsp = 2, sp=1)
-RESTree <-Phylter(ListOut$ListTrees, distance="nodal", k=2, thres=0.5, quiet=TRUE)
-RESSim <-Phylter(ListOut$ListSim, distance="nodal", k=2, thres=0.5, quiet=TRUE)
+ListOut = SimOutliersHGT(nbsp = 20, nbgn = 50, outgn= 1, outsp = 1, sp=1)
+RESTree <-Phylter(ListOut$ListTrees, distance="patristic", k=2, thres=0.5, quiet=TRUE)
+RESSim <-Phylter(ListOut$ListSim, distance="patristic", k=2, thres=0.5, quiet=TRUE)
 
 plot.2WR(RESTree$Complete$mat2WR)
 plot.2WR(RESSim$Complete$mat2WR)
