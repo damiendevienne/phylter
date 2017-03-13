@@ -20,11 +20,11 @@ TheDNAmodel="JC"
 
 TheFreq=[.25,.25,.25,.25]
 
-TheInsertThreshold=.001
+TheInsertThreshold=0.005
 
-TheDeleteThreshold=.001
+TheDeleteThreshold=0.005
 
-MeanSubstitution=.005
+MeanSubstitution=0.03
 
-TheInsFunc = [.01]
-TheDelFunc = [.01]
+TheInsFunc = [.2,.2,.2,1,1,1,1]
+TheDelFunc = [.2,.2,.2,1,1,1,1]

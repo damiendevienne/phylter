@@ -46,15 +46,18 @@ trees2branchMatrices <- function(ListTrees){
 ##----mat2Dist applique distatis sur une liste de matrices de distance----
 #En premier lieu, la liste de matrice est changée en cube
 mat2Dist <-function(matrices){
+  row = rownames(matrices[[1]])
+  for (i in 2:length(matrices)){
+    matrices[[i]]=matrices[[i]][row,row]
+  }
   genesNumber=length(matrices)
   speciesNumber=nrow(matrices[[genesNumber]])
   TheVeryBigCube = array(0, c(speciesNumber,speciesNumber,genesNumber))
   for (i in 1:genesNumber){
 	  TheVeryBigCube[,,i]<-matrices[[i]]
   }
-  #On garde les identifiants de chaque éléments de la matrice dans le cube
-	rownames(TheVeryBigCube) <- rownames(matrices[[i]])
-	colnames(TheVeryBigCube) <- colnames(matrices[[i]])
+  rownames(TheVeryBigCube) <- rownames(matrices[[1]])
+  colnames(TheVeryBigCube) <- colnames(matrices[[1]])
 	#On applique distatis sur le cube obtenu
   Distatis <- distatis(TheVeryBigCube)
   #On fait suivre le numéro de chaque élement de la matrice de départ aux résultats qui nous interressent

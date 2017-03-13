@@ -5,7 +5,7 @@ require(phangorn)
 ###Fonction qui génère une liste d'arbres de nbgn gènes avec nbsp espèces contenant des outliers gènes (outgn) et espèces (outsp) générés par HGT
 ##nbsp = nombre d'espèces dans l'arbre / nbgn = nombre d'arbres / outgn = nb d'outlier gènes /outsp = nb d'oulier sp 
 SimOutliersHGT <-function(nbsp, nbgn, outgn, outsp, sp = NULL){
-    tree<-rtree(nbsp,rooted = FALSE,min=2,max=5)
+    tree<-rtree(nbsp,rooted = TRUE,min=2,max=5)
     write.tree(tree, file = "arbre.tree")
     ListOutGnTree =list()
     "multiPhylo"->class(ListOutGnTree)
@@ -45,9 +45,10 @@ SimOutliersHGT <-function(nbsp, nbgn, outgn, outsp, sp = NULL){
       write.tree(ListOutGnTree[[i]], file = "arbreHGT.tree")
       system(paste("perl WriteRose.pl -a arbreHGT.tree -p roseParam -l ", nbsp, sep=""))
       system("rose param.output")
-      #system("phyml -i RoseTree.phy -m JC69 -n 1 -o tlr --quiet")
-      system("phyml -i RoseTree.phy -m JC69 -n 1 -o lr -u arbre.tree --quiet")
+      system("phyml -i RoseTree.phy -m JC69 -n 1 -o tlr --quiet")
+      #system("phyml -i RoseTree.phy -m JC69 -n 1 -o lr -u arbre.tree --quiet")
       ListTreesOut[[i]]= read.tree(file="RoseTree.phy_phyml_tree")
+      print(dist.topo(ListOutGnTree[[i]],ListTreesOut[[i]]))
  #seqgen     
       #system("/home/aurore/Téléchargements/Seq-Gen.v1.3.3/source/seq-gen -mHKY85 -n1 -l100 < arbreHGT.tree > seqtrees.dat")
       #system("phyml -i seqtrees.dat -n 1 -o lr -u arbre.tree --quiet")
@@ -93,7 +94,7 @@ SimOutliersLg <-function(nbsp, nbgn, outsp, outgn, sp = NULL){
     }
   }
   if (outgn !=0){
-    ListOutGnTree = BrLengthGn(ListOutGnTree, b=nrow(tree$edge)*10, k=outgn)
+    ListOutGnTree = BrLengthGn(ListOutGnTree, b=nrow(tree$edge)*2, k=outgn)
   }
   
   ListTreesOut=list()
