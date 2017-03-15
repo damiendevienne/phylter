@@ -6,36 +6,24 @@ source("/home/aurore/Documents/Phylter/Simulation.R")
 
 setwd(dir="/home/aurore/Documents/Phylter/trees/rose/")
 
-#write.tree(rtree(20),"arbreHGT.tree") 
+ListOut = SimOutliersHGT(nbsp = 15, nbgn = 15, outgn=1, outsp = 1,sp=1)
+ListOut = HGToutCell(ListOut,1)
+RES <-Phylter(ListOut, distance="patristic", k=1.5, thres=0.5, quiet=TRUE)
 
-ListOut = SimOutliersHGT(nbsp = 20, nbgn = 20, outgn= 1, outsp = 2, sp=1)
-RESTree <-Phylter(ListOut$ListTrees, distance="nodal", k=2, thres=0.5, quiet=TRUE)
-RESSim <-Phylter(ListOut$ListSim, distance="nodal", k=2, thres=0.5, quiet=TRUE)
+plot.2WR(RES$Complete$mat2WR)
 
-plot.2WR(RESTree$Complete$mat2WR)
-plot.2WR(RESSim$Complete$mat2WR)
+RES$Complete$outgn
+RES$Complete$outsp
+RES$CellByCell$outcell
 
-RESTree$Complete$outgn
-RESTree$Complete$outsp
 
-RESSim$Complete$outgn
-RESSim$Complete$outsp
+##-----------------------------------------------------------------------------------------------------------------
+ListOut2 = SimOutliersLg(nbgn =50, nbsp = 50, outgn=4, outsp = 4 ,sp=1)
+ListOut2 = BrLengthOutCell(ListOut2,1,9)
+RES <-Phylter(ListOut2, distance="patristic", k=1.5, thres=0.5, quiet=TRUE)
 
-#plot(read.tree("arbre.tree"))
-#tree=read.tree("arbre.tree")
-#RES <-pMCOA.complete(ListOut, distance="nodal", k=1.5, thres=0.5, quiet=TRUE)
-#plot.2WR(RES$step1$mat2WR)
+plot.2WR(RES$Complete$mat2WR)
 
-ListOut2 = SimOutliersLg(nbsp = 20, nbgn = 20, outgn=1 , outsp = 1, sp=1)
-
-RESTree <-Phylter(ListOut2$ListTree, distance="patristic", k=2, thres=0.5, quiet=TRUE)
-RESSim <-Phylter(ListOut2$ListSim, distance="patristic", k=2, thres=0.5, quiet=TRUE)
-
-RESTree <-pMCOA.complete(ListOut2$ListTree, distance="patristic", k=2, thres=0.5, quiet=TRUE)
-RESSim <-pMCOA.complete(ListOut2$ListSim, distance="patristic", k=2, thres=0.5, quiet=TRUE)
-
-plot.2WR(RESTree$step1$mat2WR)
-plot.2WR(RESSim$step1$mat2WR)
-
-RESTree$Complete$outgn
-RESTree$Complete$outsp
+RES$Complete$outgn
+RES$Complete$outsp
+RES$CellByCell$outcell

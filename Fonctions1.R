@@ -113,6 +113,52 @@ gestion.matrice<-function(matrices) {
   return(matrices)
 }
 
+impPCA.multi<-function(matrices) {
+  x = 0
+  grandeMatrice=matrix()
+  geneNames=list()
+  #Création d'une matrice ayant la taille maximale à remplir pour les gènes ayant des espèces manquantes
+  for (i in 1: length(matrices)){
+    if (nrow(matrices[[i]])>x){
+      x=nrow(matrices[[i]])
+      grandeMatrice=matrix(nrow=nrow(matrices[[i]]), ncol= ncol(matrices[[i]]), dimnames = dimnames(matrices[[i]]))
+    }
+  }
+  #Création d'une liste contenant les noms des matrices avec des espèces manquantes
+  j=1
+  for (i in 1: length(matrices)){
+    if (nrow(matrices[[i]])<nrow(grandeMatrice)){
+      geneNames[[j]]=names(matrices)[[i]]
+      j=j+1
+    }
+  }
+  if (length(geneNames)!=0){
+    #Pour chaque arbre avec des espèces manquantes, remplissage de la grande matrice avec les données existantes ....
+    matrices2=matrices
+    for (i in 1: length(geneNames)){
+      row = rownames(matrices2[[geneNames[[i]]]])
+      grandeMatrice2 <- grandeMatrice
+      grandeMatrice2[row,row]<-matrices2[[geneNames[[i]]]][row,row]
+      matrices2[[geneNames[[i]]]]<-grandeMatrice2
+    }
+    row = rownames(matrices2[[1]])
+    for (i in 1:length(matrices2)){
+      matrices2[[i]]=as.vector(matrices2[[i]][row,row])
+    }
+    mat = do.call(cbind,matrices2)
+    matIPCA = imputePCA(mat)
+    matIPCA <- matIPCA$completeObs
+    for (i in 1:length(matrices2)){
+      matrices[[i]]= matrix(data=as.vector(matIPCA[,i]),nrow=length(row),ncol=length(row))
+      matrices[[i]][which(as.vector(matrices[[i]])<40)]=0
+      rownames(matrices[[i]])=row
+      colnames(matrices[[i]])=row
+    }
+  }
+  return(matrices)
+}
+
+
 ###----créé la matrice 2WR à partir des résultats de distatis----
 Dist2WR <-function(Distatis){
   matrixWR2 = matrix(nrow= length(dimnames(Distatis$res4Splus$PartialF)[[1]]) ,ncol=length(dimnames(Distatis$res4Splus$PartialF)[[3]]))
@@ -169,7 +215,8 @@ Phylter <-function(trees, distance="nodal", k=2, thres=0.5, quiet=TRUE, gene.nam
   }
   RES <- NULL
   matrices <- trees2matrices.Distatis(trees, distance=distance)
-  matrices=gestion.matrice(matrices)
+  #matrices=gestion.matrice(matrices)
+  matrices=impPCA.multi(matrices)
   Dist <- mat2Dist(matrices)
   WR <- Dist2WR(Dist)
   CompOutl <- detect.complete.outliers(WR, k=k, thres=thres)

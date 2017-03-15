@@ -24,7 +24,7 @@ TheInsertThreshold=0.005
 
 TheDeleteThreshold=0.005
 
-MeanSubstitution=0.03
+MeanSubstitution=0.01
 
-TheInsFunc = [.2,.2,.2,1,1,1,1]
-TheDelFunc = [.2,.2,.2,1,1,1,1]
+TheInsFunc = [1.0]
+TheDelFunc = [1.0]
