@@ -55,16 +55,16 @@ mat2Dist <-function(matrices){
 
 ##Fonction utilisant le package missMDA afin dimputer des données d'espèces potentiellement manquantes dans les différentes matrices
 impPCA.multi<-function(matrices) {
-  x = 0
+  species = list()
   grandeMatrice=matrix()
   geneNames=list()
   #Création d'une matrice ayant la taille maximale à remplir pour les gènes ayant des espèces manquantes
   for (i in 1: length(matrices)){
-    if (nrow(matrices[[i]])>x){
-      x=nrow(matrices[[i]])
-      grandeMatrice=matrix(nrow=nrow(matrices[[i]]), ncol= ncol(matrices[[i]]), dimnames = dimnames(matrices[[i]]))
-    }
+    species = c(species,setdiff(rownames(matrices[[i]]),species))
   }
+  grandeMatrice=matrix(nrow=length(species), ncol= length(species))
+  rownames(grandeMatrice) = species
+  colnames(grandeMatrice) = species
   #Création d'une liste contenant les noms des matrices avec des espèces manquantes
   j=1
   for (i in 1: length(matrices)){
