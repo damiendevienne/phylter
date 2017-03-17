@@ -1,29 +1,41 @@
-library(DistatisR)
-library(phangorn)
 source("/media/aurore/KINGSTON/stageLBBE/pmcoa.R")
-source("/home/aurore/Documents/Phylter/Fonctions1.R")
-source("/home/aurore/Documents/Phylter/Simulation.R")
+source("/home/aurore/Documents/Phylter/PhylteR.R")
 
 setwd(dir="/home/aurore/Documents/Phylter/trees/rose/")
 
-ListOut = SimOutliersHGT(nbsp = 15, nbgn = 15, outgn=1, outsp = 1,sp=1)
-ListOut = HGToutCell(ListOut,1)
-RES <-Phylter(ListOut, distance="patristic", k=1.5, thres=0.5, quiet=TRUE)
+ListOut = SimOutliersHGT(nbgn = 20, nbsp = 30, outgn=1, outsp = 1, outcell = 1, sp=0)
 
+RES <-Phylter(ListOut, distance="nodal", k=1.5, thres=0.5, quiet=TRUE)
 plot.2WR(RES$Complete$mat2WR)
+
+RESCOA <-pMCOA.complete(ListOut, distance="nodal", k=1.5, thres=0.5, quiet=TRUE)
+plot.2WR(RESCOA$step1$mat2WR)
 
 RES$Complete$outgn
 RES$Complete$outsp
 RES$CellByCell$outcell
 
+
+RESCOA$outcompl$outgn
+RESCOA$outcompl$outsp
+RESCOA$outcell$outcell
 
 ##-----------------------------------------------------------------------------------------------------------------
-ListOut2 = SimOutliersLg(nbgn =50, nbsp = 50, outgn=4, outsp = 4 ,sp=1)
-ListOut2 = BrLengthOutCell(ListOut2,1,9)
-RES <-Phylter(ListOut2, distance="patristic", k=1.5, thres=0.5, quiet=TRUE)
+ListOut2 = SimOutliersLg(nbgn =30, nbsp = 20, outgn=2, outsp = 2, outcell = 1 ,sp=1)
+
+RES <-Phylter(ListOut2, distance="nodal", k=1.5, thres=0.5, quiet=TRUE)
+RESCOA <-pMCOA.complete(ListOut2, distance="nodal", k=1.5, thres=0.5, quiet=TRUE)
 
 plot.2WR(RES$Complete$mat2WR)
+plot.2WR(RESCOA$step1$mat2WR)
 
 RES$Complete$outgn
 RES$Complete$outsp
 RES$CellByCell$outcell
+
+RESCOA$outcompl$outgn
+RESCOA$outcompl$outsp
+RESCOA$outcell$outcell
+
+
+

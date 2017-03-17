@@ -1,6 +1,3 @@
-##load required packages
-require(ape)
-require(phangorn)
 
 ###Fonction qui génère une liste d'arbres de nbgn gènes avec nbsp espèces contenant des outliers gènes (outgn) et espèces (outsp) générés par HGT
 ##nbsp = nombre d'espèces dans l'arbre / nbgn = nombre d'arbres / outgn = nb d'outlier gènes /outsp = nb d'oulier sp 
@@ -48,9 +45,6 @@ SimOutliersHGT <-function(nbgn, nbsp, outgn, outsp, sp = 0){
       ListTreesOut[[i]]= read.tree(file="RoseTree.phy_phyml_tree")
       print(dist.topo(ListOutGnTree[[i]],ListTreesOut[[i]]))
     }
-    #RES=list()
-    #RES$ListTrees = ListOutGnTree
-    #RES$ListSim =ListTreesOut
     return(ListTreesOut)
 }
 
@@ -100,9 +94,6 @@ SimOutliersLg <-function(nbgn, nbsp, outgn, outsp, sp = 1){
     #system("phyml -i RoseTree.phy -m JC69 -n 1 -o lr -u arbre.tree --quiet")
    ListTreesOut[[i]]= read.tree(file="RoseTree.phy_phyml_tree")
   }
-  #RES=list()
-  #RES$ListTrees = ListOutGnTree
-  #RES$ListSim =ListTreesOut
   return(ListTreesOut)
 }
 

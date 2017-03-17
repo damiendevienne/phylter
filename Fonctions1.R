@@ -1,3 +1,8 @@
+##load required packages
+require(missMDA)
+require(DistatisR)
+require(ape)
+require(phangorn)
 
 ##----trees2matrices.Distatis change un arbre en liste de matrices----
 trees2matrices.Distatis<-function(trees, distance="nodal", gene.names = NULL) {
