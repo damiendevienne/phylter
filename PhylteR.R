@@ -32,7 +32,9 @@ rename.genes <-function(trees, gene.names=NULL){
 }
 
 ##----mat2Dist applique distatis sur une liste de matrices de distance----
-mat2Dist <-function(matrices){
+##Norm = "none" si on ne veut pas normaliser les données --> permet de detecter les variations de longueur dans des gènes entiers
+##Norm = "mfa" normalise les données
+mat2Dist <-function(matrices, Norm="NONE"){
   #En premier lieu, la liste de matrice est changée en cube
   row = rownames(matrices[[1]])
   for (i in 1:length(matrices)){
@@ -47,7 +49,7 @@ mat2Dist <-function(matrices){
   rownames(TheVeryBigCube) <- rownames(matrices[[1]])
   colnames(TheVeryBigCube) <- colnames(matrices[[1]])
   #On applique distatis sur le cube obtenu
-  Distatis <- distatis(TheVeryBigCube)
+  Distatis <- distatis(TheVeryBigCube, Norm = Norm)
   #On fait suivre le numéro de chaque élement de la matrice de départ aux résultats qui nous interressent
   dimnames(Distatis$res4Splus$PartialF)[[3]] = names(matrices)
   return(Distatis)
@@ -82,22 +84,33 @@ impPCA.multi<-function(matrices) {
       grandeMatrice2[row,row]<-matrices2[[geneNames[[i]]]][row,row]
       matrices2[[geneNames[[i]]]]<-grandeMatrice2
     }
+    matrices3=matrices2
     row = rownames(matrices2[[1]])
     for (i in 1:length(matrices2)){
-      matrices2[[i]]=as.vector(matrices2[[i]][row,row])
+      matrices3[[i]]=as.vector(matrices2[[i]][row,row][upper.tri(matrices2[[i]][row,row])])
     }
-    mat = do.call(cbind,matrices2)
-    matIPCA = imputePCA(mat)
+    mat = do.call(cbind,matrices3)
+    
+    nb = estim_ncpPCA(mat, ncp.min=0,ncp.max=5) ##estimation du nombre de dimensions necessaires pour imputer les données manquantes
+    matIPCA = imputePCA(mat, ncp = nb$ncp) ##estimation des données manquantes par ACP itérative
     matIPCA <- matIPCA$completeObs
+    matricesF=list()
+    matricesFT=list()
     for (i in 1:length(matrices2)){
-      matrices[[i]]= matrix(data=as.vector(matIPCA[,i]),nrow=length(row),ncol=length(row))
-      ##Rustine afin d'éviter qu'on ait des valeurs négative de branches d'arbre (peut arriver quand la valeurà imputer est 0)
-      matrices[[i]][which(as.vector(matrices[[i]])<0)]=0
-      rownames(matrices[[i]])=row
-      colnames(matrices[[i]])=row
+      matricesF[[i]]= matrix(nrow=length(row),ncol=length(row))
+      rownames(matricesF[[i]])=row
+      colnames(matricesF[[i]])=row
+      data=as.vector(matIPCA[,i])
+      matricesF[[i]][upper.tri(matrices2[[i]])]=data
+      matricesFT[[i]]=t(matricesF[[i]])
+      matricesF[[i]][lower.tri(matrices2[[i]])]=matricesFT[[i]][lower.tri(matrices2[[i]])]
+      for (j in 1:ncol(matricesF[[i]])){
+        matricesF[[i]][j,j] = 0
+      }
     }
   }
-  return(matrices)
+  return(matricesF)
+  #return(matrices2)
 }
 
 ###----créé la matrice 2WR à partir des résultats de distatis----
@@ -150,21 +163,21 @@ rm.gene.and.species.Distatis<-function(trees, sp2rm, gn2rm) {
 }
 
 ##-------Fonction qui fait tout-----
-Phylter <-function(trees, distance="nodal", k=2, thres=0.5, quiet=TRUE, gene.names=NULL){
+Phylter <-function(trees, distance="nodal", k=2, thres=0.5, quiet=TRUE, gene.names=NULL, Norm="NONE"){
   if (is.null(gene.names)==FALSE){
     trees=rename.genes(trees, gene.names=gene.names)
   }
   RES <- NULL
   matrices <- trees2matrices.Distatis(trees, distance=distance)
   matrices=impPCA.multi(matrices)
-  Dist <- mat2Dist(matrices)
+  Dist <- mat2Dist(matrices,Norm=Norm)
   WR <- Dist2WR(Dist)
   CompOutl <- detect.complete.outliers(WR, k=k, thres=thres)
   if (length(CompOutl$outsp)>0 || length(CompOutl$outgn)>0) {
     TREESwithoutCompleteOutlierDist<-rm.gene.and.species.Distatis(trees, CompOutl$outsp, CompOutl$outgn)
     matrices2 = trees2matrices.Distatis(TREESwithoutCompleteOutlierDist, distance=distance)
     matrices2=impPCA.multi(matrices2)
-    Dist2 <- mat2Dist(matrices2)
+    Dist2 <- mat2Dist(matrices2,Norm=Norm)
     WR2 = Dist2WR(Dist2)
     CellOutl2 <- detect.cell.outliers(WR2, k=k+2, quiet=quiet)
     RES$Complete <- CompOutl
@@ -527,4 +540,92 @@ BrLengthGn <- function(ListTrees, b, k){
   return(ListTrees2)
 }
 
+#############IMPUTE PCA#################
+imputePCA <- function (X, ncp = 2, scale=TRUE, method=c("Regularized","EM"),row.w=NULL,coeff.ridge=1,threshold = 1e-6,seed = NULL,nb.init=1,maxiter=1000,...){
+  
+  impute <- function (X, ncp = 4, scale=TRUE, method=NULL,threshold = 1e-6,seed = NULL,init=1,maxiter=1000,row.w=NULL,coeff.ridge=1,...){
+    moy.p <- function(V, poids) {
+      res <- sum(V * poids,na.rm=TRUE)/sum(poids[!is.na(V)])
+    }
+    ec <- function(V, poids) {
+      res <- sqrt(sum(V^2 * poids,na.rm=TRUE)/sum(poids[!is.na(V)]))
+    }
+    
+    nb.iter <- 1
+    old <- Inf
+    objective <- 0
+    if (!is.null(seed)){set.seed(seed)}
+    X <- as.matrix(X)
+    ncp <- min(ncp,ncol(X),nrow(X)-1)
+    missing <- which(is.na(X))
+    mean.p <- apply(X, 2, moy.p,row.w)
+    Xhat <- t(t(X)-mean.p)
+    et <- apply(Xhat, 2, ec,row.w)
+    if (scale) Xhat <- t(t(Xhat)/et)
+    if (any(is.na(X))) Xhat[missing] <- 0
+    if (init>1) Xhat[missing] <- rnorm(length(missing)) ## random initialization
+    fittedX <- Xhat
+    if (ncp==0) nb.iter=0
+    
+    while (nb.iter > 0) {
+      Xhat[missing] <- fittedX[missing]
+      if (scale) Xhat=t(t(Xhat)*et)
+      Xhat <- t(t(Xhat)+mean.p)
+      mean.p <- apply(Xhat, 2, moy.p,row.w)
+      Xhat <- t(t(Xhat)-mean.p)
+      et <- apply(Xhat, 2, ec,row.w)
+      if (scale) Xhat <- t(t(Xhat)/et)
+      svd.res <- svd.triplet(Xhat,row.w=row.w,ncp=ncp)
+      #       sigma2 <- mean(svd.res$vs[-(1:ncp)]^2)
+      sigma2  <- nrow(X)*ncol(X)/min(ncol(X),nrow(X)-1)* sum((svd.res$vs[-c(1:ncp)]^2)/((nrow(X)-1) * ncol(X) - (nrow(X)-1) * ncp - ncol(X) * ncp + ncp^2))
+      sigma2 <- min(sigma2*coeff.ridge,svd.res$vs[ncp+1]^2)
+      if (method=="em") sigma2 <-0
+      lambda.shrinked=(svd.res$vs[1:ncp]^2-sigma2)/svd.res$vs[1:ncp]
+      fittedX = tcrossprod(t(t(svd.res$U[,1:ncp,drop=FALSE]*row.w)*lambda.shrinked),svd.res$V[,1:ncp,drop=FALSE])
+      fittedX <- fittedX/row.w
+      diff <- Xhat-fittedX
+      diff[missing] <- 0
+      objective <- sum(diff^2*row.w)
+      #       objective <- mean((Xhat[-missing]-fittedX[-missing])^2)
+      criterion <- abs(1 - objective/old)
+      old <- objective
+      nb.iter <- nb.iter + 1
+      if (!is.nan(criterion)) {
+        if ((criterion < threshold) && (nb.iter > 5))  nb.iter <- 0
+        if ((objective < threshold) && (nb.iter > 5))  nb.iter <- 0
+      }
+      if (nb.iter > maxiter) {
+        nb.iter <- 0
+        warning(paste("Stopped after ",maxiter," iterations"))
+      }
+    }
+    if (scale) Xhat <- t(t(Xhat)*et)
+    Xhat <- t(t(Xhat)+mean.p)
+    completeObs <- X
+    completeObs[missing] <- Xhat[missing]
+    if (scale) fittedX <- t(t(fittedX)*et)
+    fittedX <- t(t(fittedX)+mean.p)
+    
+    result <- list()
+    result$completeObs <- completeObs
+    result$fittedX <- fittedX
+    return(result) 
+  }
+  
+  #### Main program
+  method <- match.arg(method,c("Regularized","regularized","EM","em"),several.ok=T)[1]
+  obj=Inf
+  method <- tolower(method)
+  if (ncp>min(nrow(X)-2,ncol(X)-1)) stop("ncp is too large")
+  if (is.null(row.w)) row.w = rep(1,nrow(X))/nrow(X)
+  for (i in 1:nb.init){
+    if (!any(is.na(X))) return(X)
+    res.impute=impute(X, ncp=ncp, scale=scale, method=method, threshold = threshold,seed=if(!is.null(seed)){(seed*(i-1))}else{NULL},init=i,maxiter=maxiter,row.w=row.w,coeff.ridge=coeff.ridge)
+    if (mean((res.impute$fittedX[!is.na(X)]-X[!is.na(X)])^2) < obj){
+      res <- res.impute
+      obj <- mean((res.impute$fittedX[!is.na(X)]-X[!is.na(X)])^2)
+    }
+  }
+  return(res)
+}
 
