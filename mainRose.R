@@ -1,9 +1,9 @@
-source("/media/aurore/KINGSTON/stageLBBE/pmcoa.R")
+source("/home/aurore/Documents/Phylter/pmcoa.R")
 source("/home/aurore/Documents/Phylter/PhylteR.R")
 
 setwd(dir="/home/aurore/Documents/Phylter/trees/rose/")
 
-ListOut = SimOutliersHGT(nbgn = 20, nbsp = 30, outgn=1, outsp = 1, outcell = 1, sp=0)
+ListOut = SimOutliersHGT(nbgn = 5, nbsp = 5, outgn=1, outsp = 1, outcell = 1, sp=0)
 
 RES <-Phylter(ListOut, distance="nodal", k=1.5, thres=0.5, quiet=TRUE, Norm="NONE")
 plot.2WR(RES$Complete$mat2WR)
