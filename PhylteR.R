@@ -1,5 +1,6 @@
 ##load required packages
 require(missMDA)
+require(FactoMineR)
 require(DistatisR)
 require(ape)
 require(phangorn)
@@ -56,7 +57,7 @@ mat2Dist <-function(matrices, Norm="NONE"){
 }
 
 ##Fonction utilisant le package missMDA afin dimputer des données d'espèces potentiellement manquantes dans les différentes matrices
-impPCA.multi<-function(matrices, ncp = 2, center =FALSE, scale = FALSE) {
+impPCA.multi<-function(matrices, ncp = 3, center =FALSE, scale = FALSE) {
   species = list()
   grandeMatrice=matrix()
   geneNames=list()
@@ -317,6 +318,7 @@ SimOutliersHGT <-function(nbgn, nbsp, outgn, outsp, outcell, sp = 0){
       }
     }
   }
+  else {species = NULL}
   if (outgn !=0){
     samp = sample(1:length(ListOutGnTree),outgn)
     print(paste("outgn",samp,sep=" "))
@@ -325,13 +327,16 @@ SimOutliersHGT <-function(nbgn, nbsp, outgn, outsp, outcell, sp = 0){
       ListOutGnTree[[samp[j]]] =  HGT1gn(ListOutGnTree[[samp[j]]], n=length(ListOutGnTree[[samp[j]]]$edge))
     }
   }
+  else{genes = NULL}
   if (outcell !=0){ ## Les outcell ne peuvent pas être sur les espèces ou sur les gènes déjà complete outlier. 
     #Si on veut que ce soit possible d'avoir des outcell sur des gènes ou sp outliers complets, on fixe outcell = 0 et on créé des outcells avec la fonction
     #HGToutCell()
-    genespossible = c(1:length(ListOutGnTree))[which(c(1:length(ListOutGnTree))!=genes)]
+    if (!is.null(genes)){genespossible = c(1:length(ListOutGnTree))[which(c(1:length(ListOutGnTree))!=genes)]}
+    else{genespossible=c(1:length(ListOutGnTree))}
     samp= sample(genespossible,outcell)
     for (i in 1:length(samp)){
-      speciespossible = setdiff(ListOutGnTree[[samp[i]]]$tip.label, species)
+      if (!is.null(species)){speciespossible = setdiff(ListOutGnTree[[samp[i]]]$tip.label, species)}
+      else{speciespossible=ListOutGnTree[[samp[i]]]$tip.label}
       lab = sample(speciespossible,1)
       print(paste("outcell =", samp[i],"/", lab[[1]],sep=" "))
       ListOutGnTree[[samp[i]]] = HGT2(ListOutGnTree[[samp[i]]],lab[[1]])
@@ -420,6 +425,7 @@ SimOutliersLg <-function(nbgn, nbsp, outgn, outsp, outcell, sp = 1){
     system("rose param.output")
     system("phyml -i RoseTree.phy -m JC69 -n 1 -o tlr --quiet > sortie.out")
     ListTreesOut[[i]]= read.tree(file="RoseTree.phy_phyml_tree")
+    system("gedit param.output")
     compteur=compteur+1
     print(compteur)
   }
