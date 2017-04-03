@@ -57,7 +57,7 @@ mat2Dist <-function(matrices, Norm="NONE"){
 }
 
 ##Fonction utilisant le package missMDA afin dimputer des données d'espèces potentiellement manquantes dans les différentes matrices
-impPCA.multi<-function(matrices, ncp = 3, center =FALSE, scale = FALSE) {
+impPCA.multi<-function(matrices, ncp = 3, center =FALSE, scale = FALSE, maxiter = 10000) {
   species = list()
   grandeMatrice=matrix()
   geneNames=list()
@@ -91,7 +91,7 @@ impPCA.multi<-function(matrices, ncp = 3, center =FALSE, scale = FALSE) {
       matrices3[[i]]=as.vector(matrices2[[i]][row,row][upper.tri(matrices2[[i]][row,row])])
     }
     mat = do.call(cbind,matrices3)
-    matIPCA = imputePCA(mat, center =center, scale = scale) ##estimation des données manquantes par ACP itérative
+    matIPCA = imputePCA(mat, center =center, scale = scale, maxiter = maxiter) ##estimation des données manquantes par ACP itérative
     matIPCA <- matIPCA$completeObs
     matricesFT=list()
     for (i in 1:length(matrices2)){
@@ -288,6 +288,7 @@ Phylter <-function(trees, distance="nodal", k=2, thres=0.5, quiet=TRUE, gene.nam
 ##nbsp = nombre d'espèces dans l'arbre / nbgn = nombre d'arbres / outgn = nb d'outlier gènes /outsp = nb d'oulier sp  /outcell = couple outlier gn/sp
 ##sp= 0 -> HGT sur tous les branches / sp = 1 -> HGT que sur les branches extérieures
 SimOutliersHGT <-function(nbgn, nbsp, outgn, outsp, outcell, sp = 0){
+  genes=NULL
   tree<-rtree(nbsp,rooted = TRUE,min=2,max=5)
   write.tree(tree, file = "arbre.tree")
   ListOutGnTree =list()
@@ -346,14 +347,20 @@ SimOutliersHGT <-function(nbgn, nbsp, outgn, outsp, outcell, sp = 0){
   "multiPhylo"->class(ListTreesOut)
   compteur= 0
   for  (i in 1: length(ListOutGnTree)){
-    write.tree(ListOutGnTree[[i]], file = "arbreHGT.tree")
-    system(paste("perl WriteRose.pl -a arbreHGT.tree -p roseParam -l ", nbsp, sep=""))
+    tree<-di2multi(ListOutGnTree[[i]], tol=1e-4)
+    n=length(tree$tip.label)
+    write.tree(tree, file = "arbreHGT.tree")
+    system(paste("perl WriteRose.pl -a arbreHGT.tree -p roseParam -l ", n, sep=""))
     system("rose param.output")
     system("phyml -i RoseTree.phy -m JC69 -n 1 -o tlr --quiet > sortie.out")
     ListTreesOut[[i]]= read.tree(file="RoseTree.phy_phyml_tree")
     compteur=compteur+1
     print(compteur)
   }
+  #RES=NULL
+  #RES$genes=genes
+  #RES$ListTreesOut=ListTreesOut
+  #return(RES)
   return(ListTreesOut)
 }
 
@@ -393,6 +400,7 @@ SimOutliersLg <-function(nbgn, nbsp, outgn, outsp, outcell, sp = 1){
       }
     }
   }
+  else {species = NULL}
   if (outgn !=0){
     samp= sample(1:length(ListOutGnTree),outgn)
     print(paste("outgn",samp,sep=" "))
@@ -401,13 +409,16 @@ SimOutliersLg <-function(nbgn, nbsp, outgn, outsp, outcell, sp = 1){
       ListOutGnTree[[samp[[j]]]] =  BrLGn(ListOutGnTree[[samp[[j]]]], b=length(ListOutGnTree[[samp[[j]]]]$edge))
     }
   }
+  else {genes = NULL}
   if (outcell !=0){## Les outcell ne peuvent pas être sur les espèces ou sur les gènes déjà complete outlier. 
     #Si on veut que ce soit possible d'avoir des outcell sur des gènes ou sp outliers complets, on fixe outcell = 0 et on créé des outcells avec la fonction
-    #HBrLengthOutCell()
-    genespossible = c(1:length(ListOutGnTree))[which(c(1:length(ListOutGnTree))!=genes)]
+    #BrLengthOutCell()
+    if (!is.null(genes)){genespossible = c(1:length(ListOutGnTree))[which(c(1:length(ListOutGnTree))!=genes)]}
+    else{genespossible=c(1:length(ListOutGnTree))}
     samp= sample(genespossible,outcell)
     for (T in 1:outcell){
-      speciespossible = setdiff(ListOutGnTree[[samp[T]]]$tip.label, species)
+      if (!is.null(species)){speciespossible = setdiff(ListOutGnTree[[samp[T]]]$tip.label, species)}
+      else{speciespossible=ListOutGnTree[[samp[T]]]$tip.label}
       lab = sample(speciespossible,1)
       print(paste("outcell =", samp[T],"/", lab[[1]],sep=" "))
       j<-which(ListOutGnTree[[samp[T]]]$tip.label==lab[[1]])
@@ -420,12 +431,13 @@ SimOutliersLg <-function(nbgn, nbsp, outgn, outsp, outcell, sp = 1){
   "multiPhylo"->class(ListTreesOut)
   compteur=0
   for  (i in 1: length(ListOutGnTree)){
-    write.tree(ListOutGnTree[[i]], file = "arbreHGT.tree")
-    system(paste("perl WriteRose.pl -a arbreHGT.tree -p roseParam -l ", nbsp, sep=""))
+    tree<-di2multi(ListOutGnTree[[i]], tol=1e-5)
+    n=length(tree$tip.label)
+    write.tree(tree, file = "arbreHGT.tree")
+    system(paste("perl WriteRose.pl -a arbreHGT.tree -p roseParam -l ", n, sep=""))
     system("rose param.output")
     system("phyml -i RoseTree.phy -m JC69 -n 1 -o tlr --quiet > sortie.out")
     ListTreesOut[[i]]= read.tree(file="RoseTree.phy_phyml_tree")
-    system("gedit param.output")
     compteur=compteur+1
     print(compteur)
   }

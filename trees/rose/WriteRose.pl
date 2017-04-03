@@ -12,7 +12,7 @@ my $length;
 Getopt::Long::Configure ('bundling');
 GetOptions ('a|arbre=s' => \$arbre,
 	    'p|param=s' => \$param,
-	    'l|param=i' => \$length)
+	    'l|length=i' => \$length)
 or die("Error in command line arguments\n");
 
 
