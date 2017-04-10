@@ -1,11 +1,9 @@
-##load required packages
-require(ape)
-require(phangorn)
 
 ###Fonction qui génère une liste d'arbres de nbgn gènes avec nbsp espèces contenant des outliers gènes (outgn) et espèces (outsp) générés par HGT
 ##nbsp = nombre d'espèces dans l'arbre / nbgn = nombre d'arbres / outgn = nb d'outlier gènes /outsp = nb d'oulier sp 
-SimOutliersHGT <-function(nbsp, nbgn, outgn, outsp, sp = NULL){
-    tree<-rtree(nbsp,rooted = FALSE,min=2,max=5)
+##sp= 0 -> HGT sur tous les branche / sp = 1 -> HGT que sur les branches extérieures
+SimOutliersHGT <-function(nbgn, nbsp, outgn, outsp, sp = 0){
+    tree<-rtree(nbsp,rooted = TRUE,min=2,max=5)
     write.tree(tree, file = "arbre.tree")
     ListOutGnTree =list()
     "multiPhylo"->class(ListOutGnTree)
@@ -13,7 +11,7 @@ SimOutliersHGT <-function(nbsp, nbgn, outgn, outsp, sp = NULL){
         ListOutGnTree[[i]]=tree
     }
     if(outsp!=0){
-      if(!is.null(sp)){
+      if(sp==1){
         ## On ne fait des hgt que sur les branches externes (pour pouvoir contrôler le nombre d'espèces outliers)
         samp = sample(tree$tip.label,outsp) 
         print(samp)
@@ -22,9 +20,7 @@ SimOutliersHGT <-function(nbsp, nbgn, outgn, outsp, sp = NULL){
         }
       }
       else{
-        s=1
-        #dans le cas où outspe > 1, on peut prendre plusieurs fois la même branche.
-        #C'est également possible que deux branches différentes choisies comme outliers aient les mêmes espèces déscendantes
+        #C'est possible que deux branches différentes choisies comme outliers aient les mêmes espèces déscendantes
         bra = c(1:nrow(tree$edge))
         br<-sample(bra,outsp)
         for (B in 1:length(br)){
@@ -41,29 +37,22 @@ SimOutliersHGT <-function(nbsp, nbgn, outgn, outsp, sp = NULL){
     ListTreesOut=list()
     "multiPhylo"->class(ListTreesOut)
     for  (i in 1: length(ListOutGnTree)){
-#rose    
       write.tree(ListOutGnTree[[i]], file = "arbreHGT.tree")
       system(paste("perl WriteRose.pl -a arbreHGT.tree -p roseParam -l ", nbsp, sep=""))
       system("rose param.output")
-      #system("phyml -i RoseTree.phy -m JC69 -n 1 -o tlr --quiet")
-      system("phyml -i RoseTree.phy -m JC69 -n 1 -o lr -u arbre.tree --quiet")
+      system("phyml -i RoseTree.phy -m JC69 -n 1 -o tlr --quiet")
+      #system("phyml -i RoseTree.phy -m JC69 -n 1 -o lr -u arbre.tree --quiet")
       ListTreesOut[[i]]= read.tree(file="RoseTree.phy_phyml_tree")
- #seqgen     
-      #system("/home/aurore/Téléchargements/Seq-Gen.v1.3.3/source/seq-gen -mHKY85 -n1 -l100 < arbreHGT.tree > seqtrees.dat")
-      #system("phyml -i seqtrees.dat -n 1 -o lr -u arbre.tree --quiet")
-      #ListTreesOut[[i]]= read.tree(file="seqtrees.dat_phyml_tree")
-      
+      print(dist.topo(ListOutGnTree[[i]],ListTreesOut[[i]]))
     }
-    RES=list()
-    RES$ListTrees = ListOutGnTree
-    RES$ListSim =ListTreesOut
-    return(RES)
+    return(ListTreesOut)
 }
 
 ###Fonction qui génère une liste d'arbres de nbgn gènes avec nbsp espèces contenant des outliers gènes (outgn) et espèces (outsp) générés
 ###en modifiant les longueurs de branches
-#nbsp = nombre d'espèces dans l'arbre / nbgn = nombre d'arbres / outgn = nb d'outliers gènes /outsp = nb d'ouliers sp 
-SimOutliersLg <-function(nbsp, nbgn, outsp, outgn, sp = NULL){
+#nbsp = nombre d'espèces dans l'arbre / nbgn = nombre d'arbres / outgn = nb d'outliers gènes /outsp = nb d'ouliers sp
+##sp= 0 -> HGT sur tous les branche / sp = 1 -> HGT que sur les branches extérieures
+SimOutliersLg <-function(nbgn, nbsp, outgn, outsp, sp = 1){
   tree=rtree(nbsp,rooted = TRUE, min=2,max=5)
   write.tree(tree, file = "arbre.tree")
   ListOutGnTree =list()
@@ -73,7 +62,7 @@ SimOutliersLg <-function(nbsp, nbgn, outsp, outgn, sp = NULL){
   }
   if(outsp!=0){ 
     ## outspe = seulement les branches externes
-    if(!is.null(sp)){
+    if(sp==1){
       samp = sample(tree$tip.label,outsp)
       print(samp)
       for (i in 1:length(samp)){
@@ -93,30 +82,19 @@ SimOutliersLg <-function(nbsp, nbgn, outsp, outgn, sp = NULL){
     }
   }
   if (outgn !=0){
-    ListOutGnTree = BrLengthGn(ListOutGnTree, b=nrow(tree$edge)*10, k=outgn)
+    ListOutGnTree = BrLengthGn(ListOutGnTree, b=nrow(tree$edge), k=outgn)
   }
-  
   ListTreesOut=list()
   "multiPhylo"->class(ListTreesOut)
   for  (i in 1: length(ListOutGnTree)){
-    
     write.tree(ListOutGnTree[[i]], file = "arbreHGT.tree")
-    
     system(paste("perl WriteRose.pl -a arbreHGT.tree -p roseParam -l ", nbsp, sep=""))
     system("rose param.output")
     system("phyml -i RoseTree.phy -m JC69 -n 1 -o tlr --quiet")
     #system("phyml -i RoseTree.phy -m JC69 -n 1 -o lr -u arbre.tree --quiet")
-    ListTreesOut[[i]]= read.tree(file="RoseTree.phy_phyml_tree")
-    
-    #system("/home/aurore/Téléchargements/Seq-Gen.v1.3.3/source/seq-gen -mHKY85 -n1 -l100 < arbreHGT.tree > seqtrees.dat")
-    #system("phyml -i seqtrees.dat -n 1 -o lr -u arbre.tree --quiet")
-    #ListTreesOut[[i]]= read.tree(file="seqtrees.dat_phyml_tree")
-    
+   ListTreesOut[[i]]= read.tree(file="RoseTree.phy_phyml_tree")
   }
-  RES=list()
-  RES$ListTrees = ListOutGnTree
-  RES$ListSim =ListTreesOut
-  return(RES)
+  return(ListTreesOut)
 }
 
 #--------------------------HGT----------------------------------------------------
@@ -165,9 +143,9 @@ HGToutsp <- function(ListTrees, species){ #ne pas laisser species = NULL sinon o
   return(ListTrees2)
 }
 
-## NOUVELLE TENTATIVE. Je ne modifie pas ta fonction pour ne pas trop mettre le bazarre.
-## je propose que la fonction fasse les transferts en fonction d'une espèce ou d'un groupe d'espèces
-## plutôt qu'a partir d'un numéro de branche 
+## Fonction qui effectue un trasfert horizontal d'un endroit de l'arbre à un autre a partir d'une espèce ou d'un groupe d'espèces qu'on lui donne en entrée.
+## Dans le cas où aucune espèce n'est précisée, le moment de la coupure est aléatoire.
+## La branche coupée peut-être rebranché sur n'importe quelle branche entre le temps 0 et le temps de la coupure.
 HGT2 <-  function(Tree, species=NULL){
   nbSpTot = Ntip(Tree)
   distnodes<-dist.nodes(Tree)[,nbSpTot+1] ##on ne le calcule qu'une seule fois et on ne garde que la colonne intéressante (distance à la racine)
@@ -269,9 +247,10 @@ HGT2 <-  function(Tree, species=NULL){
 ##Fonction qui permet de changer la longueur d'une branche donnée dans un arbre donné en multipliant sa longeur par un ratio
 BrLength <- function(Tree, branche = sample(1:nrow(Tree$edge),1), ratio){
   Tree2 = Tree
-  boo=sample(c(0,1),1)
-  if(boo==1){Tree2$edge.length[branche]=Tree$edge.length[branche]+Tree$edge.length[branche]*ratio}
-  else {Tree2$edge.length[branche]=Tree$edge.length[branche]-Tree$edge.length[branche]*ratio}
+  Tree2$edge.length[branche]=Tree$edge.length[branche]*ratio
+  #boo=sample(c(0,1),1)
+  #if(boo==1){Tree2$edge.length[branche]=Tree$edge.length[branche]+Tree$edge.length[branche]*ratio}
+  #else {Tree2$edge.length[branche]=Tree$edge.length[branche]-Tree$edge.length[branche]*ratio}
   return(Tree2)
 }
 
@@ -295,7 +274,7 @@ BrLengthSp <- function(ListTrees, branche){
   ListTrees2=ListTrees
   for (t in 1:length(ListTrees)){
     Tree2 = ListTrees[[t]]
-    ratio = runif(1, 0.1, 0.9)
+    ratio = runif(1, 0.01, 10)
     Tree2 = BrLength(Tree2, branche, ratio)
     ListTrees2[[t]]=Tree2
   }
@@ -307,7 +286,7 @@ BrLGn <- function(Tree, b){
   Tree2=Tree
   for (i in 1:b){
     branche = sample(1:nrow(Tree$edge),1)
-    ratio = runif(1, 0.1, 0.9)
+    ratio = runif(1, 0.01, 10)
     Tree2 = BrLength(Tree2, branche, ratio)
   }
   return(Tree2)

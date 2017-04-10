@@ -12,7 +12,8 @@ my $length;
 Getopt::Long::Configure ('bundling');
 GetOptions ('a|arbre=s' => \$arbre,
 	    'p|param=s' => \$param,
-	    'l|param=s' => \$length);
+	    'l|length=i' => \$length)
+or die("Error in command line arguments\n");
 
 
 open(F2,"$param") or die ("Erreur de creation de F2\n");

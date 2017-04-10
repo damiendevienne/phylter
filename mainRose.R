@@ -1,40 +1,41 @@
-library(DistatisR)
-library(phangorn)
-source("/media/aurore/KINGSTON/stageLBBE/pmcoa.R")
-source("/home/aurore/Documents/Phylter/Fonctions1.R")
-source("/home/aurore/Documents/Phylter/Simulation.R")
+source("/home/aurore/Documents/Phylter/pmcoa.R")
+source("/home/aurore/Documents/Phylter/PhylteR.R")
 
 setwd(dir="/home/aurore/Documents/Phylter/trees/rose/")
 
-#write.tree(rtree(20),"arbreHGT.tree") 
+ListOut = SimOutliersHGT(nbgn = 10, nbsp = 20, outgn=5, outsp = 2, outcell = 0, sp=1)
 
-ListOut = SimOutliersHGT(nbsp = 20, nbgn = 50, outgn= 1, outsp = 1, sp=1)
-RESTree <-Phylter(ListOut$ListTrees, distance="patristic", k=2, thres=0.5, quiet=TRUE)
-RESSim <-Phylter(ListOut$ListSim, distance="patristic", k=2, thres=0.5, quiet=TRUE)
+RES <-Phylter(ListOut, distance="patristic", k=1.5, thres=0.5, quiet=TRUE, Norm="NONE")
+plot.2WR(RES$Complete$mat2WR)
 
-plot.2WR(RESTree$Complete$mat2WR)
-plot.2WR(RESSim$Complete$mat2WR)
-
-RESTree$Complete$outgn
-RESTree$Complete$outsp
-
-RESSim$Complete$outgn
-RESSim$Complete$outsp
-
-
-#plot(read.tree("arbre.tree"))
-#tree=read.tree("arbre.tree")
-#RES <-pMCOA.complete(ListOut, distance="nodal", k=1.5, thres=0.5, quiet=TRUE)
-#plot.2WR(RES$step1$mat2WR)
-
-ListOut2 = SimOutliersLg(nbsp = 10, nbgn = 10, outgn= 1, outsp = 1, sp=1)
-
-RESTree <-Phylter(ListOut2$ListTree, distance="patristic", k=2, thres=0.5, quiet=TRUE)
-RESSim <-Phylter(ListOut2$ListSim, distance="patristic", k=2, thres=0.5, quiet=TRUE)
-
-plot.2WR(RESTree$Complete$mat2WR)
-plot.2WR(RESSim$Complete$mat2WR)
+RESCOA <-pMCOA.complete(ListOut, distance="nodal", k=1.5, thres=0.5, quiet=TRUE)
+plot.2WR(RESCOA$step1$mat2WR)
 
 RES$Complete$outgn
 RES$Complete$outsp
 RES$CellByCell$outcell
+
+
+RESCOA$outcompl$outgn
+RESCOA$outcompl$outsp
+RESCOA$outcell$outcell
+
+##-----------------------------------------------------------------------------------------------------------------
+ListOut2 = SimOutliersLg(nbgn =30, nbsp = 20, outgn=2, outsp = 2, outcell = 1 ,sp=1)
+
+RES <-Phylter(ListOut2, distance="nodal", k=1.5, thres=0.5, quiet=TRUE)
+RESCOA <-pMCOA.complete(ListOut2, distance="nodal", k=1.5, thres=0.5, quiet=TRUE)
+
+plot.2WR(RES$Complete$mat2WR)
+plot.2WR(RESCOA$step1$mat2WR)
+
+RES$Complete$outgn
+RES$Complete$outsp
+RES$CellByCell$outcell
+
+RESCOA$outcompl$outgn
+RESCOA$outcompl$outsp
+RESCOA$outcell$outcell
+
+
+
