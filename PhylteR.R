@@ -4,29 +4,30 @@ require(FactoMineR)
 require(DistatisR)
 require(ape)
 require(phangorn)
+require(adephylo)
 
 ##----trees2matrices.Distatis change un arbre en liste de matrices----
-trees2matrices.Distatis<-function(trees, distance="nodal", gene.names = NULL) {
+trees2matrices.Distatis<-function(trees, distance="nodal") {
   list.trees<-list()  
   for (i in 1:length(trees)) {
     tree<-trees[[i]]
     if (distance=="nodal") {
-      tree.brlen <- compute.brlen(tree, 1)
+      tree.brlen <- distTips(trees[[i]], method="nNodes")
     }
     else if (distance=="patristic") {
-      tree.brlen<-tree
+      tree.brlen<- distTips(trees[[i]],method="patristic")
     }
-    list.trees[[i]]<- tree.brlen
+    list.trees[[i]]<-as.matrix(tree.brlen)
   }
-  TRS<-lapply(list.trees, cophenetic)
-  ###On attribut ici de nom d'un arbre à chaque élément de la liste. (Utile pour la fonction mat2Dist)
-  names(TRS)<-as.list(labels(trees))
-  return(TRS)
+  if (!is.null(names(trees))){
+    names(list.trees) = names(trees)
+  }
+  return(list.trees)
 }
 
 #Permet à l'utilisateur d'ajouter des noms de gènes (sous forme de liste) aux arbres
 rename.genes <-function(trees, gene.names=NULL){
-  if(is.null(gene.names)==FALSE){
+  if(!is.null(gene.names)){
     names(trees)=gene.names
   }
   return(trees)
@@ -72,7 +73,12 @@ impPCA.multi<-function(matrices, ncp = 3, center =FALSE, scale = FALSE, maxiter 
   j=1
   for (i in 1: length(matrices)){
     if (nrow(matrices[[i]])<nrow(grandeMatrice)){
-      geneNames[j]=names(matrices)[[i]]
+      if(!is.null(names(matrices))){
+        geneNames[j]=names(matrices)[[i]]
+      }
+      else{
+        geneNames[j]=i
+      }
       j=j+1
     }
   }
@@ -206,7 +212,7 @@ imputePCA <- function (X, ncp = 2, center= FALSE, scale=FALSE, method=c("Regular
 
 ###----créé la matrice 2WR à partir des résultats de distatis----
 Dist2WR <-function(Distatis){
-  matrixWR2 = matrix(nrow= length(dimnames(Distatis$res4Splus$PartialF)[[1]]) ,ncol=length(dimnames(Distatis$res4Splus$PartialF)[[3]]))
+  matrixWR2 = matrix(nrow= dim(Distatis$res4Splus$PartialF)[[1]] ,ncol=dim(Distatis$res4Splus$PartialF)[[3]])
   colnames(matrixWR2)=dimnames(Distatis$res4Splus$PartialF)[[3]]
   rownames(matrixWR2)=dimnames(Distatis$res4Splus$PartialF)[[1]]
   
@@ -255,9 +261,7 @@ rm.gene.and.species.Distatis<-function(trees, sp2rm, gn2rm) {
 
 ##-------Fonction qui fait tout-----
 Phylter <-function(trees, distance="nodal", k=2, thres=0.5, quiet=TRUE, gene.names=NULL, Norm="NONE"){
-  if (is.null(gene.names)==FALSE){
-    trees=rename.genes(trees, gene.names=gene.names)
-  }
+  trees=rename.genes(trees, gene.names=gene.names)
   RES <- NULL
   matrices <- trees2matrices.Distatis(trees, distance=distance)
   matrices=impPCA.multi(matrices)
@@ -289,7 +293,7 @@ Phylter <-function(trees, distance="nodal", k=2, thres=0.5, quiet=TRUE, gene.nam
 ##sp= 0 -> HGT sur tous les branches / sp = 1 -> HGT que sur les branches extérieures
 SimOutliersHGT <-function(nbgn, nbsp, outgn, outsp, outcell, sp = 0){
   genes=NULL
-  tree<-rtree(nbsp,rooted = TRUE,min=2,max=5)
+  tree<-rtree(nbsp,rooted = TRUE,min=1,max=10)
   write.tree(tree, file = "arbre.tree")
   ListOutGnTree =list()
   "multiPhylo"->class(ListOutGnTree)
@@ -347,7 +351,7 @@ SimOutliersHGT <-function(nbgn, nbsp, outgn, outsp, outcell, sp = 0){
   "multiPhylo"->class(ListTreesOut)
   compteur= 0
   for  (i in 1: length(ListOutGnTree)){
-    tree<-di2multi(ListOutGnTree[[i]], tol=1e-4)
+    tree<-di2multi(ListOutGnTree[[i]], tol=1e-3)
     n=length(tree$tip.label)
     write.tree(tree, file = "arbreHGT.tree")
     system(paste("perl WriteRose.pl -a arbreHGT.tree -p roseParam -l ", n, sep=""))
@@ -361,6 +365,7 @@ SimOutliersHGT <-function(nbgn, nbsp, outgn, outsp, outcell, sp = 0){
   #RES$genes=genes
   #RES$ListTreesOut=ListTreesOut
   #return(RES)
+  #return(ListOutGnTree)
   return(ListTreesOut)
 }
 
@@ -369,7 +374,7 @@ SimOutliersHGT <-function(nbgn, nbsp, outgn, outsp, outcell, sp = 0){
 #nbsp = nombre d'espèces dans l'arbre / nbgn = nombre d'arbres / outgn = nb d'outliers gènes /outsp = nb d'ouliers sp
 ##sp= 0 -> HGT sur tous les branches / sp = 1 -> HGT que sur les branches extérieures
 SimOutliersLg <-function(nbgn, nbsp, outgn, outsp, outcell, sp = 1){
-  tree=rtree(nbsp,rooted = TRUE, min=2,max=5)
+  tree=rtree(nbsp,rooted = TRUE, min=1,max=10)
   write.tree(tree, file = "arbre.tree")
   ListOutGnTree =list()
   "multiPhylo"->class(ListOutGnTree)
@@ -406,7 +411,7 @@ SimOutliersLg <-function(nbgn, nbsp, outgn, outsp, outcell, sp = 1){
     print(paste("outgn",samp,sep=" "))
     genes = samp
     for (j in 1:outgn){
-      ListOutGnTree[[samp[[j]]]] =  BrLGn(ListOutGnTree[[samp[[j]]]], b=length(ListOutGnTree[[samp[[j]]]]$edge))
+      ListOutGnTree[[samp[[j]]]] =  BrLGn(ListOutGnTree[[samp[[j]]]], b=nrow(ListOutGnTree[[samp[[j]]]]$edge))
     }
   }
   else {genes = NULL}
@@ -423,7 +428,7 @@ SimOutliersLg <-function(nbgn, nbsp, outgn, outsp, outcell, sp = 1){
       print(paste("outcell =", samp[T],"/", lab[[1]],sep=" "))
       j<-which(ListOutGnTree[[samp[T]]]$tip.label==lab[[1]])
       l<-which(ListOutGnTree[[samp[T]]]$edge[,2]==j)
-      ratio = runif(1,0.01,10)
+      ratio = runif(1,2,10)
       ListOutGnTree[[samp[T]]] = BrLength(ListOutGnTree[[samp[T]]], l ,ratio)
     }
   }
@@ -431,7 +436,7 @@ SimOutliersLg <-function(nbgn, nbsp, outgn, outsp, outcell, sp = 1){
   "multiPhylo"->class(ListTreesOut)
   compteur=0
   for  (i in 1: length(ListOutGnTree)){
-    tree<-di2multi(ListOutGnTree[[i]], tol=1e-5)
+    tree<-di2multi(ListOutGnTree[[i]], tol=1e-3)
     n=length(tree$tip.label)
     write.tree(tree, file = "arbreHGT.tree")
     system(paste("perl WriteRose.pl -a arbreHGT.tree -p roseParam -l ", n, sep=""))
@@ -618,7 +623,7 @@ BrLengthSp <- function(ListTrees, branche){
   ListTrees2=ListTrees
   for (t in 1:length(ListTrees)){
     Tree2 = ListTrees[[t]]
-    ratio = runif(1, 0.01, 10)
+    ratio = runif(1, 1.5, 3)
     Tree2 = BrLength(Tree2, branche, ratio)
     ListTrees2[[t]]=Tree2
   }
@@ -628,10 +633,10 @@ BrLengthSp <- function(ListTrees, branche){
 ##Fonction qui permet de changer aléatoirement la longueur d'un certain nombre (b) de branches d'un arbre -> outgn
 BrLGn <- function(Tree, b){
   Tree2=Tree
+  branche = sample(1:nrow(Tree$edge),b)
   for (i in 1:b){
-    branche = sample(1:nrow(Tree$edge),1)
-    ratio = runif(1, 0.1, 3)
-    Tree2 = BrLength(Tree2, branche, ratio)
+    ratio = runif(1, 1.5, 3)
+    Tree2 = BrLength(Tree2, branche[[i]], ratio)
   }
   return(Tree2)
 }
