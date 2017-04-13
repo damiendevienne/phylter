@@ -30,6 +30,11 @@ rename.genes <-function(trees, gene.names=NULL){
   if(!is.null(gene.names)){
     names(trees)=gene.names
   }
+  else{
+    if(is.null(names(trees))){
+      names(trees) = as.character(c(1:length(trees)))
+    }
+  }
   return(trees)
 }
 
@@ -291,10 +296,10 @@ Phylter <-function(trees, distance="nodal", k=2, thres=0.5, quiet=TRUE, gene.nam
 ###Fonction qui génère une liste d'arbres de nbgn gènes avec nbsp espèces contenant des outliers gènes (outgn) et espèces (outsp) générés par HGT
 ##nbsp = nombre d'espèces dans l'arbre / nbgn = nombre d'arbres / outgn = nb d'outlier gènes /outsp = nb d'oulier sp  /outcell = couple outlier gn/sp
 ##sp= 0 -> HGT sur tous les branches / sp = 1 -> HGT que sur les branches extérieures
-SimOutliersHGT <-function(nbgn, nbsp, outgn, outsp, outcell, sp = 0){
+SimOutliersHGT <-function(tree, nbgn, nbsp, outgn, outsp, outcell, sp = 0){
   genes=NULL
-  tree<-rtree(nbsp,rooted = TRUE,min=1,max=10)
-  write.tree(tree, file = "arbre.tree")
+  #tree<-rtree(nbsp,rooted = TRUE,min=1,max=10)
+  #write.tree(tree, file = "arbre.tree")
   ListOutGnTree =list()
   "multiPhylo"->class(ListOutGnTree)
   for (i in 1:nbgn){ # n fois le même arbre qui va evoluer différement
