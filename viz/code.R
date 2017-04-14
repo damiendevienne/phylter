@@ -3,8 +3,8 @@ require(phangorn)
 require(ade4)
 require(scales)
 
-#t<-read.tree("/home/aurore/Documents/Phylter/viz/Aguileta-et-al-2008_TREES.txt")
-t=read.tree("/home/aurore/Documents/Phylter/trees/rose/test.phy")
+t<-read.tree("/home/aurore/Documents/Phylter/viz/Aguileta-et-al-2008_TREES.txt")
+#t=read.tree("/home/aurore/Documents/Phylter/trees/rose/test.phy")
 tc<-lapply(t, getClans)
 ## we remove clades with only one 0 or one 1
 tc<-lapply(tc, function(x) x[(apply(x,1,sum)!=1)&(apply(x,1,sum)!=(ncol(x)-1)),])
@@ -48,8 +48,8 @@ for (i in 1:length(TCf)) {
 
 
 ###OTHER approach: one circle per species and per gene
-#tr<-read.tree("/home/aurore/Documents/Phylter/viz/Aguileta-et-al-2008_TREES.txt")
-tr=read.tree("/home/aurore/Documents/Phylter/trees/rose/test.phy")
+tr<-read.tree("/home/aurore/Documents/Phylter/viz/Aguileta-et-al-2008_TREES.txt")
+#tr=read.tree("/home/aurore/Documents/Phylter/trees/rose/test.phy")
 tr<-lapply(tr, compute.brlen, 1)
 TAB<-lapply(tr, cophenetic)
 nam<-tr[[1]]$tip.label
@@ -84,7 +84,7 @@ for (j in 1:length(nam)) { ##for each species
     GENEi<-NULL
     plot(4*xc,4*yc,type="n", xlim=c(-4,4), ylim=c(-4,4), frame.plot=FALSE, axes=FALSE, xlab="", ylab="")
     text(4*xc,4*yc,labels=nam, col="light grey")
-    for (i in 1:6) {
+    for (i in 1:length(tr)) {
         genei<-T1m[i,]/Means.T1m
         ##NEW! 
 #        genei<-1+abs(1-genei)
@@ -108,7 +108,7 @@ for (j in 1:length(nam)) { ##for each species
 par(mfrow=c(10,10))
 par(mar=c(0,0,0,0))
 par(oma=c(0,0,0,0))
-for (i in 1:6) { ##25 first genes
+for (i in 1:100) { ##25 first genes
     plot(x,y,type="n", xlim=c(-4,4), ylim=c(-4,4), frame.plot=FALSE, axes=FALSE, xlab="", ylab="")
     for (j in 1:length(nam)) { ##for each speciew
         SP<-nam[j]
@@ -131,15 +131,12 @@ for (i in 1:6) { ##25 first genes
     }
 }
 
-
-
-
 ##BY SPECIES AGAIN
 for (j in 1:21) {
      SP<-nam[j]
      T1<-lapply(TAB, function(x,y) (x[SP,nam]))
      T1m<-matrix(unlist(T1), nrow=length(tr), byrow=TRUE)
-    for (i in 1:246) {
+    for (i in 1:20) {
         ii<-apply(T1m, 1, function(x) cor.test(x, T1m[i,])$estimate)
     }
 }

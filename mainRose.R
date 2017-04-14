@@ -3,14 +3,16 @@ source("/home/aurore/Documents/Phylter/PhylteR.R")
 
 setwd(dir="/home/aurore/Documents/Phylter/trees/rose/")
 
-nbgn = 10
-nbsp = 10
+nbgn = 5
+nbsp = 20
 outgn=0
-outsp = 1
+outsp = 0
 outcell = 0
 sp=1
+tree= rtree(nbsp, min=5, max=10, rooted=TRUE)
 
-ListOut = SimOutliersHGT(nbgn, nbsp, outgn, outsp, outcell, sp)
+ListOut = SimOutliersHGT(tree, nbgn, outgn, outsp, outcell, sp)
+
 write.tree(ListOut,file="test.phy")
 
 mat = trees2matrices.Distatis(ListOut, distance = "patristic")
