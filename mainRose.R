@@ -3,6 +3,18 @@ source("/home/aurore/Documents/Phylter/PhylteR.R")
 
 setwd(dir="/home/aurore/Documents/Phylter/trees/rose/")
 
+trees = read.tree("/home/aurore/Documents/Phylter/viz/Aguileta-et-al-2008_TREES.txt", keep.multi = TRUE)
+
+RES = Phylter(trees,distance = "patristic", k=2)
+RES$Complete$outgn
+RES$Complete$outsp
+RES$CellByCell$outcell
+
+RES2 = pMCOA.complete(trees,distance = "patristic", k=2)
+RES2$outcompl$outgn
+RES2$outcompl$outsp
+RES2$outcell$outcell
+
 nbgn = 5
 nbsp = 20
 outgn=0

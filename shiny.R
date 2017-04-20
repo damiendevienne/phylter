@@ -1,12 +1,13 @@
 library(shiny)
 library(shinythemes)
+library(ape)
 #library(plotrix)
 
-source("/home/aurore/Documents/Phylter/pmcoa.R")
-source("/home/aurore/Documents/Phylter/PhylteR.R")
+#source("/home/aurore/Documents/Phylter/pmcoa.R")
+#source("/home/aurore/Documents/Phylter/PhylteR.R")
 
-#source("F:/stageLBBE/Phylter-R/pmcoa.R")
-#source("F:/stageLBBE/Phylter-R/PhylteR.R")
+source("G:/stageLBBE/Phylter-R/pmcoa.R")
+source("G:/stageLBBE/Phylter-R/PhylteR.R")
 
 #trees = read.tree("/home/aurore/Documents/Phylter/viz/Aguileta-et-al-2008_TREES.txt", keep.multi = TRUE)
 #trees=read.tree(file="/home/aurore/Documents/Phylter/trees/rose/test.phy", keep.multi = TRUE)
@@ -25,21 +26,27 @@ ui<-fluidPage(
         sliderInput(inputId="k", label = "select k", value = 3, min=1, max=6,round=FALSE,step=0.1)
         ),
       wellPanel(
-        titlePanel("Visualisation"),
-        actionButton(inputId="WR",label = "WR"),
+        textAreaInput(inputId="Treeslist",label = "Enter some genes"),
+        actionButton(inputId="SumitTrees",label="Visualize")
+      ),
+      wellPanel(
         actionButton(inputId="species",label = "SpeciesByGenes"),
+        selectInput(inputId = "selectSpecies",label = "see a particular specie","")
+      ),
+      wellPanel(
         actionButton(inputId="species2",label = "Species"),
         actionButton(inputId="genesG",label = "Genes"),
+        textAreaInput(inputId="Geneslist",label = "Enter some genes"),
         actionButton(inputId="genes2",label = "Genes2"),
         actionButton(inputId="genesCortrees",label = "Genes Clusters"),
-        selectInput(inputId = "selectSpecies",label = "see a particular specie","")
+        actionButton(inputId="WR",label = "WR")
       )
     ),
     mainPanel(
-      textOutput(outputId= "outputPhylter1"),
-      textOutput(outputId= "outputPhylter2"),
-      textOutput(outputId= "outputPhylter3"),
-      plotOutput(outputId = "plot1", height = "1000px",dblclick = "BackClick")
+          textOutput(outputId= "outputPhylter1"),
+          textOutput(outputId= "outputPhylter2"),
+          textOutput(outputId= "outputPhylter3"),
+          plotOutput(outputId = "plot1", height = "1000px",dblclick = "BackClick")
     )
   )
 )
@@ -70,11 +77,15 @@ server <-function(input,output,session){
     mat2Dist(mat)
   })
   
+  TreesList <- reactive({
+    input$Treeslist
+  })
+  
   WR <- reactive({
     Dist2WR(dist())
   })
   trees <- reactive({
-    read.tree(input$trees$datapath, keep.multi = TRUE)
+    trees = read.tree(input$trees$datapath, keep.multi = TRUE)
   })
   
 ###########-----------------------------------
@@ -256,17 +267,22 @@ server <-function(input,output,session){
       
     })
   })
-  observeEvent(input$Species2, { 
+  observeEvent(input$species2, { 
     output$plot1 <- renderPlot({
       trees = trees()
+      trees<-lapply(trees, compute.brlen, 1)
+      TAB<-lapply(trees, cophenetic)
+      nam<-trees[[1]]$tip.label
+      TAB<-lapply(TAB, function(x,y) x[y,y],y=nam)
+      
       nam = trees[[1]]$tip.label
-      par(mfrow=c(5,5))
+      par(mfrow=c(ceiling(length(trees[[1]]$tip.label)/5),5))
       par(mar=c(0,0,0,0))
       par(oma=c(0,0,0,0))
       for (j in 1:length(nam)) { ##for each species
         SP<-nam[j]
         T1<-lapply(TAB, function(x) (x[SP,nam]))
-        T1m<-matrix(unlist(T1), nrow=length(tr), byrow=TRUE)
+        T1m<-matrix(unlist(T1), nrow=length(trees), byrow=TRUE)
         ##T1m gives 1 plot corresponding to "Kla" for each gene.
         Means.T1m<-apply(T1m, 2, mean)
     
@@ -285,7 +301,7 @@ server <-function(input,output,session){
         GENEi<-NULL
         plot(4*xc,4*yc,type="n", xlim=c(-4,4), ylim=c(-4,4), frame.plot=FALSE, axes=FALSE, xlab="", ylab="")
         text(4*xc,4*yc,labels=nam, col="light grey")
-        for (i in 1:length(tr)) {
+        for (i in 1:length(trees)) {
           genei<-T1m[i,]/Means.T1m
       ##NEW! 
            #        genei<-1+abs(1-genei)
@@ -303,7 +319,90 @@ server <-function(input,output,session){
       }
     })
   })
+  observeEvent(input$genes2, { 
+    output$plot1 <- renderPlot({
+      trees = trees()
+      trees<-lapply(trees, compute.brlen, 1)
+      TAB<-lapply(trees, cophenetic)
+      nam<-trees[[1]]$tip.label
+      TAB<-lapply(TAB, function(x,y) x[y,y],y=nam)
+      
+      for (j in 1:length(nam)) { ##for each species
+        SP<-nam[j]
+        T1<-lapply(TAB, function(x) (x[SP,nam]))
+        T1m<-matrix(unlist(T1), nrow=length(trees), byrow=TRUE)
+        ##T1m gives 1 plot corresponding to "Kla" for each gene.
+        Means.T1m<-apply(T1m, 2, mean)
+        
+        ##CIRCLE:
+        xc<-rep(1,length(nam)+1)*cos(seq(0,2*pi,length.out=length(nam)+1))
+        yc<-rep(1,length(nam)+1)*sin(seq(0,2*pi,length.out=length(nam)+1))
+        ##we check angles
+        alphas<-seq(0,2*pi,length.out=length(nam)+1)
+        alphas<-alphas[1:length(nam)]
+        
+        xc<-xc[1:length(nam)]
+        yc<-yc[1:length(nam)]
+        alphas<-alphas[1:length(nam)]
+        ##for each gene, the ray is given by the proportion:
+        
+        GENEi<-NULL
+        for (i in 1:length(trees)) {
+          genei<-T1m[i,]/Means.T1m
+          genei[is.na(genei)]<-1
+          GENEi<-c(GENEi, genei)
+          x<-genei*cos(alphas)
+          y<-genei*sin(alphas)
+          x[is.na(x)]<-0
+          y[is.na(y)]<-0
+        }
+      }
+      par(mfrow=c(5,3))
+      par(mar=c(1,1,1,1))
+      par(oma=c(1,1,1,1))
+      for (i in 1:15) { ##50 first genes
+        plot(x,y,type="n", xlim=c(-4,4), ylim=c(-4,4), frame.plot=FALSE, axes=FALSE, xlab="", ylab="", main=i)
+        for (j in 1:length(nam)) { ##for each speciew
+          SP<-nam[j]
+          T1<-lapply(TAB, function(x,y) (x[SP,nam]))
+          T1m<-matrix(unlist(T1), nrow=length(trees), byrow=TRUE)
+          ##T1m gives 1 plot corresponding to "Kla" for each gene.
+          Means.T1m<-apply(T1m, 2, mean)
+          genei<-T1m[i,]/Means.T1m
+          ##        genei<-1+abs(1-genei)
+          
+          x<-genei*cos(alphas)
+          y<-genei*sin(alphas)
+          x[is.na(x)]<-0
+          y[is.na(y)]<-0
+          ##    plot(x,y,type="n", xlim=c(-2,2), ylim=c(-2,2), frame.plot=FALSE, axes=FALSE, xlab="", ylab="")
+          polygon(xc,yc, border="light grey", lwd=0.5)
+          points(x,y,pch=19, cex=0.2, col="red")
+          polygon(x,y,border="red", lwd=0.1)
+          #        text(-2.5,-2.5,paste("gene",i,sep=" "),cex=1)
+        }
+      }
+    })  
+  })
+  observeEvent(input$SumitTrees,{
+    Trees=trees()
+    if (is.null(names(Trees))){
+      names(Trees) = as.character(c(1:length(Trees)))
+    }
+    List = TreesList()
+     S = strsplit(List, ",")
+     S = S[[1]]
+       output$plot1 <- renderPlot({
+        if (length(S)==1){par(mfrow = c(1,1))}
+        if (length(S)>=2 && length(S)<=8){par(mfrow = c(ceiling(length(S)/2),2))}
+        if (length(S)>8 && length(S)<=30){par(mfrow = c(ceiling(length(S)/5),5))}
+        if (length(S)>30){par(mfrow = c(ceiling(length(S)/8),8))}
+         par(mar = c(0,0,0,0))
+        for (i in 1:length(S)){
+          ape::plot.phylo(Trees[[S[i]]])
+        }
+     })
+  })
 }
-
 
 shinyApp(ui=ui,server =server)

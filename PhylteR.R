@@ -296,11 +296,11 @@ Phylter <-function(trees, distance="nodal", k=2, thres=0.5, quiet=TRUE, gene.nam
 ###Fonction qui génère une liste d'arbres de nbgn gènes avec nbsp espèces contenant des outliers gènes (outgn) et espèces (outsp) générés par HGT
 ##nbsp = nombre d'espèces dans l'arbre / nbgn = nombre d'arbres / outgn = nb d'outlier gènes /outsp = nb d'oulier sp  /outcell = couple outlier gn/sp
 ##sp= 0 -> HGT sur tous les branches / sp = 1 -> HGT que sur les branches extérieures
-SimOutliersHGT <-function(tree, nbgn, outgn, outsp, outcell, sp = 0){
+SimOutliersHGT <-function(i_plan,tree, nbgn, outgn, outsp, outcell, sp = 0){
   genes=NULL
   nbsp = length(tree$tip.label)
   #tree<-rtree(nbsp,rooted = TRUE,min=1,max=10)
-  #write.tree(tree, file = "arbre.tree")
+  write.tree(tree, file = "arbre.tree")
   ListOutGnTree =list()
   "multiPhylo"->class(ListOutGnTree)
   for (i in 1:nbgn){ # n fois le même arbre qui va evoluer différement
@@ -324,7 +324,7 @@ SimOutliersHGT <-function(tree, nbgn, outgn, outsp, outcell, sp = 0){
         bran<-tree$edge[br[B],2]
         samp<-tree$tip.label[Descendants(tree, bran, "tips")[[1]]]
         print(paste("outsp",samp,sep=" "))
-        system(paste("echo", paste("outsp",samp,sep=" "), ">>log", sep=" "))
+        system(paste("echo", paste("outsp",samp,sep=" "), ">>log_",i_plan, sep=" "))
         species = samp
         ListOutGnTree = HGToutsp(ListOutGnTree,samp)
       }
@@ -334,7 +334,7 @@ SimOutliersHGT <-function(tree, nbgn, outgn, outsp, outcell, sp = 0){
   if (outgn !=0){
     samp = sample(1:length(ListOutGnTree),outgn)
     print(paste("outgn",samp,sep=" "))
-    system(paste("echo", paste("outgn",samp,sep=" "), ">>log", sep=" "))
+    system(paste("echo", paste("outgn",samp,sep=" "), ">>log_",i_plan,sep=" "))
     genes = samp
     for (j in 1:length(samp)){
       ListOutGnTree[[samp[j]]] =  HGT1gn(ListOutGnTree[[samp[j]]], n=length(ListOutGnTree[[samp[j]]]$edge))
@@ -352,7 +352,7 @@ SimOutliersHGT <-function(tree, nbgn, outgn, outsp, outcell, sp = 0){
       else{speciespossible=ListOutGnTree[[samp[i]]]$tip.label}
       lab = sample(speciespossible,1)
       print(paste("outcell =", samp[i],"/", lab[[1]],sep=" "))
-      system(paste("echo", paste("outcell =", samp[i],"/", lab[[1]],sep=" "), ">>log", sep=" "))
+      system(paste("echo", paste("outcell =", samp[i],"/", lab[[1]],sep=" "), ">>log_" ,i_plan, sep=" "))
       ListOutGnTree[[samp[i]]] = HGT2(ListOutGnTree[[samp[i]]],lab[[1]])
     }
   }
@@ -366,6 +366,7 @@ SimOutliersHGT <-function(tree, nbgn, outgn, outsp, outcell, sp = 0){
     system(paste("perl WriteRose.pl -a arbreHGT.tree -p roseParam -l ", n, sep=""))
     system("rose param.output")
     system("phyml -i RoseTree.phy -m JC69 -n 1 -o tlr --quiet > sortie.out")
+    #system("phyml -i RoseTree.phy -m JC69 -n 1 -o lr -u arbreHGT.tree --quiet > sortie.out")
     ListTreesOut[[i]]= read.tree(file="RoseTree.phy_phyml_tree")
     #compteur=compteur+1
     #print(compteur)
