@@ -28,7 +28,7 @@ ui<-fluidPage(
         plotOutput(outputId = "plot1", height = "1000px")
       )
     ),
-    tabPanel("visualize genes by species",
+    tabPanel("visualize species on distatis compromise",
       column(3, offset = 0,
         selectInput(inputId = "selectSpecies",label = "see a particular specie","all")
        ),
@@ -48,12 +48,17 @@ ui<-fluidPage(
       plotOutput(outputId = "plot4", height = "1000px")
     ),
     tabPanel("visualize genes clusters",
+      helpText("Clusterization of genes. Y axe is the correlation between genes"),
       plotOutput(outputId = "plot5", height = "1000px")
     ),
     tabPanel("visualize distances between species",
+      helpText("Grey circles is the mean of distance between species for a particular species. Red circles are genes. 
+               For a given gene, the distance between the specie of interest and an other one is given by the shape of the red line: 
+               an acute angle mean an important distance between two species"),
       plotOutput(outputId = "plot6", height = "1000px")
     ),
     tabPanel("visualize distances between genes",
+      helpText(""),
       selectInput(inputId="Geneslist",label = "Select Genes",""),
       plotOutput(outputId = "plot7", height = "1000px")
     )
