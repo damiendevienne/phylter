@@ -232,13 +232,7 @@ server <-function(input,output,session){
           ##for each gene, the ray is given by the proportion:
           GENEi<-NULL
           plot(4*xc,4*yc,type="n", xlim=c(-4,4), ylim=c(-4,4), frame.plot=FALSE, axes=FALSE, xlab="", ylab="")
-          if (SP%in%sp){
-            colo = "red"
-          }
-          else{
-            colo= "black"
-          }
-          text(4*xc,4*yc,labels=nam, col="light grey", col = colo)
+          text(4*xc,4*yc,labels=nam, col="light grey")
           for (i in 1:length(trees)) {
             genei<-T1m[i,]/Means.T1m
             genei[is.na(genei)]<-1
@@ -249,7 +243,13 @@ server <-function(input,output,session){
             y[is.na(y)]<-0
             polygon(xc,yc, border="light grey", lwd=0.54)
             polygon(x,y,border="red", lwd=0.8)
-            text(-3.5,-3.5,SP,cex=2)
+            if (SP%in%sp){
+              colo = "red"
+            }
+            else{
+              colo= "black"
+            }
+            text(-3.5,-3.5,SP,cex=2, col = colo)
           }
         }
       })
