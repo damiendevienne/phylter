@@ -230,6 +230,39 @@ Dist2WR <-function(Distatis){
   return(matrixWR2)
 }
 
+##Fonction
+plot2WR <- function(matrixWR2){
+  WR<-normalize(matrixWR2)
+  names = list()
+  names[[1]]="gene"
+  names[[2]]="specie"
+  names[[3]]="value"
+  MAT = matrix(nrow = length(WR), ncol =3)
+  colnames(MAT)=names
+  k=1
+  for (i in 1:nrow(WR)){ #espèces
+    for (j in 1:ncol(WR)){ #gènes
+      MAT[k,2] = rownames(WR)[i]
+      MAT[k,1] = colnames(WR)[j]
+      MAT[k,3] = WR[i,j]
+      k=k+1
+    }
+  }
+  MAT = as.data.frame(MAT)
+  genes=as.character(MAT$gene)
+  species=as.character(MAT$specie)
+  distanceToRef=as.numeric(as.character(MAT$value))
+  
+  pl = ggplot(MAT, aes(genes,species, z=distanceToRef))
+  pl = pl + geom_tile(aes(fill = distanceToRef)) + theme_bw() + scale_fill_gradient(low="white", high="blue") 
+  pl = pl + theme(axis.text.x = element_text(angle = 90, hjust = 1, size=13,color="black"))
+  pl = pl + theme(axis.text.y = element_text(angle = 00, hjust = 1, size=13,color="black"))
+  pl = pl + theme(axis.title.y = element_text(size = rel(1.8), angle = 90))
+  pl = pl + theme(axis.title.x = element_text(size = rel(1.8), angle = 00))
+  #pl + coord_fixed(ratio=1/5)
+  return(pl)
+}
+
 ###-----Suppression des complete outiers dans les arbres du départ pour ensuite faire la détection des cell outliers-----
 #Fonction modifiée à partir de celle de pMCOA
 rm.gene.and.species.Distatis<-function(trees, sp2rm, gn2rm) {
