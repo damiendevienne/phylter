@@ -68,7 +68,7 @@ SimOutliersHGT <-function(tree, nbgn, outgn, outsp, outcell, sp = 0){
   "multiPhylo"->class(ListTreesOut)
   #compteur= 0
   for  (i in 1: length(ListOutGnTree)){
-    tree<-di2multi(ListOutGnTree[[i]], tol=1e-3)
+    tree<-di2multi(ListOutGnTree[[i]], tol=1e-2)
     n=length(tree$tip.label)
     write.tree(tree, file = "arbreHGT.tree")
     system(paste("perl WriteRose.pl -a arbreHGT.tree -p roseParam -l ", n, sep=""))

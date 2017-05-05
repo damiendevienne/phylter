@@ -17,7 +17,7 @@ server <-function(input,output,session){
     if(is.null(names(trees))){
       names(trees)=as.character(c(1:length(trees)))
     }
-    Phylter(trees, distance = input$choice, k=input$k, thres = 0.5)
+    PhylteR(trees, distance = input$choice, k=input$k, thres = 0.5)
   })
 
   dist <- reactive({
@@ -25,7 +25,7 @@ server <-function(input,output,session){
     if(is.null(names(trees))){
       names(trees)=as.character(c(1:length(trees)))
     }
-    mat <- trees2matrices.Distatis(trees, input$choice)
+    mat <- trees2mat(trees, input$choice)
     mat2Dist(mat)
   })
   choice <- reactive({
@@ -34,7 +34,7 @@ server <-function(input,output,session){
   TreesList <- reactive({
     input$Treeslist
   })
-  
+
   WR <- reactive({
     Dist2WR(dist())
   })
@@ -42,9 +42,9 @@ server <-function(input,output,session){
     trees = read.tree(input$trees$datapath, keep.multi = TRUE)
   })
   ranges <- reactiveValues(x = NULL, y = NULL)
-  
+
 ###########-----------------------------------
-  
+
   #quand on ajoute un arbre
   observeEvent(input$trees, {
     trees = trees()
@@ -87,7 +87,7 @@ server <-function(input,output,session){
         }
       })
     })
-    
+
     ##Update Genetrees
     n=names(trees)
     c=1
@@ -107,7 +107,7 @@ server <-function(input,output,session){
     observe({
       updateSelectInput(session, "Geneslist", choices = Partition)
     })
-    
+
     observeEvent(outliers(), {
       ##event = DETECTION OUTLIER ON
       if (outliers()== "on"){
@@ -120,7 +120,7 @@ server <-function(input,output,session){
             "no outlier gene detected"
           }
         })
-        output$outputPhylter2 <- renderText ({  
+        output$outputPhylter2 <- renderText ({
           if(length(RES()$Complete$outsp)!=0){
             sp=paste(RES()$Complete$outsp, ";")
             append (sp, "outlier species: ", after=0)
@@ -128,8 +128,8 @@ server <-function(input,output,session){
         else{
           "no outlier specie detected"
         }
-      }) 
-      output$outputPhylter3 <- renderText ({  
+      })
+      output$outputPhylter3 <- renderText ({
         if(!is.null(RES()$CellByCell$outcell)){
           ce = paste(RES()$CellByCell$outcell[,1],RES()$CellByCell$outcell[,2], ";")
           append (ce, "outlier gène/species: ", after=0)
@@ -167,7 +167,7 @@ server <-function(input,output,session){
       output$plot7 <- renderPlot({
         Geneslist = input$Geneslist
         Geneslist = strsplit(Geneslist, "-")
-        TAB<-trees2matrices.Distatis(trees, distance=choice())
+        TAB<-trees2mat(trees, distance=choice())
         nam<-trees[[1]]$tip.label
         #TAB<-lapply(TAB, function(x,y) x[y,y],y=nam)
         par(mfrow=c(5,4))
@@ -208,7 +208,7 @@ server <-function(input,output,session){
       ##Distance by species
       output$plot6 <- renderPlot({
         sp=paste(RES()$Complete$outsp)
-        TAB<-trees2matrices.Distatis(trees, distance=choice())
+        TAB<-trees2mat(trees, distance=choice())
         nam<-trees[[1]]$tip.label
         #TAB<-lapply(TAB, function(x,y) x[y,y],y=nam)
         par(mfrow=c(ceiling(length(trees[[1]]$tip.label)/5),5))
@@ -254,7 +254,7 @@ server <-function(input,output,session){
         }
       })
     }
-      
+
       #################################################################################################event = DETECTION OUTLIER OFF
     else{
       output$outputPhylter1 <- renderText ({
@@ -266,7 +266,7 @@ server <-function(input,output,session){
       output$outputPhylter3 <- renderText ({
         ""
       })
-     
+
       output$plot3 <- renderPlot({
         participant.colors = "grey50"
         plot(G, col = participant.colors, cex = 3.5)
@@ -274,7 +274,7 @@ server <-function(input,output,session){
       })
       ##Distance by species
       output$plot6 <- renderPlot({
-        TAB<-trees2matrices.Distatis(trees, distance=choice())
+        TAB<-trees2mat(trees, distance=choice())
         nam<-trees[[1]]$tip.label
         #TAB<-lapply(TAB, function(x,y) x[y,y],y=nam)
         par(mfrow=c(ceiling(length(trees[[1]]$tip.label)/5),5))
@@ -317,7 +317,7 @@ server <-function(input,output,session){
       output$plot7 <- renderPlot({
         Geneslist = input$Geneslist
         Geneslist = strsplit(Geneslist, "-")
-        TAB<-trees2matrices.Distatis(trees, distance=choice())
+        TAB<-trees2mat(trees, distance=choice())
         nam<-trees[[1]]$tip.label
         #TAB<-lapply(TAB, function(x,y) x[y,y],y=nam)
         par(mfrow=c(5,4))
@@ -347,7 +347,7 @@ server <-function(input,output,session){
             polygon(x,y,border="red", lwd=0.1)
           }
         }
-      })  
+      })
     }
   })
   ##Species
@@ -369,7 +369,7 @@ server <-function(input,output,session){
           center.rep <- matrix(center.point, dim(PF)[3], 2, byrow = TRUE)
           bound.mat <- rbind(center.rep, to.plot[, c(1, 2)])
           bound.mat <- bound.mat[as.vector(t(matrix(seq(1, nrow(bound.mat)), ncol = 2))), ]
-          plot(to.plot, main = dimnames(PF)[[1]][sp], cex.main= 1.5, col = participant.colors, cex=3.2)
+          plot(to.plot, main = dimnames(PF)[[1]][sp], cex.main= 1.5, col = participant.colors, cex=3.2, xlim = range(t(PF[, 1, ])), ylim = range(t(PF[, 2, ])))
           points(bound.mat, type = "l", lty = 1, lwd = 1, col = "grey70")
           text(to.plot, labels = rownames(t(PF[sp, , ])))
         }
@@ -388,7 +388,7 @@ server <-function(input,output,session){
         text(FS, rownames(FS))
       })
     }
-    if(S != "mean" && S != "all"){ 
+    if(S != "mean" && S != "all"){
       output$plot2 <- renderPlot({
         part.design <- diag(dim(PF)[3])
         participant.colors <- as.matrix(createColorVectorsByDesign(part.design)$oc)
@@ -423,7 +423,7 @@ server <-function(input,output,session){
       if (!is.null(brush)) {
         ranges$x <- c(brush$xmin, brush$xmax)
         ranges$y <- c(brush$ymin, brush$ymax)
-        
+
       } else {
         ranges$x <- NULL
         ranges$y <- NULL

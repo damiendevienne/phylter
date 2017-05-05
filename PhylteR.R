@@ -5,8 +5,8 @@ require(ape)
 require(phangorn)
 require(adephylo)
 
-# trees2matrices changes a list of trees in a list of matrices
-trees2matrices <- function(trees, distance = "nodal") {
+# trees2mat changes a list of trees in a list of matrices
+trees2mat <- function(trees, distance = "nodal") {
   list.trees <- list()
   for (i in 1:length(trees)) {
     tree <- trees[[i]]
@@ -291,24 +291,26 @@ rm.gene.and.species.Distatis <- function(trees, sp2rm, gn2rm) {
 }
 
 # Phylter Function to detect complete and cell outliers from a list of trees
-PhylteR <- function(trees, distance = "nodal", k = 2, thres = 0.5, quiet = TRUE, gene.names = NULL, Norm = "NONE") {
+PhylteR <- function(trees, distance = "nodal", k = 1.5, thres = 0.5, quiet = TRUE, gene.names = NULL, Norm = "NONE") {
   trees <- rename.genes(trees, gene.names = gene.names)
   RES <- NULL
-  matrices <- trees2matrices(trees, distance=distance)
+  matrices <- trees2mat(trees, distance=distance)
   matrices <- impPCA.multi(matrices)
   Dist <- mat2Dist(matrices, Norm = Norm)
   WR <- Dist2WR(Dist)
   CompOutl <- detect.complete.outliers(WR, k = k, thres = thres)
   if (length(CompOutl$outsp) > 0 || length(CompOutl$outgn) > 0) {
     TREESwithoutCompleteOutlierDist <- rm.gene.and.species.Distatis(trees, CompOutl$outsp, CompOutl$outgn)
-    matrices2 <- trees2matrices(TREESwithoutCompleteOutlierDist, distance = distance)
+    matrices2 <- trees2mat(TREESwithoutCompleteOutlierDist, distance = distance)
     matrices2 <- impPCA.multi(matrices2)
     Dist2 <- mat2Dist(matrices2, Norm = Norm)
     WR2 <- Dist2WR(Dist2)
     CellOutl2 <- detect.cell.outliers(WR2, k = k + 2, quiet = quiet)
+    RES$WR = WR
     RES$Complete <- CompOutl
     RES$CellByCell <- CellOutl2
   } else {
+    RES$WR = WR
     CellOutl2 <- detect.cell.outliers(WR,  k = k + 2, quiet = quiet)
     RES$Complete <- CompOutl
     RES$CellByCell <- CellOutl2
@@ -345,7 +347,7 @@ detect.complete.outliers <- function(mat2WR, k = 1.5, thres = 0.5) {
   out.genes <- names(score.genes)[score.genes > thres]
   out.species <- names(score.species)[score.species > thres]
   RES <- NULL
-  RES$mat2WR <- mat2WR
+  #RES$mat2WR <- mat2WR
   #RES$thres <- thres
   #RES$allgn <- names(score.genes)
   #RES$allsp <- names(score.species)
