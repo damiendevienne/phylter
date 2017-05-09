@@ -1,5 +1,5 @@
 # load required packages
-#require(missMDA)
+require(missMDA)
 require(DistatisR)
 require(ape)
 require(phangorn)
@@ -77,7 +77,7 @@ impPCA.multi <- function(matrices, ncp = 3, center = FALSE, scale = FALSE, maxit
   # Create a list of matrices names with missing data
   dimMat<-unlist(lapply(matrices, nrow))
   geneNames<-names(which(dimMat<nbsp))
-  matrice2 = list()
+  matrices2 = matrices
   if (length(geneNames) != 0) {
     # For each matrix with missing data, we fill the GrandeMatrice
     for (i in 1:length(geneNames)) {
