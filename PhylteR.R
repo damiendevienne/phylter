@@ -7,16 +7,21 @@ require(adephylo)
 
 # trees2mat changes a list of trees in a list of matrices
 trees2mat <- function(trees, distance = "nodal") {
-  list.trees <- list()
-  for (i in 1:length(trees)) {
-    tree <- trees[[i]]
-    if (distance == "nodal") {
-      tree.brlen <- distTips(trees[[i]], method = "nNodes")
+  correction <- function(mat){
+    for (i in 1: nrow(mat)){
+      for (j in 1:ncol(mat)){
+        if (i != j) {mat[i,j] <- mat[i,j]-1}
+      }
     }
-    else if (distance == "patristic") {
-      tree.brlen <- distTips(trees[[i]], method = "patristic")
-    }
-    list.trees[[i]] <- as.matrix(tree.brlen)
+    return(mat)
+  }
+  if (distance == "nodal") {
+    trees <- lapply(trees,compute.brlen,1)
+    list.trees <- lapply(trees, cophenetic)
+    list.trees <- lapply(list.trees,correction)
+  }
+  else if (distance == "patristic") {
+    list.trees <- lapply(trees, cophenetic)
   }
   if (!is.null(names(trees))) {
     names(list.trees) <- names(trees)
@@ -62,28 +67,17 @@ mat2Dist <- function(matrices, Norm = "NONE") {
 
 # Imputing missing data in matrices with missMDA package
 impPCA.multi <- function(matrices, ncp = 3, center = FALSE, scale = FALSE, maxiter = 10000) {
-  species <- list()
-  grandeMatrice <- matrix()
   geneNames <- list()
   # Create a matrix with every species to fill : GrandeMatrice
-  for (i in 1:length(matrices)) {
-    species <- c(species, setdiff(rownames(matrices[[i]]), species))
-  }
-  grandeMatrice=matrix(nrow = length(species), ncol = length(species))
+  species<-unique(unlist(lapply(matrices, rownames)))
+  nbsp<-length(species) #ca évite de le recalculer plein de fois.
+  grandeMatrice=matrix(nrow = length(species), ncol = nbsp)
   rownames(grandeMatrice) = species
   colnames(grandeMatrice) = species
   # Create a list of matrices names with missing data
-  j <- 1
-  for (i in 1:length(matrices)) {
-    if (nrow(matrices[[i]]) < nrow(grandeMatrice)) {
-      if(!is.null(names(matrices))) {
-        geneNames[j] <- names(matrices)[[i]]
-      } else {
-        geneNames[j] <- i
-      }
-      j <- j + 1
-    }
-  }
+  dimMat<-unlist(lapply(matrices, nrow))
+  geneNames<-names(which(dimMat<nbsp))
+  matrice2 = list()
   if (length(geneNames) != 0) {
     # For each matrix with missing data, we fill the GrandeMatrice
     for (i in 1:length(geneNames)) {
