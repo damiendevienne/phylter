@@ -1,5 +1,5 @@
 # load required packages
-require(missMDA)
+require(FactoMineR)
 require(DistatisR)
 require(ape)
 require(phangorn)
