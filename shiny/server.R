@@ -77,15 +77,18 @@ server <-function(input,output,session){
       S = strsplit(List, ",")
       S = S[[1]]
       output$plot1 <- renderPlot({
+        withProgress(message = 'Making plot', value = 0, {
         if (length(S)==1){par(mfrow = c(1,1))}
         if (length(S)>=2 && length(S)<=8){par(mfrow = c(ceiling(length(S)/2),2))}
         if (length(S)>8 && length(S)<=30){par(mfrow = c(ceiling(length(S)/5),5))}
         if (length(S)>30){par(mfrow = c(ceiling(length(S)/8),8))}
         par(mar = c(0,0,0,0))
         for (i in 1:length(S)){
+          incProgress(1/length(S))
           ape::plot.phylo(trees[[S[i]]])
         }
       })
+    })
     })
 
     ##Update Genetrees
@@ -149,8 +152,10 @@ server <-function(input,output,session){
         }
       }
       output$plot3 <- renderPlot({
+        withProgress(message = 'Making plot', value = 0, {
         gn=paste(RES()$Complete$outgn)
         participant.colors <- rownames(G)
+        incProgress(1)
         if (length(RES()$Complete$outgn)!=0){
           for (j in 1:length(gn)){
             participant.colors[which(participant.colors==gn[j])] = "red1"
@@ -162,9 +167,11 @@ server <-function(input,output,session){
         }
         plot(G, col = participant.colors, cex = 3.5)
         text(G, labels = rownames(G))
+        })
       })
       ##Distance by genes
       output$plot7 <- renderPlot({
+        withProgress(message = 'Making plot', value = 0, {
         Geneslist = input$Geneslist
         Geneslist = strsplit(Geneslist, "-")
         TAB<-trees2mat(trees, distance=choice())
@@ -176,6 +183,7 @@ server <-function(input,output,session){
         i1 = as.integer(Geneslist[[1]][1])
         i2 = as.integer(Geneslist[[1]][2])
         for (i in i1:i2) {
+          incProgress(1/length(Geneslist))
           gn=paste(RES()$Complete$outgn)
           if (i%in%gn){
             colo = "red"
@@ -204,9 +212,11 @@ server <-function(input,output,session){
             polygon(x,y,border="red", lwd=0.1)
           }
         }
+        
       })
       ##Distance by species
       output$plot6 <- renderPlot({
+        withProgress(message = 'Making plot', value = 0, {
         sp=paste(RES()$Complete$outsp)
         TAB<-trees2mat(trees, distance=choice())
         nam<-trees[[1]]$tip.label
@@ -215,6 +225,7 @@ server <-function(input,output,session){
         par(mar=c(0,0,0,0))
         par(oma=c(0,0,0,0))
         for (j in 1:length(nam)) { ##for each species
+          incProgress(1/length(nam))
           SP<-nam[j]
           T1<-lapply(TAB, function(x) (x[SP,nam]))
           T1m<-matrix(unlist(T1), nrow=length(trees), byrow=TRUE)
@@ -252,6 +263,8 @@ server <-function(input,output,session){
             text(-3.5,-3.5,SP,cex=2, col = colo)
           }
         }
+        })
+      })
       })
     }
 
@@ -268,12 +281,16 @@ server <-function(input,output,session){
       })
 
       output$plot3 <- renderPlot({
+        withProgress(message = 'Making plot', value = 0, {
+        incProgress(1)
         participant.colors = "grey50"
         plot(G, col = participant.colors, cex = 3.5)
         text(G, labels = rownames(G))
+        })
       })
       ##Distance by species
       output$plot6 <- renderPlot({
+        withProgress(message = 'Making plot', value = 0, {
         TAB<-trees2mat(trees, distance=choice())
         nam<-trees[[1]]$tip.label
         #TAB<-lapply(TAB, function(x,y) x[y,y],y=nam)
@@ -281,6 +298,7 @@ server <-function(input,output,session){
         par(mar=c(0,0,0,0))
         par(oma=c(0,0,0,0))
         for (j in 1:length(nam)) { ##for each species
+          incProgress(1/length(nam))
           SP<-nam[j]
           T1<-lapply(TAB, function(x) (x[SP,nam]))
           T1m<-matrix(unlist(T1), nrow=length(trees), byrow=TRUE)
@@ -312,9 +330,11 @@ server <-function(input,output,session){
             text(-3.5,-3.5,SP,cex=2)
           }
         }
+        })
       })
       ##Distance by genes
       output$plot7 <- renderPlot({
+        withProgress(message = 'Making plot', value = 0, {
         Geneslist = input$Geneslist
         Geneslist = strsplit(Geneslist, "-")
         TAB<-trees2mat(trees, distance=choice())
@@ -326,6 +346,7 @@ server <-function(input,output,session){
         i1 = as.integer(Geneslist[[1]][1])
         i2 = as.integer(Geneslist[[1]][2])
         for (i in i1:i2) {
+          incProgress(1/length(Geneslist))
           plot(0,0,type="n", xlim=c(-4,4), ylim=c(-4,4), frame.plot=FALSE, axes=FALSE, xlab="", ylab="", main=i, col.main="black", cex.main = 1.5)
           for (j in 1:length(nam)) { ##for each speciew
             SP<-nam[j]
@@ -347,6 +368,7 @@ server <-function(input,output,session){
             polygon(x,y,border="red", lwd=0.1)
           }
         }
+        })
       })
     }
   })
@@ -359,11 +381,13 @@ server <-function(input,output,session){
     S=input$selectSpecies
     if (S == "all"){
       output$plot2 <- renderPlot({
+        withProgress(message = 'Making plot', value = 0, {
         par(mfrow=c(ceiling(length(trees[[1]]$tip.label)/4),4))
         par(mar=c(2,2,2,2))
         part.design <- diag(dim(PF)[3])
         participant.colors <- as.matrix(createColorVectorsByDesign(part.design)$oc)
         for (sp in 1:length(trees[[1]]$tip.label)){
+          incProgress(1/length(trees[[1]]$tip.label))
           to.plot <- t(PF[sp, , ])
           center.point <- FS[sp, c(1, 2)]
           center.rep <- matrix(center.point, dim(PF)[3], 2, byrow = TRUE)
@@ -373,10 +397,13 @@ server <-function(input,output,session){
           points(bound.mat, type = "l", lty = 1, lwd = 1, col = "grey70")
           text(to.plot, labels = rownames(t(PF[sp, , ])))
         }
+        })
       })
     }
     if(S == "mean"){
       output$plot2 <- renderPlot({
+        withProgress(message = 'Making plot', value = 0, {
+        incProgress(1)
         item.design <- diag(dim(FS)[1])
         item.colors <- as.matrix(createColorVectorsByDesign(item.design)$oc)
         real.minimum <- min(FS)
@@ -386,10 +413,13 @@ server <-function(input,output,session){
         axis(1, pos=0,lwd.ticks=0.5)
         axis(2, pos=0,lwd.ticks=0.5)
         text(FS, rownames(FS))
+        })
       })
     }
     if(S != "mean" && S != "all"){
       output$plot2 <- renderPlot({
+        withProgress(message = 'Making plot', value = 0, {
+        incProgress(1)
         part.design <- diag(dim(PF)[3])
         participant.colors <- as.matrix(createColorVectorsByDesign(part.design)$oc)
         to.plot <- t(PF[S, , ])
@@ -400,6 +430,7 @@ server <-function(input,output,session){
         plot(to.plot, main = dimnames(PF)[[1]][S], cex.main= 1.5, col = participant.colors, cex=3.2)
         points(bound.mat, type = "l", lty = 1, lwd = 1, col = "grey70")
         text(to.plot, labels = rownames(t(PF[S, , ])))
+        })
       })
     }
   })
@@ -409,14 +440,19 @@ server <-function(input,output,session){
 
   ##Gene clusters
     output$plot5 <- renderPlot({
-      plot(hclust(as.dist(C)))
+      withProgress(message = 'Making plot', value = 0, {
+        incProgress(1)
+      plot(hclust(as.dist(C)), main ="",xlab="",sub="",ylab="correlation between genes")
+      })
     })
   ##WR
     output$plot4 <- renderPlot({
+      withProgress(message = 'Making plot', value = 0, {
+      incProgress(1)
       WR<-WR()
       pl = plot2WR(WR)
       pl + coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE)
-      #pl + coord_fixed(ratio=1/5)
+      })
     })
     observeEvent(input$plot4dbclick, {
       brush <- input$plot4_brush

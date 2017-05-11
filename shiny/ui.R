@@ -48,20 +48,20 @@ ui<-fluidPage(
       plotOutput(outputId = "plot4", height = "1000px", dblclick="plot4dbclick", brush = brushOpts(id = "plot4_brush",resetOnNew = TRUE))
     ),
     tabPanel("visualize genes clusters",
-      helpText("Clusterization of genes. Y axe is the correlation between genes"),
+      helpText("Clusterization of genes."),
       plotOutput(outputId = "plot5", height = "1000px")
     ),
     tabPanel("visualize distances between species",
       helpText("Grey circles are the mean of distance between species for a particular species. Red circles are genes.
                For a given gene, the distance between the specie of interest and an other one is given by the shape of the red line:
                an acute angle mean an important distance between two species"),
-      plotOutput(outputId = "plot6", height = "1000px")
+      plotOutput(outputId = "plot6", height = "1500px")
     ),
     tabPanel("visualize distances between genes",
       helpText("For a given gene, each red line correspond to a species and each point on the red line correspond to
                the distance between this specie and the other species? Grey circle is the mean distance between species for this given gene."),
       selectInput(inputId="Geneslist",label = "Select Genes",""),
-      plotOutput(outputId = "plot7", height = "1000px")
+      plotOutput(outputId = "plot7", height = "1500px")
     )
   )
 )
