@@ -1,3 +1,5 @@
+
+
 ui<-fluidPage(
   theme = shinytheme("united"),
   wellPanel(
@@ -18,6 +20,22 @@ ui<-fluidPage(
     )
   ),
   navbarPage("PhylteR",
+    tabPanel("Welcome",
+      column(10, offset = 1,
+        helpText(
+          HTML("<h2 align='center'>Welcome on the PhylteR application online!</h2>
+          <h4 align='center'>Here you can visualize and detect outliers in a list of gene trees.</h4>
+          <hr style='height: 2px; color: #FF4000; background-color: #FF4000; width: 50%; border: none;'>
+          <p align='center'>First of all, you must add a tree file in Newick format.</p> 
+          <p align='center'>Then, If you want to detect outliers, you should turn on the Detection button and then choose the parameters you want:</p> 
+          <p align='center'> - <u>nodal and patristic</u> are methods to calculate the distances between species.</p>
+          <p align='center'> - <u>k</u> is a threshold of the outlier detection. The bigger, the more stringent the detection is. </p>
+             <hr style='height: 2px; color: #FF4000; background-color: #FF4000; width: 50%; border: none;'>
+            <p align='center'>You can then visualize your data by clicking on the several tabs! </p>")
+          
+          )
+      )
+    ),
     tabPanel("visualize some trees",
       column(3, offset = 0,
         textAreaInput(inputId="Treeslist",label = "Enter some genes"),
@@ -31,15 +49,14 @@ ui<-fluidPage(
     tabPanel("visualize species on distatis compromise",
       column(3, offset = 0,
         selectInput(inputId = "selectSpecies",label = "see a particular specie","all")
-       ),
-       mainPanel(
-         helpText("Projection of the cross product of each gene matrice onto the compromise space of the distatis method"),
-         plotOutput(outputId = "plot2", height = "1000px",dblclick = "BackClick2")
+      ),
+      mainPanel(
+        helpText("Projection of the cross product of each gene matrice onto the compromise space of the distatis method. The center of each cloud is the mean position of a specie in the compromise. Each circle is the position of this specie in a particular gene. The line between the center of the cloud and a circle is the distance between the reference position of the specie and its true position in a particular gene."),
+        plotOutput(outputId = "plot2", height = "1000px",dblclick = "BackClick2")
       )
     ),
     tabPanel("visualize genes",
-      helpText("Plot of the between genes space. Genes with larger projections on the first axe are more similar to the other genes
-               than genes with smaller projections"),
+      helpText("Plot of the between genes space. Each circles are genes. Genes with larger projections on the first axe are more similar to the other genes than genes with smaller projections."),
       plotOutput(outputId = "plot3", height = "1000px")
     ),
     tabPanel("visualize 2WR matrices",
@@ -65,3 +82,4 @@ ui<-fluidPage(
     )
   )
 )
+
