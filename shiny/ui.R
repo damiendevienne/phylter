@@ -1,6 +1,19 @@
-
-
 ui<-fluidPage(
+  
+  tags$head(tags$script("
+        window.onload = function() {
+            $('#PhylteR a:contains(\"visualize some trees\")').parent().addClass('disabled');
+            $('#PhylteR a:contains(\"visualize species on distatis compromise\")').parent().addClass('disabled');
+            $('#PhylteR a:contains(\"visualize genes\")').parent().addClass('disabled');
+            $('#PhylteR a:contains(\"visualize 2WR matrices\")').parent().addClass('disabled');
+            $('#PhylteR a:contains(\"visualize distances \")').parent().addClass('disabled');
+        };
+        Shiny.addCustomMessageHandler('activeNavs', function(nav_label) {
+            $('#PhylteR a:contains(\"' + nav_label + '\")').parent().removeClass('disabled');
+        });
+   ")),
+  
+  
   theme = shinytheme("united"),
   wellPanel(
     fluidRow(
@@ -19,23 +32,23 @@ ui<-fluidPage(
       textOutput(outputId= "outputPhylter3")
     )
   ),
-  navbarPage("PhylteR",
+  navbarPage("PhylteR", id="PhylteR",selected = "Welcome",
     tabPanel("Welcome",
       column(10, offset = 1,
         helpText(
           HTML("<h2 align='center'>Welcome on the PhylteR application online!</h2>
-          <h4 align='center'>Here you can visualize and detect outliers in a list of gene trees.</h4>
-          <hr style='height: 2px; color: #FF4000; background-color: #FF4000; width: 50%; border: none;'>
-          <p align='center'>First of all, you must add a tree file in Newick format.</p> 
-          <p align='center'>Then, If you want to detect outliers, you should turn on the Detection button and then choose the parameters you want:</p> 
-          <p align='center'> - <u>nodal and patristic</u> are methods to calculate the distances between species.</p>
-          <p align='center'> - <u>k</u> is a threshold of the outlier detection. The bigger, the more stringent the detection is. </p>
-             <hr style='height: 2px; color: #FF4000; background-color: #FF4000; width: 50%; border: none;'>
+            <h4 align='center'>Here you can visualize and detect outliers in a list of gene trees.</h4>
+            <hr style='height: 2px; color: #FF4000; background-color: #FF4000; width: 50%; border: none;'>
+            <p align='center'>First of all, you must add a tree file in Newick format.</p> 
+            <p align='center'>Then, If you want to detect outliers, you should turn on the Detection button and then choose the parameters you want:</p> 
+            <p align='center'> - <u>nodal and patristic</u> are methods to calculate the distances between species.</p>
+            <p align='center'> - <u>k</u> is a threshold of the outlier detection. The bigger, the more stringent the detection is. </p>
+            <hr style='height: 2px; color: #FF4000; background-color: #FF4000; width: 50%; border: none;'>
             <p align='center'>You can then visualize your data by clicking on the several tabs! </p>")
           
           )
-      )
-    ),
+        )
+        ),
     tabPanel("visualize some trees",
       column(3, offset = 0,
         textAreaInput(inputId="Treeslist",label = "Enter some genes"),
@@ -80,6 +93,5 @@ ui<-fluidPage(
       selectInput(inputId="Geneslist",label = "Select Genes",""),
       plotOutput(outputId = "plot7", height = "1500px")
     )
-  )
-)
-
+        )
+        )

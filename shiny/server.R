@@ -47,6 +47,13 @@ server <-function(input,output,session){
 
   #quand on ajoute un arbre
   observeEvent(input$trees, {
+
+    session$sendCustomMessage('activeNavs', 'visualize some trees')
+    session$sendCustomMessage('activeNavs', 'visualize species on distatis compromise')
+    session$sendCustomMessage('activeNavs', 'visualize genes')
+    session$sendCustomMessage('activeNavs', 'visualize distances')
+    session$sendCustomMessage('activeNavs', 'visualize 2WR')
+    
     trees = trees()
     if(is.null(names(trees))){
       names(trees)=as.character(c(1:length(trees)))
@@ -94,14 +101,14 @@ server <-function(input,output,session){
     ##Update Genetrees
     n=names(trees)
     c=1
-    l1 = 20
+    l1 = 50
     Partition = list()
     while (l1 < length(n)){
       p=n[l1]
       k=paste(c, "-", p, sep="")
       Partition = append(Partition, k)
-      l1 =l1+20
-      c=c+20
+      l1 =l1+50
+      c=c+50
     }
     if (l1 >= length(n)){
       k=paste(c, "-", length(n), sep="")
@@ -177,8 +184,8 @@ server <-function(input,output,session){
         TAB<-trees2mat(trees, distance=choice())
         nam<-trees[[1]]$tip.label
         #TAB<-lapply(TAB, function(x,y) x[y,y],y=nam)
-        par(mfrow=c(5,4))
-        par(mar=c(1,1,1,1))
+        par(mfrow=c(5,10))
+        par(mar=c(0,0,1,0))
         par(oma=c(0,0,0,0))
         i1 = as.integer(Geneslist[[1]][1])
         i2 = as.integer(Geneslist[[1]][2])
@@ -222,7 +229,7 @@ server <-function(input,output,session){
         nam<-trees[[1]]$tip.label
         #TAB<-lapply(TAB, function(x,y) x[y,y],y=nam)
         par(mfrow=c(ceiling(length(trees[[1]]$tip.label)/5),5))
-        par(mar=c(0,0,0,0))
+        par(mar=c(0,0,1,0))
         par(oma=c(0,0,0,0))
         for (j in 1:length(nam)) { ##for each species
           incProgress(1/length(nam))
@@ -295,7 +302,7 @@ server <-function(input,output,session){
         nam<-trees[[1]]$tip.label
         #TAB<-lapply(TAB, function(x,y) x[y,y],y=nam)
         par(mfrow=c(ceiling(length(trees[[1]]$tip.label)/5),5))
-        par(mar=c(0,0,0,0))
+        par(mar=c(0,0,1,0))
         par(oma=c(0,0,0,0))
         for (j in 1:length(nam)) { ##for each species
           incProgress(1/length(nam))
@@ -340,8 +347,8 @@ server <-function(input,output,session){
         TAB<-trees2mat(trees, distance=choice())
         nam<-trees[[1]]$tip.label
         #TAB<-lapply(TAB, function(x,y) x[y,y],y=nam)
-        par(mfrow=c(5,4))
-        par(mar=c(1,1,1,1))
+        par(mfrow=c(5,10))
+        par(mar=c(0,0,1,0))
         par(oma=c(0,0,0,0))
         i1 = as.integer(Geneslist[[1]][1])
         i2 = as.integer(Geneslist[[1]][2])
