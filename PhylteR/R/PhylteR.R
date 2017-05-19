@@ -1,26 +1,7 @@
-require(shiny)
-require(shinythemes)
-require(ape)
-require(shinyBS)
-require(stringr)
-require(ggplot2)
-require(shinydashboard)
+# trees2matrices changes a list of trees into a list of matrices
 
-require(FactoMineR)
-require(DistatisR)
-require(ape)
-require(phangorn)
-
-# trees2mat changes a list of trees in a list of matrices
-trees2mat <- function(trees, distance = "nodal") {
-  correction <- function(mat){
-    for (i in 1: nrow(mat)){
-      for (j in 1:ncol(mat)){
-        if (i != j) {mat[i,j] <- mat[i,j]-1}
-      }
-    }
-    return(mat)
-  }
+#' @return return a list of distance matrices
+trees2matrices <- function(trees, distance = "patristic") {
   if (distance == "nodal") {
     trees <- lapply(trees,compute.brlen,1)
     list.trees <- lapply(trees, cophenetic)
@@ -35,8 +16,8 @@ trees2mat <- function(trees, distance = "nodal") {
   return(list.trees)
 }
 
-# this function permits the user to add gene names (as list) to the trees.
-# If no names is given, genes are numeroted from 1 to the number of genes.
+# this function permits the user to add gene names (as list) to the trees. If no names is given, genes are numeroted from 1 to the number of genes.
+
 rename.genes <- function(trees, gene.names = NULL) {
   if(!is.null(gene.names)) {
     names(trees) <- gene.names
@@ -48,9 +29,8 @@ rename.genes <- function(trees, gene.names = NULL) {
   return(trees)
 }
 
-# mat2Dist applique distatis sur une liste de matrices de distance
-# Norm = "none" if we dont want to normalize data. It permits to detect branch lengths variations in entire genes.
-# Norm = "mfa" to normalize data
+# mat2Dist applies distatis on a list of distance matrices
+
 mat2Dist <- function(matrices, Norm = "NONE") {
   # transform the list of matrices to a cube
   row <- rownames(matrices[[1]])
@@ -72,6 +52,7 @@ mat2Dist <- function(matrices, Norm = "NONE") {
 }
 
 # Imputing missing data in matrices with missMDA package
+
 impPCA.multi <- function(matrices, ncp = 3, center = FALSE, scale = FALSE, maxiter = 10000) {
   geneNames <- list()
   # Create a matrix with every species to fill : GrandeMatrice
@@ -118,8 +99,9 @@ impPCA.multi <- function(matrices, ncp = 3, center = FALSE, scale = FALSE, maxit
   return(matrices)
 }
 
-# ImputePCA function from imputePCA package but with the possibility to not center the data. And with no negative values possibly imputed.
-imputePCA <- function (X, ncp = 2, center = FALSE, scale = FALSE, method = c("Regularized", "EM"), row.w = NULL, coeff.ridge = 1, threshold = 1e-6, seed = NULL,nb.init = 1, maxiter = 1000, ...) {
+# imputePCA2 function from missMDA package but with the possibility to not center the data. And with no negative values possibly imputed.
+
+imputePCA2 <- function (X, ncp = 2, center = FALSE, scale = FALSE, method = c("Regularized", "EM"), row.w = NULL, coeff.ridge = 1, threshold = 1e-6, seed = NULL,nb.init = 1, maxiter = 1000, ...) {
   impute <- function (X, ncp = 4, center = FALSE, scale = FALSE, method = NULL, threshold = 1e-6,seed = NULL, init = 1, maxiter = 1000, row.w = NULL, coeff.ridge = 1, ...) {
     moy.p <- function(V, poids) {
       res <- sum(V * poids, na.rm = TRUE) / sum(poids[!is.na(V)])
@@ -132,7 +114,7 @@ imputePCA <- function (X, ncp = 2, center = FALSE, scale = FALSE, method = c("Re
     objective <- 0
     if (!is.null(seed)) {
       set.seed(seed)
-    }
+      }
     X <- as.matrix(X)
     ncp <- min(ncp, ncol(X), nrow(X) - 1)
     missing <- which(is.na(X))
@@ -187,7 +169,7 @@ imputePCA <- function (X, ncp = 2, center = FALSE, scale = FALSE, method = c("Re
     completeObs[missing] <- Xhat[missing]
     if (scale) fittedX <- t(t(fittedX) * et)
     fittedX <- t(t(fittedX) + mean.p)
-    
+
     result <- list()
     result$completeObs <- completeObs
     result$fittedX <- fittedX
@@ -211,11 +193,12 @@ imputePCA <- function (X, ncp = 2, center = FALSE, scale = FALSE, method = c("Re
 }
 
 # create 2WR matrix from distatis results
+
 Dist2WR <- function(Distatis) {
   matrixWR2 <- matrix(nrow = dim(Distatis$res4Splus$PartialF)[[1]], ncol = dim(Distatis$res4Splus$PartialF)[[3]])
   colnames(matrixWR2) <- dimnames(Distatis$res4Splus$PartialF)[[3]]
   rownames(matrixWR2) <- dimnames(Distatis$res4Splus$PartialF)[[1]]
-  
+
   for (i in 1:length(dimnames(Distatis$res4Splus$PartialF)[[3]])){
     for (j in 1:length(dimnames(Distatis$res4Splus$PartialF)[[1]])){
       x <- (Distatis$res4Splus$PartialF[dimnames(Distatis$res4Splus$PartialF)[[1]][j], , dimnames(Distatis$res4Splus$PartialF)[[3]][i]] - Distatis$res4Splus$F[dimnames(Distatis$res4Splus$PartialF)[[1]][j], ]) ^ 2
@@ -226,7 +209,8 @@ Dist2WR <- function(Distatis) {
 }
 
 # Fonction to plot 2WR matrix
-plot2WR <- function(matrixWR2) {
+
+ plot2WR <- function(matrixWR2) {
   WR <- normalize(matrixWR2)
   names <- list()
   names[[1]] <- "gene"
@@ -247,7 +231,7 @@ plot2WR <- function(matrixWR2) {
   genes <- as.character(MAT$gene)
   species <- as.character(MAT$specie)
   distanceToRef <- as.numeric(as.character(MAT$value))
-  
+
   pl <- ggplot(MAT, aes(genes, species, z = distanceToRef))
   pl <- pl + geom_tile(aes(fill = distanceToRef)) + theme_bw() + scale_fill_gradient(low = "white", high = "blue")
   pl <- pl + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 13, color = "black"))
@@ -258,9 +242,10 @@ plot2WR <- function(matrixWR2) {
   return(pl)
 }
 
-# Suppress complete outiers in trees in order to detect cell outliers in a second time.
-# Fonction from phylo_mcoa slitly modified to fit our method.
-rm.gene.and.species.Distatis <- function(trees, sp2rm, gn2rm) {
+# Suppress complete outiers (species or genes) in trees in order to detect cell outliers in a second time.
+# Fonction from phylo_MCOA slitly modified to fit our method.
+
+rm.gene.and.species <- function(trees, sp2rm, gn2rm) {
   gene.names <- list()
   for (i in 1:length(labels(trees))) {
     gene.names[i] <- labels(trees)[i]
@@ -282,53 +267,53 @@ rm.gene.and.species.Distatis <- function(trees, sp2rm, gn2rm) {
         trees2[[j]] <- trees[[i]]
       }
     }
-    ##On conserve l'identifiant de chaque gène dans l'arbre de sortie.
     names(trees2) <- genes2keep
-  } else {  ##Si gn2rm=0, on peut quand même enlever les espèces complete outlier
+  } else {
     trees2 <- trees
   }
   return(trees2)
 }
 
 # Phylter Function to detect complete and cell outliers from a list of trees
-PhylteR <- function(trees, distance = "nodal", k = 1.5, thres = 0.5, quiet = TRUE, gene.names = NULL, Norm = "NONE") {
+
+PhylteR <- function(trees, distance = "patristic", k = 1.5, thres = 0.5, gene.names = NULL, Norm = "NONE") {
   trees <- rename.genes(trees, gene.names = gene.names)
   RES <- NULL
-  matrices <- trees2mat(trees, distance=distance)
+  matrices <- trees2matrices(trees, distance=distance)
   matrices <- impPCA.multi(matrices)
   Dist <- mat2Dist(matrices, Norm = Norm)
   WR <- Dist2WR(Dist)
   CompOutl <- detect.complete.outliers(WR, k = k, thres = thres)
   if (length(CompOutl$outsp) > 0 || length(CompOutl$outgn) > 0) {
-    TREESwithoutCompleteOutlierDist <- rm.gene.and.species.Distatis(trees, CompOutl$outsp, CompOutl$outgn)
-    matrices2 <- trees2mat(TREESwithoutCompleteOutlierDist, distance = distance)
+    TREESwithoutCompleteOutlierDist <- rm.gene.and.species(trees, CompOutl$outsp, CompOutl$outgn)
+    matrices2 <- trees2matrices(TREESwithoutCompleteOutlierDist, distance = distance)
     matrices2 <- impPCA.multi(matrices2)
     Dist2 <- mat2Dist(matrices2, Norm = Norm)
     WR2 <- Dist2WR(Dist2)
-    CellOutl2 <- detect.cell.outliers(WR2, k = k + 2, quiet = quiet)
-    RES$WR = WR
+    CellOutl2 <- detect.cell.outliers(WR2, k = k + 2)
     RES$Complete <- CompOutl
     RES$CellByCell <- CellOutl2
   } else {
-    RES$WR = WR
-    CellOutl2 <- detect.cell.outliers(WR,  k = k + 2, quiet = quiet)
+    CellOutl2 <- detect.cell.outliers(WR,  k = k + 2)
     RES$Complete <- CompOutl
     RES$CellByCell <- CellOutl2
   }
   return(RES)
 }
 
+#This function normalizes the 2WR matrix (or any matrix) according to the species (rows) or to the genes (columns).
+
 normalize <- function(mat, what = "none") {
   if (what == "species") mat <- apply(mat, 2, function(x) {x / mean(x)})
   else if (what == "genes") mat <- t(apply(mat, 1, function(x) {x / mean(x)}))
   else if (what == "none") {
     mat <- mat
-    cat("The matric is unchanged.\n")
+    #cat("The matric is unchanged.\n")
   } else print ("WARNING! Error in the kind of scaling you want! No scaling applied.")
   return(mat)
 }
 
-# Detection of outlier from phylo-mcoa
+# Detection of complete outliers from phylo-mcoa
 detect.complete.outliers <- function(mat2WR, k = 1.5, thres = 0.5) {
   outl.sub <- function(x, k) {
     return(x > quantile(x)[4] + k * IQR(x) + 1e-10)
@@ -347,7 +332,7 @@ detect.complete.outliers <- function(mat2WR, k = 1.5, thres = 0.5) {
   out.genes <- names(score.genes)[score.genes > thres]
   out.species <- names(score.species)[score.species > thres]
   RES <- NULL
-  #RES$mat2WR <- mat2WR
+  RES$mat2WR <- mat2WR
   #RES$thres <- thres
   #RES$allgn <- names(score.genes)
   #RES$allsp <- names(score.species)
@@ -359,15 +344,10 @@ detect.complete.outliers <- function(mat2WR, k = 1.5, thres = 0.5) {
   RES$outsp <- out.species
   return(RES)
 }
-detect.cell.outliers <- function(mat2WR, k = 3, quiet = FALSE) {
+
+# Function to detect cell outliers (species and genes)
+detect.cell.outliers <- function(mat2WR, k = 3) {
   ans <- "y"
-  if (quiet == FALSE) {
-    cat("        \nYou are about to do the Cell-by-cell detection of outliers.\n")
-    cat("THIS SHOULD BE DONE ON A 2WR MATRIX COMING FROM A DATASET WITHOUT COMPLETE OUTLIERS.\n")
-    cat(" Please use the function \"detec.complete.outliers()\" prior to do this analysis.\n\n")
-    cat("Do you want to continue ? (y/n)\n")
-    ans <- scan(what = "character", n = 1, quiet = TRUE)
-  }
   if (ans == "y") {
     MAT <- mat2WR
     detect.island <- function(arr) {
@@ -417,8 +397,6 @@ detect.cell.outliers <- function(mat2WR, k = 3, quiet = FALSE) {
         }
         out.island <- as.list(setdiff(true.names, in.island))
         return(c(list.i, out.island))
-      } else {
-        return(NULL)
       }
     }
     outl.sub <- function(x, k) {
@@ -451,15 +429,13 @@ detect.cell.outliers <- function(mat2WR, k = 3, quiet = FALSE) {
       MATfinal <- testspgn
       MATfinal[,] <- 0
       for (w in 2:nrow(res)) MATfinal[res[w, 1], res[w, 2]] <- 1
-      RESULT <- NULL
-      #RESULT$mat2WR <- mat2WR
-      #RESULT$matspgn <- MATspgn
-      #RESULT$matfinal <- MATfinal
-      #RESULT$testFALSE <- testFALSE
-      RESULT$outcell <- res[2:nrow(res), ]
+        RESULT <- NULL
+        #RESULT$mat2WR <- mat2WR
+        #RESULT$matspgn <- MATspgn
+        #RESULT$matfinal <- MATfinal
+        #RESULT$testFALSE <- testFALSE
+        RESULT$outcell <- res[2:nrow(res), ]
       return(RESULT)
     } else return(NULL)
   } else cat("\n---Operation canceled by the user.---\n")
 }
-
-

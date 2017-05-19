@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "Package: PhylteR\nType: Package\nTitle: Detection of outliers in a list of gene trees\nVersion: 1.0.0\nAuthors@R: c(person(\"Aurore\", \"Comte\", email = \"aurore.f.comte@gmail.com\", role = c(\"aut\", \"cre\")), \n    person(\"Damien\",\"de Vienne\", email = \"damien.de-vienne@univ-lyon1.fr\", role = \"ctb\"),\n    person(\"Stephane\", \"Dray\", email = \"stephane.dray@univ-lyon1.fr\", role = \"ctb\"))\nDescription: Detection of outliers in a list of genes trees. Detected outliers could be complete outliers \n    (genes and/or species) different from all the others. PhylteR can also detect couples gene/specie outliers\n    (a leaf outlier in a particular tree). Phylter also use a missMDA method (imputePCA) to impute the position of\n    missing species in gene trees. A web application of this package exists online at lbbe-shiny.univ-lyon1.fr/PhylteR\nEncoding: UTF-8\nLazyData: true\nLicense: GPL-3\nDepends: R (>= 3.3.0)\nImports: \n  FactoMineR, \n  ape, \n  DistatisR, \n  phangorn\nRoxygenNote: 6.0.1\n",
+    "created" : 1495182352092.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1408424940",
+    "id" : "57FD6D79",
+    "lastKnownWriteTime" : 1495185325,
+    "last_content_update" : 1495185325367,
+    "path" : "~/PhylteR/DESCRIPTION",
+    "project_path" : "DESCRIPTION",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "dcf"
+}
