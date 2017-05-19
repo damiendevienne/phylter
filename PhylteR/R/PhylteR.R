@@ -1,6 +1,5 @@
 # trees2matrices changes a list of trees into a list of matrices
 
-#' @return return a list of distance matrices
 trees2matrices <- function(trees, distance = "patristic") {
   if (distance == "nodal") {
     trees <- lapply(trees,compute.brlen,1)

@@ -19,4 +19,5 @@ Function to detect cell outliers (species and genes)
 }
 \details{
 This function must be used after all complete outliers (species and genes) have been removed from the data.
+detect.cell.outliers is a function taken from the method phylo-MCOA (de Vienne M.D., Ollier S. et Aguileta G. (2012) Phylo-MCOA: A Fast and Efficient Method to Detect Outlier Genes and Species in Phylogenomics Using Multiple Co-inertia Analysis. Molecular Biology and Evolution 29 : 1587 – 1598)
 }

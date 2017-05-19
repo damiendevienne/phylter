@@ -16,4 +16,5 @@ A normalized matrix
 }
 \description{
 This function normalizes the 2WR matrix (or any matrix) according to the species (rows) or to the genes (columns).
+normalize is a function taken from the method phylo-MCOA (de Vienne M.D., Ollier S. et Aguileta G. (2012) Phylo-MCOA: A Fast and Efficient Method to Detect Outlier Genes and Species in Phylogenomics Using Multiple Co-inertia Analysis. Molecular Biology and Evolution 29 : 1587 – 1598)
 }

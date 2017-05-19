@@ -21,4 +21,5 @@ Function to detect complete outliers (species and genes)
 }
 \details{
 Must be runed before the detection of cell outliers
+detect.complete.outliers is a function taken from the method phylo-MCOA (de Vienne M.D., Ollier S. et Aguileta G. (2012) Phylo-MCOA: A Fast and Efficient Method to Detect Outlier Genes and Species in Phylogenomics Using Multiple Co-inertia Analysis. Molecular Biology and Evolution 29 : 1587 – 1598).
 }
