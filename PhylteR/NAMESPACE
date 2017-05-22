@@ -3,5 +3,8 @@ export(trees2matrices,rm.gene.and.species,rename.genes,plot2WR,PhylteR,normalize
 import(DistatisR)
 import(ape)
 import(phangorn)
+import(ggplot2)
 importFrom(FactoMineR,svd.triplet)
+importFrom(stats,IQR,dist,quantile,rnorm,cophenetic)
+importFrom(utils,combn)
 

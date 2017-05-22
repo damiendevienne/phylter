@@ -1,6 +1,14 @@
 # trees2matrices changes a list of trees into a list of matrices
 
 trees2matrices <- function(trees, distance = "patristic") {
+  correction <- function(mat){
+    for (i in 1: nrow(mat)){
+      for (j in 1:ncol(mat)){
+        if (i != j) {mat[i,j] <- mat[i,j]-1}
+      }
+    }
+    return(mat)
+  }
   if (distance == "nodal") {
     trees <- lapply(trees,compute.brlen,1)
     list.trees <- lapply(trees, cophenetic)
@@ -79,7 +87,7 @@ impPCA.multi <- function(matrices, ncp = 3, center = FALSE, scale = FALSE, maxit
     }
     mat <- do.call(cbind,matrices3)
     # estimating missing data
-    matIPCA <- imputePCA(mat, center = center, scale = scale, maxiter = maxiter)
+    matIPCA <- imputePCA2(mat, center = center, scale = scale, maxiter = maxiter)
     matIPCA <- matIPCA$completeObs
     matricesFT <- list()
     for (i in 1:length(matrices2)) {
@@ -100,8 +108,8 @@ impPCA.multi <- function(matrices, ncp = 3, center = FALSE, scale = FALSE, maxit
 
 # imputePCA2 function from missMDA package but with the possibility to not center the data. And with no negative values possibly imputed.
 
-imputePCA2 <- function (X, ncp = 2, center = FALSE, scale = FALSE, method = c("Regularized", "EM"), row.w = NULL, coeff.ridge = 1, threshold = 1e-6, seed = NULL,nb.init = 1, maxiter = 1000, ...) {
-  impute <- function (X, ncp = 4, center = FALSE, scale = FALSE, method = NULL, threshold = 1e-6,seed = NULL, init = 1, maxiter = 1000, row.w = NULL, coeff.ridge = 1, ...) {
+imputePCA2 <- function (X, ncp = 2, center = FALSE, scale = FALSE, method = c("Regularized", "EM"), row.w = NULL, coeff.ridge = 1, threshold = 1e-6, seed = NULL,nb.init = 1, maxiter = 1000) {
+  impute <- function (X, ncp = 4, center = FALSE, scale = FALSE, method = NULL, threshold = 1e-6,seed = NULL, init = 1, maxiter = 1000, row.w = NULL, coeff.ridge = 1) {
     moy.p <- function(V, poids) {
       res <- sum(V * poids, na.rm = TRUE) / sum(poids[!is.na(V)])
     }

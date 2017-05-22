@@ -6,7 +6,7 @@
 \usage{
 imputePCA2(X, ncp = 2, center = FALSE, scale = FALSE,
   method = c("Regularized", "EM"), row.w = NULL, coeff.ridge = 1,
-  threshold = 1e-06, seed = NULL, nb.init = 1, maxiter = 1000, ...)
+  threshold = 1e-06, seed = NULL, nb.init = 1, maxiter = 1000)
 }
 \arguments{
 \item{X}{a data.frame with continuous variables containing missing values}

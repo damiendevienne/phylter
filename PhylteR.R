@@ -5,6 +5,14 @@ require(phangorn)
 
 # trees2mat changes a list of trees in a list of matrices
 trees2mat <- function(trees, distance = "nodal") {
+  correction <- function(mat){
+    for (i in 1: nrow(mat)){
+      for (j in 1:ncol(mat)){
+        if (i != j) {mat[i,j] <- mat[i,j]-1}
+      }
+    }
+    return(mat)
+  }
   if (distance == "nodal") {
     trees <- lapply(trees,compute.brlen,1)
     list.trees <- lapply(trees, cophenetic)
