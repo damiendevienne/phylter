@@ -284,6 +284,22 @@ rm.gene.and.species <- function(trees, sp2rm, gn2rm) {
 # Phylter Function to detect complete and cell outliers from a list of trees
 
 PhylteR <- function(trees, distance = "patristic", k = 1.5, thres = 0.5, gene.names = NULL, Norm = "NONE") {
+  if (is.list(trees)) {
+    if (class(trees[[1]])!="phylo") stop ("The trees should be in the \"phylo\" format!")
+  }
+  if (class(trees)=="character") {
+    trees<-read.tree(trees)
+  }
+  if (length(gene.names)!=length(trees)) stop ("The number of gene names and the number of trees differ!")
+  ##check for duplications
+  check.dup<-lapply(trees, function(x) {x$tip.label[duplicated(x$tip.label)]})
+  if (sum(unlist(lapply(check.dup, length)))>0) {
+    cat ("-------- ATTENTION!! There are some duplicated species in some of your trees: -------")
+    for (w in 1:length(trees)) {
+      if (length(check.dup[[w]])>0) cat(paste("\n     - Species ", check.dup[[w]], " present more than once in tree ",w,"\n\n",sep=""))
+    }
+    stop ("Remove or rename duplicated species and try again.\n\n", call.=FALSE)
+  }
   trees <- rename.genes(trees, gene.names = gene.names)
   RES <- NULL
   matrices <- trees2matrices(trees, distance=distance)

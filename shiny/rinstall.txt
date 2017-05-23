@@ -1,0 +1,13 @@
+install.packages("shiny", dependencies = TRUE, repos = "http://cran.univ-lyon1.fr")
+install.packages("shinyBS", dependencies = TRUE, repos = "http://cran.univ-lyon1.fr")
+install.packages("DT", dependencies = TRUE, repos = "http://cran.univ-lyon1.fr")
+install.packages("shinythemes", dependencies = TRUE, repos = "http://cran.univ-lyon1.fr")
+install.packages("stringr", dependencies = TRUE, repos = "http://cran.univ-lyon1.fr")
+install.packages("ggplot2", dependencies = TRUE, repos = "http://cran.univ-lyon1.fr")
+install.packages("shinydashboard", dependencies = TRUE, repos = "http://cran.univ-lyon1.fr")
+
+install.packages("FactoMineR", dependencies = TRUE, repos = "http://cran.univ-lyon1.fr")
+install.packages("DistatisR", dependencies = TRUE, repos = "http://cran.univ-lyon1.fr")
+install.packages("ape", dependencies = TRUE, repos = "http://cran.univ-lyon1.fr")
+install.packages("phangorn", dependencies = TRUE, repos = "http://cran.univ-lyon1.fr")
+

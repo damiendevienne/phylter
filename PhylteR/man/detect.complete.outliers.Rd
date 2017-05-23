@@ -14,7 +14,9 @@ detect.complete.outliers(mat2WR, k = 1.5, thres = 0.5)
 \item{thres}{threshold above which genes or species are considered as complete outliers. 0.5 means that a gene or a species is a complete outlier if it is detected as outlier for more than 50\% of the species or genes respectively.}
 }
 \value{
-"mat2WR" The 2WR matrix used to detect outliers. "outgn" Array containing all the complete outlier genes detected"outsp" Array containing all the complete outlier species detected.
+"mat2WR" The 2WR matrix used to detect outliers.
+"outgn" Array containing all the complete outlier genes detected.
+"outsp" Array containing all the complete outlier species detected.
 }
 \description{
 Function to detect complete outliers (species and genes)

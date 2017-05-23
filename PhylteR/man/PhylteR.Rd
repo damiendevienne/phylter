@@ -12,7 +12,7 @@ PhylteR(trees, distance = "patristic", k = 1.5, thres = 0.5,
 
 \item{distance}{parameter from the function trees2matrices to transform trees into distance matrices. Distance could be "nodal" or "patristic" (default).}
 
-\item{k}{the strength of outlier assignement. The higher this value the more stringent the detection (less outliers detected).}
+\item{k}{the strength of outlier assignement. The higher this valu,e the more stringent the detection (less outliers detected).}
 
 \item{thres}{For the detection of complete outlier. Threshold above which genes or species are considered as complete outliers. 0.5 means that a gene or a species is a complete outlier if it is detected as outlier for more than 50\% of the species or genes respectively.}
 
@@ -21,11 +21,14 @@ PhylteR(trees, distance = "patristic", k = 1.5, thres = 0.5,
 \item{Norm}{Type of normalization used for the function mat2dist. Current options are NONE (default) or MFA (that normalizes each matrix so that its first eigenvalue is equal to one).}
 }
 \value{
-$complete$outgn is the list of complete outlier genes, $complete$outsp is the list of complete outliers species, $CellByCell$outcell is the list of cell outliers.
+$Complete$mat2WR is the 2WR matrix used to detect complete outliers
+$complete$outgn is the list of complete outliers genes
+$complete$outsp is the list of complete outliers species
+$CellByCell$outcell is the list of cell outliers.
 }
 \description{
 This function finds complete and cell outliers inside a list of gene trees.
 }
 \details{
-The detection is done in two steps. The first step is the detection on complete outlier. Complete outliers detected are then removed of the trees list and the second step is the detection of cell outliers.
+The detection is done in two steps. The first step is the detection of complete outliers. Complete outliers detected are then removed of the list of trees and the second step is the detection of cell outliers in this list.
 }

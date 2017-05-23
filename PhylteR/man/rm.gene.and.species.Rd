@@ -14,7 +14,7 @@ rm.gene.and.species(trees, sp2rm, gn2rm)
 \item{gn2rm}{genes to remove as a list}
 }
 \value{
-Return a list of gene trees without the species or genes removed
+Return a list of gene trees without the species or genes removed.
 }
 \description{
 Suppress species or genes in a list of gene trees.

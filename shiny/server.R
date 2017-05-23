@@ -19,13 +19,12 @@ server <-function(input,output,session){
     }
     PhylteR(trees, distance = input$choice, k=input$k, thres = 0.5)
   })
-
   dist <- reactive({
     trees = trees()
     if(is.null(names(trees))){
       names(trees)=as.character(c(1:length(trees)))
     }
-    mat <- trees2mat(trees, input$choice)
+    mat <- trees2matrices(trees, input$choice)
     mat2Dist(mat)
   })
   choice <- reactive({
@@ -34,7 +33,6 @@ server <-function(input,output,session){
   TreesList <- reactive({
     input$Treeslist
   })
-
   WR <- reactive({
     Dist2WR(dist())
   })
@@ -42,18 +40,19 @@ server <-function(input,output,session){
     trees = read.tree(input$trees$datapath, keep.multi = TRUE)
   })
   ranges <- reactiveValues(x = NULL, y = NULL)
+  #end of reactives
 
-###########-----------------------------------
-
-  #quand on ajoute un arbre
+  #What happens when we add datas
   observeEvent(input$trees, {
 
+    #activation of tabs
     session$sendCustomMessage('activeNavs', 'visualize some trees')
     session$sendCustomMessage('activeNavs', 'visualize species on distatis compromise')
     session$sendCustomMessage('activeNavs', 'visualize genes')
     session$sendCustomMessage('activeNavs', 'visualize distances')
     session$sendCustomMessage('activeNavs', 'visualize 2WR')
     
+    #functions from PhylteR
     trees = trees()
     if(is.null(names(trees))){
       names(trees)=as.character(c(1:length(trees)))
@@ -78,7 +77,7 @@ server <-function(input,output,session){
         rownames(G)<-as.character(c(1:length(trees)))
       }
     }
-    ##Visualize trees
+    ##Visualize some trees tab. We can type several trees in the box "Sumit trees", all separated by a "-" and trees are ploted.
     observeEvent(input$SumitTrees,{
       List = TreesList()
       S = strsplit(List, ",")
@@ -98,7 +97,7 @@ server <-function(input,output,session){
     })
     })
 
-    ##Update Genetrees
+    ##Update Genetrees. Genelist from the panel "visualize distances between genes". Genes are spilts in partition of 50 genes
     n=names(trees)
     c=1
     l1 = 50
@@ -118,9 +117,14 @@ server <-function(input,output,session){
       updateSelectInput(session, "Geneslist", choices = Partition)
     })
 
+#Several tabs and plots are differents if the detection is on or off
     observeEvent(outliers(), {
+      
       ##event = DETECTION OUTLIER ON
       if (outliers()== "on"){
+        
+        #Update the text zone with outliers detected:
+        #gn
         output$outputPhylter1 <- renderText ({
           if(length(RES()$Complete$outgn)!=0){
             gn=paste(RES()$Complete$outgn, ";")
@@ -130,34 +134,28 @@ server <-function(input,output,session){
             "no outlier gene detected"
           }
         })
+        #sp
         output$outputPhylter2 <- renderText ({
           if(length(RES()$Complete$outsp)!=0){
             sp=paste(RES()$Complete$outsp, ";")
             append (sp, "outlier species: ", after=0)
           }
-        else{
-          "no outlier specie detected"
-        }
-      })
-      output$outputPhylter3 <- renderText ({
-        if(!is.null(RES()$CellByCell$outcell)){
-          ce = paste(RES()$CellByCell$outcell[,1],RES()$CellByCell$outcell[,2], ";")
-          append (ce, "outlier gène/species: ", after=0)
-        }
-        else{
-          "no outlier cell detected"
-        }
-      })
-      trees = trees()
-      G=dist()$res4Cmat$G
-      if(is.null(rownames(G))){
-        if(!is.null(names(trees))){
-          rownames(G)<-names(trees)
-        }
-        else{
-          rownames(G)<-as.character(c(1:length(trees)))
-        }
-      }
+          else{
+            "no outlier specie detected"
+          }
+        })
+        #cell
+        output$outputPhylter3 <- renderText ({
+          if(!is.null(RES()$CellByCell$outcell)){
+            ce = paste(RES()$CellByCell$outcell[,1],RES()$CellByCell$outcell[,2], ";")
+            append (ce, "outlier gène/species: ", after=0)
+          }
+          else{
+            "no outlier cell detected"
+          }
+        })
+        
+    #visualize genes: genes are red if outliers, grey if not
       output$plot3 <- renderPlot({
         withProgress(message = 'Making plot', value = 0, {
         gn=paste(RES()$Complete$outgn)
@@ -176,12 +174,12 @@ server <-function(input,output,session){
         text(G, labels = rownames(G))
         })
       })
-      ##Distance by genes
+      ##visualize distances between genes : outliers detected are red.
       output$plot7 <- renderPlot({
         withProgress(message = 'Making plot', value = 0, {
         Geneslist = input$Geneslist
         Geneslist = strsplit(Geneslist, "-")
-        TAB<-trees2mat(trees, distance=choice())
+        TAB<-trees2matrices(trees, distance=choice())
         nam<-trees[[1]]$tip.label
         #TAB<-lapply(TAB, function(x,y) x[y,y],y=nam)
         par(mfrow=c(5,10))
@@ -221,11 +219,11 @@ server <-function(input,output,session){
         }
         
       })
-      ##Distance by species
+      ##Visualize distance between species
       output$plot6 <- renderPlot({
         withProgress(message = 'Making plot', value = 0, {
         sp=paste(RES()$Complete$outsp)
-        TAB<-trees2mat(trees, distance=choice())
+        TAB<-trees2matrices(trees, distance=choice())
         nam<-trees[[1]]$tip.label
         #TAB<-lapply(TAB, function(x,y) x[y,y],y=nam)
         par(mfrow=c(ceiling(length(trees[[1]]$tip.label)/5),5))
@@ -275,8 +273,9 @@ server <-function(input,output,session){
       })
     }
 
-      #################################################################################################event = DETECTION OUTLIER OFF
+      ##event = DETECTION OUTLIER OFF
     else{
+      #update outliers text to blank
       output$outputPhylter1 <- renderText ({
         ""
       })
@@ -286,7 +285,7 @@ server <-function(input,output,session){
       output$outputPhylter3 <- renderText ({
         ""
       })
-
+      #visualize genes : all genes are greys
       output$plot3 <- renderPlot({
         withProgress(message = 'Making plot', value = 0, {
         incProgress(1)
@@ -295,10 +294,10 @@ server <-function(input,output,session){
         text(G, labels = rownames(G))
         })
       })
-      ##Distance by species
+      ##Visialize istance by species
       output$plot6 <- renderPlot({
         withProgress(message = 'Making plot', value = 0, {
-        TAB<-trees2mat(trees, distance=choice())
+        TAB<-trees2matrices(trees, distance=choice())
         nam<-trees[[1]]$tip.label
         #TAB<-lapply(TAB, function(x,y) x[y,y],y=nam)
         par(mfrow=c(ceiling(length(trees[[1]]$tip.label)/5),5))
@@ -339,12 +338,12 @@ server <-function(input,output,session){
         }
         })
       })
-      ##Distance by genes
+      ####Visialize istance by genes
       output$plot7 <- renderPlot({
         withProgress(message = 'Making plot', value = 0, {
         Geneslist = input$Geneslist
         Geneslist = strsplit(Geneslist, "-")
-        TAB<-trees2mat(trees, distance=choice())
+        TAB<-trees2matrices(trees, distance=choice())
         nam<-trees[[1]]$tip.label
         #TAB<-lapply(TAB, function(x,y) x[y,y],y=nam)
         par(mfrow=c(5,10))
@@ -379,13 +378,14 @@ server <-function(input,output,session){
       })
     }
   })
-  ##Species
-
+    
+  ##Observe species:
   observe({
     updateSelectInput(session, "selectSpecies", selected= "all", choices = append(append(outVar(),"mean",after=0),"all", after=0))
   })
   observeEvent(input$selectSpecies, {
     S=input$selectSpecies
+    #all species in different plot. All in the same scale.
     if (S == "all"){
       output$plot2 <- renderPlot({
         withProgress(message = 'Making plot', value = 0, {
@@ -407,6 +407,7 @@ server <-function(input,output,session){
         })
       })
     }
+    #mean position of each specie on a graph
     if(S == "mean"){
       output$plot2 <- renderPlot({
         withProgress(message = 'Making plot', value = 0, {
@@ -423,6 +424,7 @@ server <-function(input,output,session){
         })
       })
     }
+    #single specie selected
     if(S != "mean" && S != "all"){
       output$plot2 <- renderPlot({
         withProgress(message = 'Making plot', value = 0, {
@@ -441,18 +443,18 @@ server <-function(input,output,session){
       })
     }
   })
+  #Back clicking = return on the "all" plot.
   observeEvent(input$BackClick2, {
     updateSelectInput(session, "selectSpecies", selected= "all")
   })
-
-  ##Gene clusters
+  ##Visualize Gene clusters
     output$plot5 <- renderPlot({
       withProgress(message = 'Making plot', value = 0, {
         incProgress(1)
       plot(hclust(as.dist(C)), main ="",xlab="",sub="",ylab="correlation between genes")
       })
     })
-  ##WR
+  ##Visualize the 2WR matrix
     output$plot4 <- renderPlot({
       withProgress(message = 'Making plot', value = 0, {
       incProgress(1)
@@ -461,6 +463,7 @@ server <-function(input,output,session){
       pl + coord_cartesian(xlim = ranges$x, ylim = ranges$y, expand = FALSE)
       })
     })
+    #zoom on 2WR matrix
     observeEvent(input$plot4dbclick, {
       brush <- input$plot4_brush
       if (!is.null(brush)) {
