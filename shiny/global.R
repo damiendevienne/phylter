@@ -303,7 +303,9 @@ PhylteR <- function(trees, distance = "patristic", k = 1.5, thres = 0.5, gene.na
   if (class(trees)=="character") {
     trees<-read.tree(trees)
   }
-  if (length(gene.names)!=length(trees)) stop ("The number of gene names and the number of trees differ!")
+  if (!is.null(gene.names)){
+    if (length(gene.names)!=length(trees)) stop ("The number of gene names and the number of trees differ!")
+  }
   ##check for duplications
   check.dup<-lapply(trees, function(x) {x$tip.label[duplicated(x$tip.label)]})
   if (sum(unlist(lapply(check.dup, length)))>0) {

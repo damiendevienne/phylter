@@ -79,7 +79,7 @@ ui<-fluidPage(
       plotOutput(outputId = "plot3", height = "1000px")
     ),
     tabPanel("visualize 2WR matrices",
-      helpText("The 2WR matrix (wo-way reference matrix) is a matrix genes x species computed by calculating, for every species, the distance separating its position in each gene tree to its mean position. The darker a couple gene/specie is, the further it is from it's reference position. You can zoom by brushing and doubleclicking on the plot"),
+      helpText("The 2WR matrix (two-way reference matrix) is a matrix genes x species computed by calculating, for every species, the distance separating its position in each gene tree to its mean position. The darker a pair gene/specie is, the further it is from it's reference position. You can zoom by brushing and doubleclicking on the plot"),
       plotOutput(outputId = "plot4", height = "1000px", dblclick="plot4dbclick", brush = brushOpts(id = "plot4_brush",resetOnNew = TRUE))
     ),
     tabPanel("visualize genes clusters",
