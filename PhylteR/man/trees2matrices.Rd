@@ -4,13 +4,16 @@
 \alias{trees2matrices}
 \title{trees2matrices}
 \usage{
-trees2matrices(trees, distance = "patristic")
+trees2matrices(trees, distance = "patristic", bvalue = 0)
 }
 \arguments{
-\item{trees}{A list of gene trees in multiphylo format}
+\item{trees}{A list of gene trees in multiphylo format.}
 
 \item{distance}{A method to generate distance matrices. It could be "nodal" to establish that the distance between two species is the number of nodes that separate them. Or "patristic" (default) if the distance between two species is be the sum of branch lengths between them.}
+
+\item{bvalue}{This argument is only used if trees contain bootstrap values. It determines under what bootstrap values the nodes should be collapsed. Value 0 (the default) means that no nodes are collapsed.}
 }
+
 \value{
 return a list of distance matrices
 }

@@ -5,7 +5,7 @@
 \title{PhylteR}
 \usage{
 PhylteR(trees, distance = "patristic", k = 1.5, thres = 0.5,
-  gene.names = NULL, Norm = "NONE")
+  gene.names = NULL, Norm = "NONE", bvalue = 0)
 }
 \arguments{
 \item{trees}{The list of gene trees}
@@ -19,7 +19,10 @@ PhylteR(trees, distance = "patristic", k = 1.5, thres = 0.5,
 \item{gene.names}{List of gene names if the user want to renames the list of trees. NULL by default.}
 
 \item{Norm}{Type of normalization used for the function mat2dist. Current options are NONE (default) or MFA (that normalizes each matrix so that its first eigenvalue is equal to one).}
+
+\item{bvalue}{This argument is only used if trees contain bootstrap values. It determines under what bootstrap values the nodes should be collapsed. Value 0 (the default) means that no nodes are collapsed.}
 }
+
 \value{
 $Complete$mat2WR is the 2WR matrix used to detect complete outliers
 $complete$outgn is the list of complete outliers genes

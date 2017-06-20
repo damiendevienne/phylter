@@ -1,20 +1,45 @@
 # trees2matrices changes a list of trees into a list of matrices
 
-trees2matrices <- function(trees, distance = "patristic") {
+trees2matrices <- function(trees, distance = "patristic", bvalue = 0) {
   correction <- function(mat){
-    for (i in 1: nrow(mat)){
+    for (i in 1:nrow(mat)){
       for (j in 1:ncol(mat)){
-        if (i != j) {mat[i,j] <- mat[i,j]-1}
+        if (i != j) {mat[i,j] <- mat[i,j] - 1}
       }
     }
     return(mat)
   }
   if (distance == "nodal") {
+    if (bvalue != 0) {
+      if (!is.null(tree$node.label)) {
+        l <- 1:Nnode(tree)
+        indices.nodes <- l[as.numeric(tree$node.label) < bvalue] + Ntip(tree)
+        if (length(indices.nodes) > 0) {
+          for (j in 1:length(indices.nodes)) {
+            tree$edge.length[tree$edge[,1] == indices.nodes[j]] <- 1e-10
+          }
+        }
+        tree <- di2multi(tree, tol = 1e-9)
+      }
+      else {
+        tree <- di2multi(tree, tol = bvalue)
+      }
+    }
     trees <- lapply(trees,compute.brlen,1)
     list.trees <- lapply(trees, cophenetic)
     list.trees <- lapply(list.trees,correction)
   }
   else if (distance == "patristic") {
+    if (bvalue != 0) {
+      l <- 1:Nnode(tree)
+      indices.nodes <- l[as.numeric(tree$node.label) < bvalue] + Ntip(tree)
+      if (length(indices.nodes) > 0) {
+        for (j in 1:length(indices.nodes)) {
+          tree$edge.length[tree$edge[,1] == indices.nodes[j]] <- 1e-10
+        }
+      }
+      tree <- di2multi(tree, tol = 1e-9)
+    }
     list.trees <- lapply(trees, cophenetic)
   }
   if (!is.null(names(trees))) {
@@ -283,16 +308,14 @@ rm.gene.and.species <- function(trees, sp2rm, gn2rm) {
 
 # Phylter Function to detect complete and cell outliers from a list of trees
 
-PhylteR <- function(trees, distance = "patristic", k = 1.5, thres = 0.5, gene.names = NULL, Norm = "NONE") {
+PhylteR <- function(trees, distance = "patristic", k = 1.5, thres = 0.5, gene.names = NULL, Norm = "NONE", bvalue = 0) {
   if (is.list(trees)) {
-    if (class(trees[[1]])!="phylo") stop ("The trees should be in the \"phylo\" format!")
+    if (class(trees[[1]]) != "phylo") stop ("The trees should be in the \"phylo\" format!")
   }
-  if (class(trees)=="character") {
+  if (class(trees) == "character") {
     trees<-read.tree(trees)
   }
-  if (!is.null(gene.names)){
-    if (length(gene.names)!=length(trees)) stop ("The number of gene names and the number of trees differ!")
-  }
+  if (length(gene.names) != length(trees)) stop ("The number of gene names and the number of trees differ!")
   ##check for duplications
   check.dup<-lapply(trees, function(x) {x$tip.label[duplicated(x$tip.label)]})
   if (sum(unlist(lapply(check.dup, length)))>0) {
@@ -304,14 +327,14 @@ PhylteR <- function(trees, distance = "patristic", k = 1.5, thres = 0.5, gene.na
   }
   trees <- rename.genes(trees, gene.names = gene.names)
   RES <- NULL
-  matrices <- trees2matrices(trees, distance=distance)
+  matrices <- trees2matrices(trees, distance = distance, bvalue = bvalue)
   matrices <- impPCA.multi(matrices)
   Dist <- mat2Dist(matrices, Norm = Norm)
   WR <- Dist2WR(Dist)
   CompOutl <- detect.complete.outliers(WR, k = k, thres = thres)
   if (length(CompOutl$outsp) > 0 || length(CompOutl$outgn) > 0) {
     TREESwithoutCompleteOutlierDist <- rm.gene.and.species(trees, CompOutl$outsp, CompOutl$outgn)
-    matrices2 <- trees2matrices(TREESwithoutCompleteOutlierDist, distance = distance)
+    matrices2 <- trees2matrices(TREESwithoutCompleteOutlierDist, distance = distance, bvalue = bvalue)
     matrices2 <- impPCA.multi(matrices2)
     Dist2 <- mat2Dist(matrices2, Norm = Norm)
     WR2 <- Dist2WR(Dist2)
