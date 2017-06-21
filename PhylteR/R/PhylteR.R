@@ -9,45 +9,45 @@ trees2matrices <- function(trees, distance = "patristic", bvalue = 0) {
     }
     return(mat)
   }
-  list.trees<-list()
+  list.trees <- list()
   for (i in 1:length(trees)) {
-    tree<-trees[[i]]
-    if (distance=="nodal") {
-      if (bvalue!=0) {
+    tree <- trees[[i]]
+    if (distance == "nodal") {
+      if (bvalue != 0) {
         if (!is.null(tree$node.label)) {
-          l<-1:Nnode(tree)
-          indices.nodes<-l[as.numeric(tree$node.label)<bvalue]+Ntip(tree)
-          if (length(indices.nodes)>0) {
+          l <- 1:Nnode(tree)
+          indices.nodes <- l[as.numeric(tree$node.label) < bvalue] + Ntip(tree)
+          if (length(indices.nodes) > 0) {
             for (j in 1:length(indices.nodes)) {
-              tree$edge.length[tree$edge[,1]==indices.nodes[j]]<-1e-10
+              tree$edge.length[tree$edge[,1] == indices.nodes[j]]<-1e-10
             }
           }
-          tree<-di2multi(tree, tol=1e-9)
+          tree <- di2multi(tree, tol = 1e-9)
         }
         else {
-          tree<-di2multi(tree, tol=bvalue)
+          tree <- di2multi(tree, tol = bvalue)
         }
       }
       tree.brlen <- compute.brlen(tree, 1)
     }
-    else if (distance=="patristic") {
-      if (bvalue!=0) {
-        l<-1:Nnode(tree)
-        indices.nodes<-l[as.numeric(tree$node.label)<bvalue]+Ntip(tree)
-        if (length(indices.nodes)>0) {
+    else if (distance == "patristic") {
+      if (bvalue != 0) {
+        l <- 1:Nnode(tree)
+        indices.nodes <- l[as.numeric(tree$node.label) < bvalue] + Ntip(tree)
+        if (length(indices.nodes) > 0) {
           for (j in 1:length(indices.nodes)) {
-            tree$edge.length[tree$edge[,1]==indices.nodes[j]]<-1e-10
+            tree$edge.length[tree$edge[,1] == indices.nodes[j]] <- 1e-10
           }
         }
-        tree<-di2multi(tree, tol=1e-9)
+        tree <- di2multi(tree, tol = 1e-9)
       }
-      tree.brlen<-tree
+      tree.brlen <- tree
     }
-    list.trees[[i]]<- tree.brlen
+    list.trees[[i]] <- tree.brlen
   }
-  TRS<-lapply(list.trees, cophenetic)
+  TRS <- lapply(list.trees, cophenetic)
   if (distance == "nodal"){
-    TRS <- lapply(TRS,correction)
+    TRS <- lapply(TRS, correction)
   }
   if (!is.null(names(trees))) {
     names(TRS) <- names(trees)
