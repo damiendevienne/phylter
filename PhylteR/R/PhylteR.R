@@ -19,27 +19,34 @@ trees2matrices <- function(trees, distance = "patristic", bvalue = 0) {
           indices.nodes <- l[as.numeric(tree$node.label) < bvalue] + Ntip(tree)
           if (length(indices.nodes) > 0) {
             for (j in 1:length(indices.nodes)) {
-              tree$edge.length[tree$edge[,1] == indices.nodes[j]]<-1e-10
+              tree$edge.length[tree$edge[,1] == indices.nodes[j]] <- 1e-10
             }
           }
           tree <- di2multi(tree, tol = 1e-9)
         }
         else {
-          tree <- di2multi(tree, tol = bvalue)
+          #tree <- di2multi(tree, tol = bvalue)
+          cat ("-------- ATTENTION!! There are no bootstraps values in your trees or your bvalue parameter does not correspond values in your trees ! -------")
         }
       }
       tree.brlen <- compute.brlen(tree, 1)
     }
     else if (distance == "patristic") {
       if (bvalue != 0) {
-        l <- 1:Nnode(tree)
-        indices.nodes <- l[as.numeric(tree$node.label) < bvalue] + Ntip(tree)
-        if (length(indices.nodes) > 0) {
-          for (j in 1:length(indices.nodes)) {
-            tree$edge.length[tree$edge[,1] == indices.nodes[j]] <- 1e-10
+        if (!is.null(tree$node.label)) {
+          l <- 1:Nnode(tree)
+          indices.nodes <- l[as.numeric(tree$node.label) < bvalue] + Ntip(tree)
+          if (length(indices.nodes) > 0) {
+            for (j in 1:length(indices.nodes)) {
+              tree$edge.length[tree$edge[,1] == indices.nodes[j]] <- 1e-10
+            }
           }
+          tree <- di2multi(tree, tol = 1e-9)
         }
-        tree <- di2multi(tree, tol = 1e-9)
+        else {
+          #tree <- di2multi(tree, tol = bvalue)
+          cat ("-------- ATTENTION!! There are no bootstraps values in your trees ! -------")
+        }
       }
       tree.brlen <- tree
     }
@@ -267,7 +274,7 @@ Dist2WR <- function(Distatis) {
     }
   }
   MAT <- as.data.frame(MAT)
-  genes <- as.character(MAT$gene)
+  genes <- factor(as.numeric(MAT$gene))
   species <- as.character(MAT$specie)
   distanceToRef <- as.numeric(as.character(MAT$value))
 
@@ -315,7 +322,7 @@ rm.gene.and.species <- function(trees, sp2rm, gn2rm) {
 
 # Phylter Function to detect complete and cell outliers from a list of trees
 
-PhylteR <- function(trees, distance = "patristic", k = 1.5, thres = 0.5, gene.names = NULL, Norm = "NONE", bvalue = 0) {
+PhylteR <- function(trees, distance = "patristic", bvalue = 0, ncp = 3, center = FALSE, scale = FALSE, maxiter = 10000, k = 1.5, thres = 0.5, gene.names = NULL, Norm = "NONE") {
   if (is.list(trees)) {
     if (class(trees[[1]]) != "phylo") stop ("The trees should be in the \"phylo\" format!")
   }
@@ -335,14 +342,14 @@ PhylteR <- function(trees, distance = "patristic", k = 1.5, thres = 0.5, gene.na
   trees <- rename.genes(trees, gene.names = gene.names)
   RES <- NULL
   matrices <- trees2matrices(trees, distance = distance, bvalue = bvalue)
-  matrices <- impPCA.multi(matrices)
+  matrices <- impPCA.multi(matrices, ncp = ncp, center = center, scale = scale, maxiter = maxiter)
   Dist <- mat2Dist(matrices, Norm = Norm)
   WR <- Dist2WR(Dist)
   CompOutl <- detect.complete.outliers(WR, k = k, thres = thres)
   if (length(CompOutl$outsp) > 0 || length(CompOutl$outgn) > 0) {
     TREESwithoutCompleteOutlierDist <- rm.gene.and.species(trees, CompOutl$outsp, CompOutl$outgn)
     matrices2 <- trees2matrices(TREESwithoutCompleteOutlierDist, distance = distance, bvalue = bvalue)
-    matrices2 <- impPCA.multi(matrices2)
+    matrices2 <- impPCA.multi(matrices2, ncp = ncp, center = center, scale = scale, maxiter = maxiter)
     Dist2 <- mat2Dist(matrices2, Norm = Norm)
     WR2 <- Dist2WR(Dist2)
     CellOutl2 <- detect.cell.outliers(WR2, k = k + 2)
