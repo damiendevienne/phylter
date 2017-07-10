@@ -4,16 +4,19 @@
 \alias{PhylteR}
 \title{PhylteR}
 \usage{
-PhylteR(trees, distance = "patristic", bvalue = 0, ncp = 3, center = FALSE, scale = FALSE, maxiter = 10000, k = 1.5, thres = 0.5, gene.names = NULL, Norm = "NONE")
+PhylteR(trees, distance = "patristic", method.imp = "IPCA", bvalue = 0,
+ncp = 3, center = FALSE, scale = FALSE, maxiter = 1000, k = 1.5,
+thres = 0.5, gene.names = NULL, Norm = "NONE")
 }
 \arguments{
 \item{trees}{The list of gene trees}
 \item{distance}{parameter from the function trees2matrices to transform trees into distance matrices. Distance could be "nodal" or "patristic" (default).}
+\item{method.imp}{The method used for missing data imputation. "IPCA" for imputation with iteractive PCA (Slower but more accurate) ."MEAN" for imputation by means (faster but less accurate).}
 \item{bvalue}{This argument is only used if trees contain bootstrap values. It determines under what bootstrap values the nodes should be collapsed. Value 0 (the default) means that no nodes are collapsed.}
-\item{ncp}{integer corresponding to the number of components used to to predict the missing entries.}
-\item{center}{boolean. By default FALSE leading to data not centered.}
-\item{scale}{boolean. By default FALSE leading to not a same weight for each variable.}
-\item{maxiter}{integer, maximum number of iteration for the algorithm.}
+\item{ncp}{only used if method.imp = "IPCA". integer corresponding to the number of components used to to predict the missing entries.}
+\item{center}{only used if method.imp = "IPCA". boolean. By default FALSE leading to data not centered.}
+\item{scale}{only used if method.imp = "IPCA". boolean. By default FALSE leading to not a same weight for each variable.}
+\item{maxiter}{only used if method.imp = "IPCA". integer, maximum number of iteration for the algorithm.}
 \item{k}{the strength of outlier assignement. The higher this valu,e the more stringent the detection (less outliers detected).}
 \item{thres}{For the detection of complete outlier. Threshold above which genes or species are considered as complete outliers. 0.5 means that a gene or a species is a complete outlier if it is detected as outlier for more than 50\% of the species or genes respectively.}
 \item{gene.names}{List of gene names if the user want to renames the list of trees. NULL by default.}

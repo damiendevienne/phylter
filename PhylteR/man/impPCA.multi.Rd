@@ -5,7 +5,7 @@
 \title{impPCA.multi}
 \usage{
 impPCA.multi(matrices, ncp = 3, center = FALSE, scale = FALSE,
-  maxiter = 10000)
+  maxiter = 1000)
 }
 \arguments{
 \item{matrices}{A list of distance matrices with missing data. Each matrices should be named (use the rename.genes function if it is not the case)}

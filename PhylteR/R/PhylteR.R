@@ -99,7 +99,7 @@ mat2Dist <- function(matrices, Norm = "NONE") {
 
 # Imputing missing data in matrices with missMDA package
 
-impPCA.multi <- function(matrices, ncp = 3, center = FALSE, scale = FALSE, maxiter = 10000) {
+impPCA.multi <- function(matrices, ncp = 3, center = FALSE, scale = FALSE, maxiter = 1000) {
   geneNames <- list()
   # Create a matrix with every species to fill : GrandeMatrice
   species<-unique(unlist(lapply(matrices, rownames)))
@@ -238,6 +238,69 @@ imputePCA2 <- function (X, ncp = 2, center = FALSE, scale = FALSE, method = c("R
   return(res)
 }
 
+# Impute Missing datas by means
+impMean <- function(matrices) {
+  qual <- 0
+  listsp <- colnames(matrices[[1]])
+  for (i in 2:length(matrices)) {
+    listsp <- union(listsp, colnames(matrices[[i]]))
+  }
+  length.indiv <- unlist(lapply(lapply(matrices, colnames), length))
+  tmp <- rep(1,length(length.indiv))
+  testqual <- tmp[(length.indiv == length(listsp)) == FALSE]
+  if (length(testqual) > 0) qual <- 1
+  if (qual == 1) {
+    listsp <- colnames(matrices[[1]])
+    for (i in 2:length(matrices)) {
+      listsp <- union(listsp, colnames(matrices[[i]]))
+    }
+    newcol <- list()
+    for (i in 1:length(matrices)) {
+      ##print(i)
+      newcol[[i]] <- setdiff(listsp, colnames(matrices[[i]]))
+      matrices[[i]] <- cbind(matrices[[i]], matrix(ncol = length(newcol[[i]]), nrow=nrow(matrices[[i]]), dimnames = list(colnames(matrices[[i]]), newcol[[i]])))
+      matrices[[i]]<-rbind(matrices[[i]], matrix(ncol = ncol(matrices[[i]]), nrow = length(newcol[[i]]), dimnames = list(newcol[[i]], colnames(matrices[[i]]))))
+    }
+  }
+  mat1 <- matrices[[1]]
+  species1 <- row.names(mat1)
+  len2 <- length(species1)
+  ALL <- list()
+  ALL[[1]] <- mat1
+  for(i in 2:length(matrices)){
+    mati <- matrices[[i]]
+    speciesi <- row.names(mati)
+    indice <- (1:len2)[species1[1] == speciesi]
+    for(j in 2:len2){
+      indice[j] <- (1:len2)[species1[j] == speciesi]
+    }
+    mati <- mati[indice, ]
+    mati <- mati[, indice]
+    ALL[[i]] <- mati
+  }
+  if (qual == 1) {
+    TEST <- unlist(ALL)
+    nbcase <- nrow(ALL[[1]]) * nrow(ALL[[1]])
+    Nbt <- length(ALL)
+    allcase <- 0:(Nbt - 1)
+    MEANS <- array()
+    for (i in 1:nbcase) {
+      MEANS[i] <- mean(TEST[i + allcase * nbcase], na.rm = TRUE)
+    }
+    MEANMAT <- matrix(MEANS,nrow = nrow(ALL[[1]]), ncol = ncol(ALL[[1]]))
+    rownames(MEANMAT) <- colnames(MEANMAT) <- colnames(ALL[[1]])
+    MEANMAT[is.na(MEANMAT)] <- mean(MEANMAT, na.rm = TRUE)
+    for (i in 1:length(ALL)) {
+      if (length(newcol[[i]]) > 0) {
+        ALL[[i]][ ,newcol[[i]]] <- MEANMAT[ ,newcol[[i]]]
+        ALL[[i]][newcol[[i]], ] <- MEANMAT[newcol[[i]], ]
+      }
+    }
+  }
+  names(ALL) = names(matrices)
+  return(ALL)
+}
+
 # create 2WR matrix from distatis results
 
 Dist2WR <- function(Distatis) {
@@ -252,40 +315,6 @@ Dist2WR <- function(Distatis) {
     }
   }
   return(matrixWR2)
-}
-
-# Fonction to plot 2WR matrix
-
- plot2WR <- function(matrixWR2) {
-  WR <- normalize(matrixWR2)
-  names <- list()
-  names[[1]] <- "gene"
-  names[[2]] <- "specie"
-  names[[3]] <- "value"
-  MAT <- matrix(nrow = length(WR), ncol = 3)
-  colnames(MAT) <- names
-  k <- 1
-  for (i in 1:nrow(WR)) {
-    for (j in 1:ncol(WR)) {
-      MAT[k, 2] <- rownames(WR)[i]
-      MAT[k, 1] <- colnames(WR)[j]
-      MAT[k, 3] <- WR[i, j]
-      k <- k + 1
-    }
-  }
-  MAT <- as.data.frame(MAT)
-  genes <- factor(as.numeric(MAT$gene))
-  species <- as.character(MAT$specie)
-  distanceToRef <- as.numeric(as.character(MAT$value))
-
-  pl <- ggplot(MAT, aes(genes, species, z = distanceToRef))
-  pl <- pl + geom_tile(aes(fill = distanceToRef)) + theme_bw() + scale_fill_gradient(low = "white", high = "blue")
-  pl <- pl + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 13, color = "black"))
-  pl <- pl + theme(axis.text.y = element_text(angle = 00, hjust = 1, size = 13, color = "black"))
-  pl <- pl + theme(axis.title.y = element_text(size = rel(1.8), angle = 90))
-  pl <- pl + theme(axis.title.x = element_text(size = rel(1.8), angle = 00))
-  # pl + coord_fixed(ratio=1/5)
-  return(pl)
 }
 
 # Suppress complete outiers (species or genes) in trees in order to detect cell outliers in a second time.
@@ -322,34 +351,48 @@ rm.gene.and.species <- function(trees, sp2rm, gn2rm) {
 
 # Phylter Function to detect complete and cell outliers from a list of trees
 
-PhylteR <- function(trees, distance = "patristic", bvalue = 0, ncp = 3, center = FALSE, scale = FALSE, maxiter = 10000, k = 1.5, thres = 0.5, gene.names = NULL, Norm = "NONE") {
+PhylteR <- function(trees, distance = "patristic", method.imp = "IPCA", bvalue = 0, ncp = 3, center = FALSE, scale = FALSE, maxiter = 1000, k = 1.5, thres = 0.5, gene.names = NULL, Norm = "NONE") {
   if (is.list(trees)) {
     if (class(trees[[1]]) != "phylo") stop ("The trees should be in the \"phylo\" format!")
   }
   if (class(trees) == "character") {
-    trees<-read.tree(trees)
+    trees <- read.tree(trees)
   }
   if (!is.null(gene.names) && length(gene.names) != length(trees)) stop ("The number of gene names and the number of trees differ!")
   ##check for duplications
-  check.dup<-lapply(trees, function(x) {x$tip.label[duplicated(x$tip.label)]})
-  if (sum(unlist(lapply(check.dup, length)))>0) {
+  check.dup <- lapply(trees, function(x) {x$tip.label[duplicated(x$tip.label)]})
+  if (sum(unlist(lapply(check.dup, length))) > 0) {
     cat ("-------- ATTENTION!! There are some duplicated species in some of your trees: -------")
     for (w in 1:length(trees)) {
-      if (length(check.dup[[w]])>0) cat(paste("\n     - Species ", check.dup[[w]], " present more than once in tree ",w,"\n\n",sep=""))
+      if (length(check.dup[[w]]) > 0) cat(paste("\n     - Species ", check.dup[[w]], " present more than once in tree ", w, "\n\n", sep=""))
     }
     stop ("Remove or rename duplicated species and try again.\n\n", call.=FALSE)
   }
   trees <- rename.genes(trees, gene.names = gene.names)
   RES <- NULL
   matrices <- trees2matrices(trees, distance = distance, bvalue = bvalue)
-  matrices <- impPCA.multi(matrices, ncp = ncp, center = center, scale = scale, maxiter = maxiter)
+
+  if (method.imp == "IPCA"){
+    matrices <- impPCA.multi(matrices, ncp = ncp, center = center, scale = scale, maxiter = maxiter)
+  }
+  else if (method.imp == "MEAN"){
+    matrices <- impMean(matrices)
+  }
+  else{
+    stop ("You should choose an imputation method : MEAN or IPCA")
+  }
   Dist <- mat2Dist(matrices, Norm = Norm)
   WR <- Dist2WR(Dist)
   CompOutl <- detect.complete.outliers(WR, k = k, thres = thres)
   if (length(CompOutl$outsp) > 0 || length(CompOutl$outgn) > 0) {
     TREESwithoutCompleteOutlierDist <- rm.gene.and.species(trees, CompOutl$outsp, CompOutl$outgn)
     matrices2 <- trees2matrices(TREESwithoutCompleteOutlierDist, distance = distance, bvalue = bvalue)
-    matrices2 <- impPCA.multi(matrices2, ncp = ncp, center = center, scale = scale, maxiter = maxiter)
+    if (method.imp == "IPCA"){
+      matrices2 <- impPCA.multi(matrices2, ncp = ncp, center = center, scale = scale, maxiter = maxiter)
+    }
+    else if (method.imp == "MEAN"){
+      matrices2 <- impMean(matrices2)
+    }
     Dist2 <- mat2Dist(matrices2, Norm = Norm)
     WR2 <- Dist2WR(Dist2)
     CellOutl2 <- detect.cell.outliers(WR2, k = k + 2)
@@ -500,4 +543,51 @@ detect.cell.outliers <- function(mat2WR, k = 3) {
       return(RESULT)
     } else return(NULL)
   } else cat("\n---Operation canceled by the user.---\n")
+}
+
+# Fonction to plot 2WR matrix
+
+plot2WR <- function(matrixWR2) {
+  WR <- normalize(matrixWR2)
+  names <- list()
+  names[[1]] <- "gene"
+  names[[2]] <- "specie"
+  names[[3]] <- "value"
+  MAT <- matrix(nrow = length(WR), ncol = 3)
+  colnames(MAT) <- names
+  k <- 1
+  for (i in 1:nrow(WR)) {
+    for (j in 1:ncol(WR)) {
+      MAT[k, 2] <- rownames(WR)[i]
+      MAT[k, 1] <- colnames(WR)[j]
+      MAT[k, 3] <- WR[i, j]
+      k <- k + 1
+    }
+  }
+
+  MAT <- as.data.frame(MAT)
+  MAT$gene <- as.character(MAT$gene)
+  MAT$gene <- factor(MAT$gene, levels=unique(MAT$gene))
+
+  MAT$specie <- as.character(MAT$specie)
+  MAT$value <- as.numeric(as.character(MAT$value))
+
+  pl <- ggplot(MAT, aes(gene, specie, z = value))
+  pl <- pl + geom_tile(aes(fill = value)) + theme_bw() + scale_fill_gradient(low = "white", high = "blue")
+  pl <- pl + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 13, color = "black"))
+  pl <- pl + theme(axis.text.y = element_text(angle = 00, hjust = 1, size = 13, color = "black"))
+  pl <- pl + theme(axis.title.y = element_text(size = rel(1.8), angle = 90))
+  pl <- pl + theme(axis.title.x = element_text(size = rel(1.8), angle = 00))
+  # pl + coord_fixed(ratio=1/5)
+  return(pl)
+}
+
+# Function to plot species in Distatis compromise
+plotDistatisPartial <- function(trees, distance = "patristic", bvalue = 0, gene.names = NULL, ncp = 3, center = FALSE, scale = FALSE, maxiter = 1000, Norm = "none") {
+  trees <- rename.genes(trees, gene.names = gene.names)
+  RES <- NULL
+  matrices <- trees2matrices(trees, distance = distance, bvalue = bvalue)
+  matrices <- impPCA.multi(matrices, ncp = ncp, center = center, scale = scale, maxiter = maxiter)
+  Dist <- mat2Dist(matrices, Norm = Norm)
+  GraphDistatisPartial(Dist$res4Splus$F, Dist$res4Splus$PartialF)
 }

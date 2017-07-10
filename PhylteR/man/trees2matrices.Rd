@@ -18,5 +18,5 @@ trees2matrices(trees, distance = "patristic", bvalue = 0)
 return a list of distance matrices
 }
 \description{
-trees2matrices changes a list of trees into a list of matrices
+trees2matrices changes a list of trees into a list of matrices.
 }
