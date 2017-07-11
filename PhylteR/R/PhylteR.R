@@ -351,7 +351,7 @@ rm.gene.and.species <- function(trees, sp2rm, gn2rm) {
 
 # Phylter Function to detect complete and cell outliers from a list of trees
 
-PhylteR <- function(trees, distance = "patristic", method.imp = "IPCA", bvalue = 0, ncp = 3, center = FALSE, scale = FALSE, maxiter = 1000, k = 1.5, thres = 0.5, gene.names = NULL, Norm = "NONE") {
+PhylteR <- function(trees, distance = "patristic", bvalue = 0, method.imp = "IPCA", ncp = 3, center = FALSE, scale = FALSE, maxiter = 1000, k = 1.5, thres = 0.5, gene.names = NULL, Norm = "NONE") {
   if (is.list(trees)) {
     if (class(trees[[1]]) != "phylo") stop ("The trees should be in the \"phylo\" format!")
   }
@@ -395,11 +395,11 @@ PhylteR <- function(trees, distance = "patristic", method.imp = "IPCA", bvalue =
     }
     Dist2 <- mat2Dist(matrices2, Norm = Norm)
     WR2 <- Dist2WR(Dist2)
-    CellOutl2 <- detect.cell.outliers(WR2, k = k + 2)
+    CellOutl2 <- detect.cell.outliers(WR2, k = k)
     RES$Complete <- CompOutl
     RES$CellByCell <- CellOutl2
   } else {
-    CellOutl2 <- detect.cell.outliers(WR,  k = k + 2)
+    CellOutl2 <- detect.cell.outliers(WR,  k = k)
     RES$Complete <- CompOutl
     RES$CellByCell <- CellOutl2
   }
@@ -572,8 +572,8 @@ plot2WR <- function(matrixWR2) {
   MAT$specie <- as.character(MAT$specie)
   MAT$value <- as.numeric(as.character(MAT$value))
 
-  pl <- ggplot(MAT, aes(gene, specie, z = value))
-  pl <- pl + geom_tile(aes(fill = value)) + theme_bw() + scale_fill_gradient(low = "white", high = "blue")
+  pl <- ggplot(MAT, aes(quote(gene), quote(specie), z = quote(value)))
+  pl <- pl + geom_tile(aes(fill = quote(value))) + theme_bw() + scale_fill_gradient(low = "white", high = "blue")
   pl <- pl + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 13, color = "black"))
   pl <- pl + theme(axis.text.y = element_text(angle = 00, hjust = 1, size = 13, color = "black"))
   pl <- pl + theme(axis.title.y = element_text(size = rel(1.8), angle = 90))
@@ -583,11 +583,135 @@ plot2WR <- function(matrixWR2) {
 }
 
 # Function to plot species in Distatis compromise
-plotDistatisPartial <- function(trees, distance = "patristic", bvalue = 0, gene.names = NULL, ncp = 3, center = FALSE, scale = FALSE, maxiter = 1000, Norm = "none") {
+plotDistatisPartial <- function(trees, distance = "patristic", bvalue = 0, gene.names = NULL, method.imp = "IPCA", ncp = 3, center = FALSE, scale = FALSE, maxiter = 1000, Norm = "none") {
   trees <- rename.genes(trees, gene.names = gene.names)
   RES <- NULL
   matrices <- trees2matrices(trees, distance = distance, bvalue = bvalue)
-  matrices <- impPCA.multi(matrices, ncp = ncp, center = center, scale = scale, maxiter = maxiter)
+  if (method.imp == "IPCA"){
+    matrices <- impPCA.multi(matrices, ncp = ncp, center = center, scale = scale, maxiter = maxiter)
+  }
+  else if (method.imp == "MEAN"){
+    matrices <- impMean(matrices)
+  }
   Dist <- mat2Dist(matrices, Norm = Norm)
   GraphDistatisPartial(Dist$res4Splus$F, Dist$res4Splus$PartialF)
+}
+
+# Function to vizualize species
+
+VizualizeSpe <- function(trees, species, distance = "patristic", bvalue = 0, gene.names = NULL, method.imp = "IPCA", ncp = 3, center = FALSE, scale = FALSE, maxiter = 1000){
+  matrices <- trees2matrices(trees, distance = distance, bvalue = bvalue)
+  if (method.imp == "IPCA"){
+    TAB <- impPCA.multi(matrices, ncp = ncp, center = center, scale = scale, maxiter = maxiter)
+  }
+  else if (method.imp == "MEAN"){
+    TAB <- impMean(matrices)
+  }
+  else{
+    stop ("You should choose an imputation method : MEAN or IPCA")
+  }
+  nam <- rownames(TAB[[1]])
+  listx = vector()
+  listy = vector()
+    GENEi<-NULL
+    SP<-species
+    T1 <- lapply(TAB, function(x) (x[SP, nam]))
+    T1m <- matrix(unlist(T1), nrow = length(trees), byrow = TRUE)
+    Means.T1m <- apply(T1m, 2, mean)
+    alphas <- seq(0, 2 * pi, length.out = length(nam) + 1)
+    alphas <- alphas[1:length(nam)]
+    for (i in 1:length(trees)) {
+      genei <- T1m[i, ] / Means.T1m
+      genei[is.na(genei)] <- 1
+      GENEi <- c(GENEi, genei)
+      x <- genei * cos(alphas)
+      y <- genei * sin(alphas)
+      x[is.na(x)] <- 0
+      y[is.na(y)] <- 0
+      listx = append(listx, x)
+      listy = append(listy, y)
+    }
+  SP <- species
+  GENEi <- NULL
+  T1 <- lapply(TAB, function(x) (x[SP, nam]))
+  T1m <- matrix(unlist(T1), nrow = length(trees), byrow = TRUE)
+  ##T1m gives 1 plot corresponding to "Kla" for each gene.
+  Means.T1m <- apply(T1m, 2, mean)
+  ##we check angles
+  alphas <- seq(0, 2 * pi, length.out = length(nam) + 1)
+  alphas <- alphas[1:length(nam)]
+  ##CIRCLE:
+  xc <- rep(1, length(nam) + 1) * cos(seq(0, 2 * pi, length.out = length(nam) + 1))
+  yc <- rep(1, length(nam) + 1) * sin(seq(0, 2 * pi, length.out = length(nam) + 1))
+  ##we check angles
+  xc <- xc[1:length(nam)]
+  yc <- yc[1:length(nam)]
+  ##for each gene, the ray is given by the proportion:
+  plot((max(abs(listx)) / max(xc)) * xc, (max(abs(listy)) / max(yc)) * yc, type = "n", xlim = c(-max(abs(listx)) - 2, max(abs(listx)) + 2), ylim = c(-max(abs(listy))-2, max(abs(listy)) + 2), frame.plot = FALSE, axes = FALSE, xlab = "", ylab = "")
+  text((max(abs(listx)) / max(xc)) * xc, (max(abs(listy)) / max(yc)) * yc, labels = nam, col = "light grey")
+  for (i in 1:length(trees)) {
+    genei <- T1m[i,] / Means.T1m
+    genei[is.na(genei)] <- 1
+    GENEi <- c(GENEi, genei)
+    x <- genei * cos(alphas)
+    y <- genei * sin(alphas)
+    x[is.na(x)] <- 0
+    y[is.na(y)] <- 0
+    polygon(xc, yc, border = "light grey", lwd = 0.54)
+    polygon(x, y, border = "red", lwd = 0.8)
+    text(-max(max(abs(listx)) / max(xc) * xc), -max(max(abs(listy)) / max(yc) * yc), SP, cex = 2)
+  }
+}
+
+# Function to vizualize genes
+VizualizeGene <- function(trees, gene, distance = "patristic", bvalue = 0, gene.names = NULL, method.imp = "IPCA", ncp = 3, center = FALSE, scale = FALSE, maxiter = 1000){
+  matrices <- trees2matrices(trees, distance = distance, bvalue = bvalue)
+  if (method.imp == "IPCA"){
+    TAB <- impPCA.multi(matrices, ncp = ncp, center = center, scale = scale, maxiter = maxiter)
+  }
+  else if (method.imp == "MEAN"){
+    TAB <- impMean(matrices)
+  }
+  else{
+    stop ("You should choose an imputation method : MEAN or IPCA")
+  }
+  nam <- rownames(TAB[[1]])
+  listx = vector()
+  listy = vector()
+    for (j in 1:length(nam)) { ##for each speciew
+      SP <- nam[j]
+      T1 <- lapply(TAB, function(x,y) (x[SP,nam]))
+      T1m <- matrix(unlist(T1), nrow = length(trees), byrow = TRUE)
+      Means.T1m <- apply(T1m, 2, mean)
+      genei <- T1m[gene,]/Means.T1m
+      alphas <- seq(0,2 * pi, length.out = length(nam) + 1)
+      alphas <- alphas[1:length(nam)]
+      x <- genei * cos(alphas)
+      y <- genei * sin(alphas)
+      x[is.na(x)] <- 0
+      y[is.na(y)] <- 0
+      listx = append(listx, x)
+      listy = append(listy, y)
+    }
+  plot(0, 0, type = "n", xlim = c(-max(abs(listx)) - 2, max(abs(listx)) + 2), ylim = c(-max(abs(listy)) - 2, max(abs(listy)) + 2), frame.plot = FALSE, axes = FALSE, xlab = "", ylab = "", col.main = "black", cex.main = 1.5)
+  title(gene)
+  for (j in 1:length(nam)) { ##for each speciew
+    SP <- nam[j]
+    T1 <- lapply(TAB, function(x,y) (x[SP,nam]))
+    T1m <- matrix(unlist(T1), nrow=length(trees), byrow=TRUE)
+    Means.T1m <- apply(T1m, 2, mean)
+    genei <- T1m[gene,]/Means.T1m
+    xc <- rep(1, length(nam) + 1) * cos(seq(0,2 * pi, length.out = length(nam) + 1))
+    yc <- rep(1, length(nam) + 1) * sin(seq(0,2 * pi, length.out = length(nam) + 1))
+    ##we check angles
+    alphas <- seq(0,2 * pi, length.out = length(nam) + 1)
+    alphas <- alphas[1:length(nam)]
+    x <- genei * cos(alphas)
+    y <- genei * sin(alphas)
+    x[is.na(x)] <- xc[j]
+    y[is.na(y)] <- yc[j]
+    polygon(xc, yc, border="light grey", lwd = 0.5)
+    points(x, y, pch = 19, cex = 0.2, col = "red")
+    polygon(x, y, border ="red", lwd = 0.1)
+  }
 }

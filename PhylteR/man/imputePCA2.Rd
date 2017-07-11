@@ -36,7 +36,6 @@ Impute the missing values of a dataset with the Principal Components Analysis mo
 }
 \details{
 imputePCA function from missMDA package (Josse J. et Husson F. (2012) Handling missing values in exploratory multivariate data analysis method. Journal de la Société Française de Statistique vol. 153 (2): 79-99.) with some ajustements to fit trees data.
-}
-\seealso{
-\code{\link{impPCA.multi}}
+
+see also ?missMDA::imputePCA
 }

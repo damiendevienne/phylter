@@ -20,6 +20,3 @@ Return a list of matrices without missing data.
 \description{
 Imputing missing data in matrices
 }
-\seealso{
-\code{\link{imputePCA2}}
-}

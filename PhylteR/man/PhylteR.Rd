@@ -4,15 +4,15 @@
 \alias{PhylteR}
 \title{PhylteR}
 \usage{
-PhylteR(trees, distance = "patristic", method.imp = "IPCA", bvalue = 0,
+PhylteR(trees, distance = "patristic", bvalue = 0, method.imp = "IPCA",
 ncp = 3, center = FALSE, scale = FALSE, maxiter = 1000, k = 1.5,
 thres = 0.5, gene.names = NULL, Norm = "NONE")
 }
 \arguments{
 \item{trees}{The list of gene trees}
 \item{distance}{parameter from the function trees2matrices to transform trees into distance matrices. Distance could be "nodal" or "patristic" (default).}
-\item{method.imp}{The method used for missing data imputation. "IPCA" for imputation with iteractive PCA (Slower but more accurate) ."MEAN" for imputation by means (faster but less accurate).}
 \item{bvalue}{This argument is only used if trees contain bootstrap values. It determines under what bootstrap values the nodes should be collapsed. Value 0 (the default) means that no nodes are collapsed.}
+\item{method.imp}{The method used for missing data imputation. "IPCA" for imputation with iteractive PCA (Slower but more accurate) ."MEAN" for imputation by means (faster but less accurate). If there is too much missing data in your data set the iterative PCA ("IPCA") method may not converge. Please then use method.imp ⁼ "MEAN". If there is too much missing data in your data set the iterative PCA ("IPCA") method may not converge. Please then use method.imp ⁼ "MEAN".}
 \item{ncp}{only used if method.imp = "IPCA". integer corresponding to the number of components used to to predict the missing entries.}
 \item{center}{only used if method.imp = "IPCA". boolean. By default FALSE leading to data not centered.}
 \item{scale}{only used if method.imp = "IPCA". boolean. By default FALSE leading to not a same weight for each variable.}
@@ -24,14 +24,39 @@ thres = 0.5, gene.names = NULL, Norm = "NONE")
 }
 
 \value{
-$Complete$mat2WR is the 2WR matrix used to detect complete outliers
-$complete$outgn is the list of complete outliers genes
-$complete$outsp is the list of complete outliers species
-$CellByCell$outcell is the list of cell outliers.
+\item{$Complete$mat2WR}{The 2WR matrix used to detect complete outliers.}
+\item{$complete$outgn}{The list of complete outliers genes.}
+\item{$complete$outsp}{The list of complete outliers species.}
+\item{$CellByCell$outcell}{The list of cell outliers.}
 }
 \description{
 This function finds complete and cell outliers inside a list of gene trees.
 }
 \details{
 The detection is done in two steps. The first step is the detection of complete outliers. Complete outliers detected are then removed of the list of trees and the second step is the detection of cell outliers in this list.
+}
+\examples{
+
+# Detecting outliers of the dataset Fungi using nodal distances.
+# This data set doesn't contain any missing data.
+
+data(Fungi)
+
+Results <- PhylteR(Fungi, distance = "nodal", bvalue = 0, k = 3,
+thres = 0.6, gene.names = NULL, Norm = "NONE")
+
+# See results
+# Complete outliers
+
+outgn <- Results$complete$outgn
+outsp <- Results$complete$outsp
+
+# outliers cell
+
+outcell <- Results$CellByCell$outcell
+
+# you can visualize the 2WR matrices (genes x species) with the function plot2WR.
+
+plot = plot2WR(Results$Complete$mat2WR)
+
 }

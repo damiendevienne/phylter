@@ -20,3 +20,8 @@ return a list of distance matrices
 \description{
 trees2matrices changes a list of trees into a list of matrices.
 }
+\examples{
+# transforming a lsit of trees into a list of distances matrices using patristic distances:
+data(Fungi)
+matrices = trees2matrices(Fungi, distance = "patristic", bvalue = 0)
+}

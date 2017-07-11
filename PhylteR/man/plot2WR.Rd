@@ -15,3 +15,16 @@ Return a level plot of the 2WR matrix. It can be informative to look at the comp
 \description{
 This function permits to plot the 2WR matrix.
 }
+\examples{
+# Detecting outliers of the dataset Fungi using nodal distances.
+# This data set doesn't contain any missing data.
+
+data(Fungi)
+
+Results <- PhylteR(Fungi, distance = "nodal", bvalue = 0, k = 3,
+thres = 0.6, gene.names = NULL, Norm = "NONE")
+
+# you can visualize the 2WR matrices (genes x species) with the function plot2WR.
+
+plot = plot2WR(Results$Complete$mat2WR)
+}
