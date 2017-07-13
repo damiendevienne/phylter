@@ -1,0 +1,36 @@
+$outgn
+character(0)
+
+$outsp
+character(0)
+
+$outcell
+ Species                            Genes  
+ "Dickeya_dianthicola..IPO980Dd"    "GEN1" 
+ "Dickeya_dadantii..NCPPB898Dd"     "GEN1" 
+ "Dickeya_paradisiaca..Ech703Dp"    "GEN2" 
+ "Serratia_sp..ATCC39006Ss"         "GEN2" 
+ "Dickeya_zeae..MK19Dz"             "GEN6" 
+ "Dickeya_solani..GBBC2040Ds"       "GEN7" 
+ "Dickeya_paradisiaca..Ech703Dp"    "GEN8" 
+ "Dickeya_solani..RNS050512ADs"     "GEN14"
+ "Dickeya_dadantii..NCPPB898Dd"     "GEN15"
+ "Dickeya_dianthicola..NCPPB3534Dd" "GEN17"
+ "Dickeya_zeae..DZ2QDz"             "GEN18"
+ "Dickeya_zeae..NCPPB3531Dz"        "GEN19"
+ "Dickeya_solani..GBBC2040Ds"       "GEN20"
+ "Dickeya_zeae..DZ2QDz"             "GEN21"
+ "Dickeya_zeae..NCPPB2538Dz"        "GEN24"
+ "Dickeya_paradisiaca..NCPPB2511Dp" "GEN31"
+ "Dickeya_dianthicola..GBBC2039Dd"  "GEN35"
+ "Dickeya_sp..NCPPB569Ds"           "GEN38"
+ "Dickeya_dianthicola..GBBC2039Dd"  "GEN39"
+ "Dickeya_solani..GBBC2040Ds"       "GEN41"
+ "Dickeya_solani..IPO2222Ds"        "GEN41"
+ "Dickeya_zeae..ZJU1202Dz"          "GEN45"
+ "Dickeya_paradisiaca..Ech703Dp"    "GEN47"
+ "Dickeya_solani..PPO9019Ds"        "GEN48"
+ "Dickeya_dianthicola..NCPPB3534Dd" "GEN49"
+ "Dickeya_zeae..DZ2QDz"             "GEN50"
+ "Dickeya_zeae..ZJU1202Dz"          "GEN51"
+

@@ -1,0 +1,25 @@
+Package: PhylteR
+Type: Package
+Title: Detection of Outliers in a List of Gene Trees
+Version: 1.0.0
+Authors@R: c(person("Damien","de Vienne", email = "damien.de-vienne@univ-lyon1.fr", role = c("aut","ctb","cre")),
+    person("Stephane", "Dray", email = "stephane.dray@univ-lyon1.fr", role = "ctb"),
+    person("Aurore", "Comte", email = "aurore.f.comte@gmail.com", role = c("aut", "ctb"))
+    )
+Description: Detection of outliers in a list of genes trees. Detected outliers could be complete outliers 
+    (genes and/or species) different from all the others. PhylteR can also detect gene/specie outliers couples
+    (a leaf outlier in a particular tree). Phylter also use a missMDA method (imputePCA) to impute the position of
+    missing species in gene trees. A web application of this package exists online at \url{lbbe-shiny.univ-lyon1.fr/PhylteR}.
+Encoding: UTF-8
+LazyData: true
+License: GPL-3
+Depends: R (>= 3.3.0)
+Imports: FactoMineR, ape, DistatisR, phangorn, ggplot2, stats, utils
+RoxygenNote: 6.0.1
+NeedsCompilation: no
+Packaged: 2017-07-11 14:48:36 UTC; aurore
+Author: Damien de Vienne [aut, ctb, cre],
+  Stephane Dray [ctb],
+  Aurore Comte [aut, ctb]
+Maintainer: Damien de Vienne <damien.de-vienne@univ-lyon1.fr>
+Built: R 3.4.1; ; 2017-07-11 14:48:45 UTC; unix

@@ -1,0 +1,28 @@
+$outgn
+character(0)
+
+$outsp
+character(0)
+
+$outcell
+ Species                                Genes  
+ "Bradyrhizobium_sp...GCA_000284275.1"  "GEN3" 
+ "Rhodopseudomonas_pa..GCA_000013685.1" "GEN4" 
+ "Methylobacterium_po..GCA_000019945.1" "GEN5" 
+ "Bradyrhizobium_sp...GCA_000244915.1"  "GEN8" 
+ "Methylocella_silves..GCA_000021745.1" "GEN11"
+ "Azorhizobium_caulin..GCA_000010525.1" "GEN15"
+ "Methylobacterium_ra..GCA_000019725.1" "GEN19"
+ "Xanthobacter_autotr..GCA_000017645.1" "GEN23"
+ "Blastochloris_virid..GCA_001402875.1" "GEN28"
+ "Methylobacterium_po..GCA_000019945.1" "GEN30"
+ "Chelatococcus_sp...GCA_001271345.1"   "GEN31"
+ "Bradyrhizobium_sp...GCA_000296215.2"  "GEN32"
+ "Bradyrhizobium_sp...GCA_000296215.2"  "GEN33"
+ "Methylobacterium_or..GCA_000757795.1" "GEN34"
+ "Bradyrhizobium_sp...GCA_000284275.1"  "GEN38"
+ "Methylobacterium_sp..GCA_001542815.1" "GEN38"
+ "Bosea_sp...GCA_001562255.1"           "GEN40"
+ "Rhodopseudomonas_pa..GCA_000177255.2" "GEN42"
+ "Nitrobacter_winogra..GCA_000012725.1" "GEN43"
+

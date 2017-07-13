@@ -23,7 +23,8 @@ sp = 1 si HGT sur les branches externes uniquement / 0 sinon
 
 		-SCRIPT : Différents scripts ayant servis à générer les listes d'arbres simulées sur le cluster
 		
-
+		-FORETS : jeux de données réèls
+		
 
 --> Pour éditer le code du shiny, penser à demander l'acces au svn à Aurélie ou à Stéphane.
 
