@@ -1,0 +1,156 @@
+ui<-fluidPage(
+
+  useShinyjs(),
+
+  #disable tabs when data are not yet inputed.
+
+  tags$head(tags$script("
+        window.onload = function() {
+            $('#PhylteR a:contains(\"visualize some trees\")').parent().addClass('disabled');
+            $('#PhylteR a:contains(\"visualize species on distatis compromise\")').parent().addClass('disabled');
+            $('#PhylteR a:contains(\"visualize genes\")').parent().addClass('disabled');
+            $('#PhylteR a:contains(\"visualize 2WR matrices\")').parent().addClass('disabled');
+            $('#PhylteR a:contains(\"visualize distances\")').parent().addClass('disabled');
+            $('#PhylteR a:contains(\"visualize correlation between genes\")').parent().addClass('disabled');
+        };
+        Shiny.addCustomMessageHandler('activeNavs', function(nav_label) {
+            $('#PhylteR a:contains(\"' + nav_label + '\")').parent().removeClass('disabled');
+        });
+   ")
+  ),
+  theme = shinytheme("united"),
+
+  #Up panel : enter data and choose parameters
+  HTML("<br>"),
+  wellPanel(
+    fluidRow(
+      column(6,
+        bsButton("q1", label = "", icon = icon("question"), style = "info", size = "extra-small"),
+        fileInput(inputId = "trees", label = "add a tree file", accept = "text/plain"),
+        bsPopover("q1", "help", "Enter a list of gene trees in Newick format. This file should not exceeds 4Mo, if it is the case, please use the R functions.", placement = "bottom", trigger = "click", options = NULL),
+        downloadButton("downloadData", label = "Download a test file"),
+        bsPopover("downloadData", "Example Data Set", "246 genes trees of 21 fungi species (Aguileta et al., 2008)", placement = "bottom", trigger = "hover", options = NULL),
+        radioButtons(inputId="Outlier",label = "Detection", choiceNames = c("off","on"), choiceValues = c("off","on"), selected = "off"),
+        textOutput(outputId= "outputPhylter1"),
+        textOutput(outputId= "outputPhylter2"),
+        textOutput(outputId= "outputPhylter3")
+      ),
+      column(6,
+        fluidRow(
+          column(6,
+            radioButtons(inputId="choice",label = "Method", choiceNames = c("nodal","patristic"), choiceValues = c("nodal","patristic"), selected = "patristic")
+          ),
+          column(6,
+            radioButtons(inputId="impMet",label = "Imputation of missing data", choiceNames = c("IPCA (accurate but slower)","MEAN (less accurate but faster)"), choiceValues = c("IPCA","MEAN"), selected = "MEAN")
+          )
+        ),
+        sliderInput(inputId="k", label = "select k", value = 3, min=1, max=6, round=FALSE, step=0.1),
+        #uiOutput(outputId = "outbvalue"),
+        useShinyjs(),
+        disabled(
+          sliderInput("bvalue", label = "Collapse nodes having bvalues lower than : ", value = 0, min = 0, max = 100, step = 5)
+        ),
+        textOutput(outputId = "DataSetInfo"),
+        textOutput(outputId = "BvalueInfo")
+      )
+    ),
+    fluidRow(
+      htmlOutput(outputId = "DataSetProblem")
+      #downloadButton("downloadOut", label = "Download the outliers list")
+    )
+  ),
+
+  #Down panel, choose visualisation with several panels
+
+  navbarPage("PhylteR", id="PhylteR",selected = "Welcome",
+    tabPanel("Welcome",
+      fixedRow(
+        column(10, offset = 1,
+          helpText(
+            HTML("
+<h2 align='center'>Welcome to the PhylteR application!</h2>
+              <h4 align='center'>Here you can visualize and detect outliers in a list of gene trees.</h4>
+              <hr style='height: 2px; color: #FF4000; background-color: #FF4000; width: 50%; border: none;'>
+              <p align='center'>First of all, you must add a tree file in Newick format.</p>
+              <p align='center'>Then, If you want to detect outliers, you should turn on the Detection button and then choose the parameters you want:</p>
+              <p align='center'> - <u>nodal and patristic</u> are methods to calculate distances between species.</p>
+              <p align='center'> - <u>k</u> is a threshold of the outlier detection. If k is big, the detection is more stringent. </p>
+              <hr style='height: 2px; color: #FF4000; background-color: #FF4000; width: 50%; border: none;'>
+              <p align='center'>You can then visualize your data by clicking on the several tabs! </p><br>
+              <p align='center'>
+                <a href='https://lbbe.univ-lyon1.fr/'><img src='lbbe.jpg'></a><br><br>
+                <u>contacts:</u>
+                <br><br>
+Aurore Comte - <a href='mailto:aurore.f.comte@gmail.com'>aurore.f.comte@gmail.com</a><br>
+Damien de Vienne - <a href='mailto:damien.de-vienne@univ-lyon1.fr'>damien.de-vienne@univ-lyon1.fr</a><br>
+Stéphane Dray - <a href='mailto:stephane.dray@univ-lyon1.fr'>stephane.dray@univ-lyon1.fr</a><br>
+              </p>
+              <br>
+              ")
+            )
+          )
+        )
+      ),
+    tabPanel("visualize some trees",
+      column(3, offset = 0,
+        textAreaInput(inputId="Treeslist",label = "Enter some genes"),
+        bsPopover("Treeslist", "help", "Enter one or several genes separated by a comma", placement = "bottom", trigger = "hover", options = NULL),
+        actionButton(inputId="SumitTrees",label="Visualize"),
+        conditionalPanel(condition = "input.Outlier == 'on'",
+          helpText(
+            HTML("
+             <br>
+             <p align='left'>
+             <img src='legendeTree.png' width='80%' height='80%'>
+             </p>
+            ")
+          )
+        )
+      ),
+      mainPanel(
+        plotOutput(outputId = "plot1", height = "2000px")
+      )
+    ),
+    tabPanel("visualize species on distatis compromise",
+      column(3, offset = 0,
+        selectInput(inputId = "selectSpecies",label = "See a particular species","all"),
+        conditionalPanel(condition = "input.Outlier == 'on'",
+          helpText(
+           HTML("
+             <br>
+             <p align='left'>
+             <img src='legende.png' width='70%' height='70%'>
+             </p>
+            ")
+          )
+        )
+      ),
+      mainPanel(
+        helpText("Projection of each tree on a compromise space (from Distatis method). The center of each cloud is the mean position of a species in the compromise. Each circle is the position of this species in a particular gene. The line between the center of the cloud and a circle is the distance between the reference position of the species and its true position in a particular gene."),
+        plotOutput(outputId = "plot2", height = "1000px",dblclick = "BackClick2")
+      )
+    ),
+    tabPanel("visualize genes",
+      helpText("Between genes space. Each circles represents genes. Genes with larger projections on the first axe are more similar to the other genes than genes with smaller projections."),
+      plotOutput(outputId = "plot3", height = "1000px")
+    ),
+    tabPanel("visualize correlation between genes",
+      helpText("Heatmap of the correlation matrix between genes"),
+      plotOutput(outputId = "plot8", height = "1000px", dblclick="plot8dbclick", brush = brushOpts(id = "plot8_brush",resetOnNew = TRUE))
+    ),
+    tabPanel("visualize 2WR matrices",
+      helpText("The 2WR matrix (two-way reference matrix) is a matrix genes x species computed by calculating, for every species, the distance separating its position in each gene tree to its mean position. The darker a pair gene/species is, the further it is from its reference position. You can zoom by brushing and doubleclicking on the plot"),
+      plotOutput(outputId = "plot4", height = "1000px", dblclick="plot4dbclick", brush = brushOpts(id = "plot4_brush",resetOnNew = TRUE))
+    ),
+    tabPanel("visualize distances between species",
+      helpText("Grey circles are the mean of distance between species for a particular species. Red circles are genes. For a given gene, the distance between the species of interest and an other one is given by the shape of the red line: an acute angle mean an important distance between two species"),
+      plotOutput(outputId = "plot6", height = "1400px")
+    ),
+    tabPanel("visualize distances between genes",
+      helpText("For a given gene, each red line correspond to a species and each point on the red line correspond to the distance between this species and the other species. Grey circle is the mean distance between species for this given gene."),
+      selectInput(inputId="Geneslist",label = "Select Genes", ""),
+      #uiOutput(outputId="GeneslistUI"),
+      plotOutput(outputId = "plot7", height = "1400px")
+    )
+  )
+)
