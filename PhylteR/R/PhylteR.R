@@ -452,99 +452,103 @@ detect.complete.outliers <- function(mat2WR, k = 1.5, thres = 0.5) {
 
 # Function to detect cell outliers (species and genes)
 detect.cell.outliers <- function(mat2WR, k = 3) {
-  ans <- "y"
-  if (ans == "y") {
-    MAT <- mat2WR
-    detect.island <- function(arr) {
-      spi.names <- names(arr)
-      spi <- 1:length(spi.names)
-      names(spi) <- spi.names
-      true.names <- names(arr)[arr == TRUE]
-      if (length(true.names) == 1) {
-        return(list(true.names))
+  MAT <- mat2WR
+  detect.island <- function(arr) {
+    spi.names <- names(arr)
+    spi <- 1:length(spi.names)
+    names(spi) <- spi.names
+    true.names <- names(arr)[arr == TRUE]
+    if (length(true.names) == 1) {
+      return(list(true.names))
+    }
+    else if (length(true.names) > 1) {
+      true.i <- spi[true.names]
+      res<-dist(true.i)
+      table.i <- cbind(t(combn(attributes(res)$Labels, 2)), array(res))
+      in.island<-NULL
+      if (length(table.i[table.i[, 3] == "1", 3]) == 0) {
+        in.island <- "nopair"
+        list.i <- NULL
       }
-      else if (length(true.names) > 1) {
-        true.i <- spi[true.names]
-        res<-dist(true.i)
-        table.i <- cbind(t(combn(attributes(res)$Labels, 2)), array(res))
-        in.island<-NULL
-        if (length(table.i[table.i[, 3] == "1", 3]) == 0) {
-          in.island <- "nopair"
-          list.i <- NULL
-        }
-        if (length(table.i[table.i[,3] == "1", 3]) == 1) {
-          in.island <- table.i[table.i[,3] == "1", c(1, 2)]
-          list.i <- list(in.island)
-        }
-        if (is.null(in.island)) {
-          table.small <- table.i[table.i[,3] == "1",c(1,2)]
-          list.i <- list()
-          for (i in 1:nrow(table.small)) list.i[[i]] <- table.small[i, ]
-          for (i in 1:(length(list.i) - 1)) {
-            for (j in (i+1):length(list.i)) {
-              if (length(intersect(list.i[[i]], list.i[[j]])) > 0) {
-                list.i[[i]] <- c(list.i[[i]], list.i[[j]])
-                list.i[[j]] <- "out"
-                list.i[[i]] <- unique(list.i[[i]])
-              }
+      if (length(table.i[table.i[,3] == "1", 3]) == 1) {
+        in.island <- table.i[table.i[,3] == "1", c(1, 2)]
+        list.i <- list(in.island)
+      }
+      if (is.null(in.island)) {
+        table.small <- table.i[table.i[,3] == "1",c(1,2)]
+        list.i <- list()
+        for (i in 1:nrow(table.small)) list.i[[i]] <- table.small[i, ]
+        for (i in 1:(length(list.i) - 1)) {
+          for (j in (i+1):length(list.i)) {
+            if (length(intersect(list.i[[i]], list.i[[j]])) > 0) {
+              list.i[[i]] <- c(list.i[[i]], list.i[[j]])
+              list.i[[j]] <- "out"
+              list.i[[i]] <- unique(list.i[[i]])
             }
           }
-          list.i2 <- list()
-          w <- 0
-          for (i in 1:length(list.i)) {
-            if ((length(list.i[[i]]) > 1)&&(list.i[[i]][1] != "out")) {
-              w <- w+1
-              list.i2[[w]] <- list.i[[i]]
-              in.island <- c(in.island, list.i[[i]])
+        }
+        list.i2 <- list()
+        w <- 0
+        for (i in 1:length(list.i)) {
+          if ((length(list.i[[i]]) > 1)&&(list.i[[i]][1] != "out")) {
+            w <- w+1
+            list.i2[[w]] <- list.i[[i]]
+            in.island <- c(in.island, list.i[[i]])
+          }
+        }
+        list.i <- list.i2
+      }
+      out.island <- as.list(setdiff(true.names, in.island))
+      return(c(list.i, out.island))
+    }
+  }
+  outl.sub <- function(x, k) {
+    return(x > quantile(x)[4] + k * IQR(x) + 1e-10)
+  }
+  MATspgn <- normalize(mat2WR, "genes") * normalize(mat2WR, "species")
+  testspgn1 <- apply(MATspgn, 2, outl.sub, k = k)
+  testspgn2 <- t(apply(MATspgn, 1, outl.sub, k = k))
+  testspgn <- testspgn1 * testspgn2
+  testFALSE <- testspgn
+  testFALSE[testFALSE == FALSE] <- 0
+  testFALSE[testFALSE == TRUE] <- 1
+  if (sum(testFALSE) > 0) {
+    out.list <- apply(testspgn, 2, detect.island)
+    genes <- colnames(testspgn)
+    res <- c(NA,NA)
+    for (i in 1:length(out.list)) {
+      if (!is.null(out.list[[i]])) {
+        for (j in 1:length(out.list[[i]])) {
+          if (length(out.list[[i]][[j]]) == 1) res <- rbind(res, c(out.list[[i]][[j]], genes[i]))
+          if (length(out.list[[i]][[j]]) > 1) {
+            vals <- MATspgn[out.list[[i]][[j]], genes[i]]
+            multi = c(names(vals)[vals == max(vals)])
+            if(length(multi) > 1){
+              x = cbind(multi, rep(genes[i],length(multi)))
+              res <- rbind(res, x)
+            }
+            else{
+              res <- rbind(res, c(multi, genes[i]))
             }
           }
-          list.i <- list.i2
         }
-        out.island <- as.list(setdiff(true.names, in.island))
-        return(c(list.i, out.island))
       }
     }
-    outl.sub <- function(x, k) {
-      return(x > quantile(x)[4] + k * IQR(x) + 1e-10)
-    }
-    MATspgn <- normalize(mat2WR, "genes") * normalize(mat2WR, "species")
-    testspgn1 <- apply(MATspgn, 2, outl.sub, k = k)
-    testspgn2 <- t(apply(MATspgn, 1, outl.sub, k = k))
-    testspgn <- testspgn1 * testspgn2
-    testFALSE <- testspgn
-    testFALSE[testFALSE == FALSE] <- 0
-    testFALSE[testFALSE == TRUE] <- 1
-    if (sum(testFALSE) > 0) {
-      out.list <- apply(testspgn, 2, detect.island)
-      genes <- colnames(testspgn)
-      res <- c(NA,NA)
-      for (i in 1:length(out.list)) {
-        if (!is.null(out.list[[i]])) {
-          for (j in 1:length(out.list[[i]])) {
-            if (length(out.list[[i]][[j]]) == 1) res <- rbind(res, c(out.list[[i]][[j]], genes[i]))
-            if (length(out.list[[i]][[j]]) > 1) {
-              vals <- MATspgn[out.list[[i]][[j]], genes[i]]
-              res <- rbind(res, c(names(vals)[vals == max(vals)], genes[i]))
-            }
-          }
-        }
-      }
-      colnames(res) <- c("Species", "Genes")
-      ##we construct the MATfinal
-      MATfinal <- testspgn
-      MATfinal[,] <- 0
-      for (w in 2:nrow(res)) MATfinal[res[w, 1], res[w, 2]] <- 1
-        RESULT <- NULL
-        #RESULT$mat2WR <- mat2WR
-        #RESULT$matspgn <- MATspgn
-        #RESULT$matfinal <- MATfinal
-        #RESULT$testFALSE <- testFALSE
-        RESULT$outcell <- res[2:nrow(res), ]
-      return(RESULT)
-    } else return(NULL)
-  } else cat("\n---Operation canceled by the user.---\n")
+    colnames(res) <- c("Species", "Genes")
+    ##we construct the MATfinal
+    MATfinal <- testspgn
+    MATfinal[,] <- 0
+    for (w in 2:nrow(res)) MATfinal[res[w, 1], res[w, 2]] <- 1
+    RESULT <- NULL
+    #RESULT$mat2WR <- mat2WR
+    #RESULT$matspgn <- MATspgn
+    #RESULT$matfinal <- MATfinal
+    #RESULT$testFALSE <- testFALSE
+    RESULT$outcell <- res[2:nrow(res), ]
+    return(RESULT)
+  } 
+  else return(NULL)
 }
-
 # Fonction to plot 2WR matrix
 
 plot2WR <- function(matrixWR2) {
@@ -564,16 +568,19 @@ plot2WR <- function(matrixWR2) {
       k <- k + 1
     }
   }
-
+  
   MAT <- as.data.frame(MAT)
   MAT$gene <- as.character(MAT$gene)
   MAT$gene <- factor(MAT$gene, levels=unique(MAT$gene))
-
   MAT$specie <- as.character(MAT$specie)
   MAT$value <- as.numeric(as.character(MAT$value))
-
-  pl <- ggplot(MAT, aes(quote(gene), quote(specie), z = quote(value)))
-  pl <- pl + geom_tile(aes(fill = quote(value))) + theme_bw() + scale_fill_gradient(low = "white", high = "blue")
+  
+  genes <-  MAT$gene
+  species <- MAT$specie
+  values <- MAT$value
+  
+  pl <- ggplot(MAT, aes(genes, species, z = values))
+  pl <- pl + geom_tile(aes(fill = values)) + theme_bw() + scale_fill_gradient(low = "white", high = "blue")
   pl <- pl + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 13, color = "black"))
   pl <- pl + theme(axis.text.y = element_text(angle = 00, hjust = 1, size = 13, color = "black"))
   pl <- pl + theme(axis.title.y = element_text(size = rel(1.8), angle = 90))
@@ -597,7 +604,7 @@ plotDistatisPartial <- function(trees, distance = "patristic", bvalue = 0, gene.
   GraphDistatisPartial(Dist$res4Splus$F, Dist$res4Splus$PartialF)
 }
 
-# Function to vizualize species
+# Function to vizualize a specific species
 
 VizualizeSpe <- function(trees, species, distance = "patristic", bvalue = 0, gene.names = NULL, method.imp = "IPCA", ncp = 3, center = FALSE, scale = FALSE, maxiter = 1000){
   matrices <- trees2matrices(trees, distance = distance, bvalue = bvalue)
@@ -663,7 +670,7 @@ VizualizeSpe <- function(trees, species, distance = "patristic", bvalue = 0, gen
   }
 }
 
-# Function to vizualize genes
+# Function to vizualize a specific gene
 VizualizeGene <- function(trees, gene, distance = "patristic", bvalue = 0, gene.names = NULL, method.imp = "IPCA", ncp = 3, center = FALSE, scale = FALSE, maxiter = 1000){
   matrices <- trees2matrices(trees, distance = distance, bvalue = bvalue)
   if (method.imp == "IPCA"){
