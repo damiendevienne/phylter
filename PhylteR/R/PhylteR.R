@@ -1,5 +1,27 @@
 # trees2matrices changes a list of trees into a list of matrices
 
+
+
+#' trees2matrices
+#' 
+#' trees2matrices changes a list of trees into a list of matrices.
+#' 
+#' 
+#' @param trees A list of gene trees in multiphylo format.
+#' @param distance A method to generate distance matrices. It could be "nodal"
+#' to establish that the distance between two species is the number of nodes
+#' that separate them. Or "patristic" (default) if the distance between two
+#' species is be the sum of branch lengths between them.
+#' @param bvalue This argument is only used if trees contain bootstrap values.
+#' It determines under what bootstrap values the nodes should be collapsed.
+#' Value 0 (the default) means that no nodes are collapsed.
+#' @return return a list of distance matrices
+#' @examples
+#' 
+#' # transforming a lsit of trees into a list of distances matrices using patristic distances:
+#' data(Fungi)
+#' matrices = trees2matrices(Fungi, distance = "patristic", bvalue = 0)
+#' 
 trees2matrices <- function(trees, distance = "patristic", bvalue = 0) {
   correction <- function(mat){
     for (i in 1:nrow(mat)){
@@ -64,6 +86,18 @@ trees2matrices <- function(trees, distance = "patristic", bvalue = 0) {
 
 # this function permits the user to add gene names (as list) to the trees. If no names is given, genes are numeroted from 1 to the number of genes.
 
+
+
+#' rename.genes
+#' 
+#' This function permits the user to add names to the genes trees.
+#' 
+#' 
+#' @param trees A list of gene trees in multiphylo format
+#' @param gene.names List of genes names the user wants to give to the list of
+#' trees. It should be of the same lenght of the list of trees. If NULL, genes
+#' are numeroted from 1 to the number of genes.
+#' @return The list of renamed trees in multiphylo format.
 rename.genes <- function(trees, gene.names = NULL) {
   if(!is.null(gene.names)) {
     names(trees) <- gene.names
@@ -77,6 +111,20 @@ rename.genes <- function(trees, gene.names = NULL) {
 
 # mat2Dist applies distatis on a list of distance matrices
 
+
+
+#' mat2Dist
+#' 
+#' mat2Dist applies distatis on a list of distance matrices.
+#' 
+#' This function uses distatis from the DistatisR package (Beaton D., Chin Fatt
+#' C., Abdi H. (2013) DistatisR : DISTATIS Three Way Metric Multidimensional
+#' Scaling.).
+#' 
+#' @param matrices A list of distance matrices
+#' @param Norm Norm = "none" (defaut) if we dont want to normalize data.  Norm
+#' = "mfa" to normalize data.
+#' @seealso \code{\link[DistatisR]{distatis}}
 mat2Dist <- function(matrices, Norm = "NONE") {
   # transform the list of matrices to a cube
   row <- rownames(matrices[[1]])
@@ -99,6 +147,22 @@ mat2Dist <- function(matrices, Norm = "NONE") {
 
 # Imputing missing data in matrices with missMDA package
 
+
+
+#' impPCA.multi
+#' 
+#' Imputing missing data in matrices
+#' 
+#' 
+#' @param matrices A list of distance matrices with missing data. Each matrices
+#' should be named (use the rename.genes function if it is not the case)
+#' @param ncp integer corresponding to the number of components used to to
+#' predict the missing entries.
+#' @param center boolean. By default FALSE leading to data not centered.
+#' @param scale boolean. By default FALSE leading to not a same weight for each
+#' variable.
+#' @param maxiter integer, maximum number of iteration for the algorithm.
+#' @return Return a list of matrices without missing data.
 impPCA.multi <- function(matrices, ncp = 3, center = FALSE, scale = FALSE, maxiter = 1000) {
   geneNames <- list()
   # Create a matrix with every species to fill : GrandeMatrice
@@ -147,6 +211,42 @@ impPCA.multi <- function(matrices, ncp = 3, center = FALSE, scale = FALSE, maxit
 
 # imputePCA2 function from missMDA package but with the possibility to not center the data. And with no negative values possibly imputed.
 
+
+
+#' imputePCA2
+#' 
+#' Impute the missing values of a dataset with the Principal Components
+#' Analysis model.
+#' 
+#' imputePCA function from missMDA package (Josse J. et Husson F. (2012)
+#' Handling missing values in exploratory multivariate data analysis method.
+#' Journal de la Société Française de Statistique vol. 153 (2): 79-99.) with
+#' some ajustements to fit trees data.
+#' 
+#' see also ?missMDA::imputePCA
+#' 
+#' @param X a data.frame with continuous variables containing missing values
+#' @param ncp integer corresponding to the number of components used to to
+#' predict the missing entries
+#' @param center boolean. By default FALSE leading to data not centered
+#' @param scale boolean. By default FALSE leading to not a same weight for each
+#' variable
+#' @param method "Regularized" by default or "EM"
+#' @param row.w row weights (by default, a vector of 1 for uniform row weights)
+#' @param coeff.ridge 1 by default to perform the regularized imputePCA2
+#' algorithm; useful only if method="Regularized". Other regularization terms
+#' can be implemented by setting the value to less than 1 in order to
+#' regularized less (to get closer to the results of the EM method) or more
+#' than 1 to regularized more (to get closer to the results of the mean
+#' imputation)
+#' @param threshold the threshold for assessing convergence
+#' @param seed integer, by default seed = NULL implies that missing values are
+#' initially imputed by the mean of each variable. Other values leads to a
+#' random initialization
+#' @param nb.init integer corresponding to the number of random
+#' initializations; the first initialization is the initialization with the
+#' mean imputation
+#' @param maxiter integer, maximum number of iteration for the algorithm
 imputePCA2 <- function (X, ncp = 2, center = FALSE, scale = FALSE, method = c("Regularized", "EM"), row.w = NULL, coeff.ridge = 1, threshold = 1e-6, seed = NULL,nb.init = 1, maxiter = 1000) {
   impute <- function (X, ncp = 4, center = FALSE, scale = FALSE, method = NULL, threshold = 1e-6,seed = NULL, init = 1, maxiter = 1000, row.w = NULL, coeff.ridge = 1) {
     moy.p <- function(V, poids) {
@@ -239,6 +339,18 @@ imputePCA2 <- function (X, ncp = 2, center = FALSE, scale = FALSE, method = c("R
 }
 
 # Impute Missing datas by means
+
+
+#' impMean
+#' 
+#' Imputing missing data in matrices. A missing species for a gene is imputed
+#' by the mean of the values of this species for every others genes.
+#' 
+#' 
+#' @param matrices A list of distance matrices containing missing data. Each
+#' matrices should be named (use the rename.genes function if it is not the
+#' case)
+#' @return Return a list of matrices without missing data.
 impMean <- function(matrices) {
   qual <- 0
   listsp <- colnames(matrices[[1]])
@@ -303,6 +415,20 @@ impMean <- function(matrices) {
 
 # create 2WR matrix from distatis results
 
+
+
+#' Dist2WR
+#' 
+#' This function creates the two-way reference matrix (2WR) from distatis
+#' results.
+#' 
+#' 
+#' @param Distatis is the output of the fonction mat2Dist (or of distatis from
+#' the Distatis R package (Beaton D., Chin Fatt C., Abdi H. (2013) DistatisR:
+#' DISTATIS Three Way Metric Multidimensional Scaling. Package R))
+#' @return 2WR matrix is a gene x specie matrix. Each cell corresponds to the
+#' distance of a specie from a gene tree to the reference position of this
+#' specie for every gene trees.
 Dist2WR <- function(Distatis) {
   matrixWR2 <- matrix(nrow = dim(Distatis$res4Splus$PartialF)[[1]], ncol = dim(Distatis$res4Splus$PartialF)[[3]])
   colnames(matrixWR2) <- dimnames(Distatis$res4Splus$PartialF)[[3]]
@@ -320,6 +446,18 @@ Dist2WR <- function(Distatis) {
 # Suppress complete outiers (species or genes) in trees in order to detect cell outliers in a second time.
 # Fonction from phylo_MCOA slitly modified to fit our method.
 
+
+
+#' rm.gene.and.species
+#' 
+#' Suppress species or genes in a list of gene trees.
+#' 
+#' 
+#' @param trees list of gene trees (in multiphylo format) from which we want to
+#' remove species or genes
+#' @param sp2rm species to remove as a list
+#' @param gn2rm genes to remove as a list
+#' @return Return a list of gene trees without the species or genes removed.
 rm.gene.and.species <- function(trees, sp2rm, gn2rm) {
   gene.names <- list()
   for (i in 1:length(labels(trees))) {
@@ -351,6 +489,79 @@ rm.gene.and.species <- function(trees, sp2rm, gn2rm) {
 
 # Phylter Function to detect complete and cell outliers from a list of trees
 
+
+
+#' PhylteR
+#' 
+#' This function finds complete and cell outliers inside a list of gene trees.
+#' 
+#' The detection is done in two steps. The first step is the detection of
+#' complete outliers. Complete outliers detected are then removed of the list
+#' of trees and the second step is the detection of cell outliers in this list.
+#' 
+#' @param trees The list of gene trees
+#' @param distance parameter from the function trees2matrices to transform
+#' trees into distance matrices. Distance could be "nodal" or "patristic"
+#' (default).
+#' @param bvalue This argument is only used if trees contain bootstrap values.
+#' It determines under what bootstrap values the nodes should be collapsed.
+#' Value 0 (the default) means that no nodes are collapsed.
+#' @param method.imp The method used for missing data imputation. "IPCA" for
+#' imputation with iteractive PCA (Slower but more accurate) ."MEAN" for
+#' imputation by means (faster but less accurate). If there is too much missing
+#' data in your data set the iterative PCA ("IPCA") method may not converge.
+#' Please then use method.imp ⁼ "MEAN". If there is too much missing data in
+#' your data set the iterative PCA ("IPCA") method may not converge. Please
+#' then use method.imp ⁼ "MEAN".
+#' @param ncp only used if method.imp = "IPCA". integer corresponding to the
+#' number of components used to to predict the missing entries.
+#' @param center only used if method.imp = "IPCA". boolean. By default FALSE
+#' leading to data not centered.
+#' @param scale only used if method.imp = "IPCA". boolean. By default FALSE
+#' leading to not a same weight for each variable.
+#' @param maxiter only used if method.imp = "IPCA". integer, maximum number of
+#' iteration for the algorithm.
+#' @param k the strength of outlier assignement. The higher this valu,e the
+#' more stringent the detection (less outliers detected).
+#' @param thres For the detection of complete outlier. Threshold above which
+#' genes or species are considered as complete outliers. 0.5 means that a gene
+#' or a species is a complete outlier if it is detected as outlier for more
+#' than 50\% of the species or genes respectively.
+#' @param gene.names List of gene names if the user want to renames the list of
+#' trees. NULL by default.
+#' @param Norm Type of normalization used for the function mat2dist. Current
+#' options are NONE (default) or MFA (that normalizes each matrix so that its
+#' first eigenvalue is equal to one).
+#' @return \item{$Complete$mat2WR}{The 2WR matrix used to detect complete
+#' outliers.} \item{$complete$outgn}{The list of complete outliers genes.}
+#' \item{$complete$outsp}{The list of complete outliers species.}
+#' \item{$CellByCell$outcell}{The list of cell outliers.}
+#' @examples
+#' 
+#' 
+#' # Detecting outliers of the dataset Fungi using nodal distances.
+#' # This data set doesn't contain any missing data.
+#' 
+#' data(Fungi)
+#' 
+#' Results <- PhylteR(Fungi, distance = "nodal", bvalue = 0, k = 3,
+#' thres = 0.6, gene.names = NULL, Norm = "NONE")
+#' 
+#' # See results
+#' # Complete outliers
+#' 
+#' outgn <- Results$complete$outgn
+#' outsp <- Results$complete$outsp
+#' 
+#' # outliers cell
+#' 
+#' outcell <- Results$CellByCell$outcell
+#' 
+#' # you can visualize the 2WR matrices (genes x species) with the function plot2WR.
+#' 
+#' plot = plot2WR(Results$Complete$mat2WR)
+#' 
+#' 
 PhylteR <- function(trees, distance = "patristic", bvalue = 0, method.imp = "IPCA", ncp = 3, center = FALSE, scale = FALSE, maxiter = 1000, k = 1.5, thres = 0.5, gene.names = NULL, Norm = "NONE") {
   if (is.list(trees)) {
     if (class(trees[[1]]) != "phylo") stop ("The trees should be in the \"phylo\" format!")
@@ -408,6 +619,25 @@ PhylteR <- function(trees, distance = "patristic", bvalue = 0, method.imp = "IPC
 
 #This function normalizes the 2WR matrix (or any matrix) according to the species (rows) or to the genes (columns).
 
+
+
+#' normalize
+#' 
+#' This function normalizes the 2WR matrix (or any matrix) according to the
+#' species (rows) or to the genes (columns). normalize is a function taken from
+#' the method phylo-MCOA (de Vienne M.D., Ollier S. et Aguileta G. (2012)
+#' Phylo-MCOA: A Fast and Efficient Method to Detect Outlier Genes and Species
+#' in Phylogenomics Using Multiple Co-inertia Analysis. Molecular Biology and
+#' Evolution 29 : 1587 – 1598)
+#' 
+#' 
+#' @param mat A matrix
+#' @param what Character string indicating whether the matrix should be
+#' normalized and how. If what="none", the matrix is not normalized (the
+#' default), if what="species", the matrix is normalized so that the difference
+#' between species is increased, and if what="genes", the matrix is normalized
+#' so that the difference between genes is increased.
+#' @return A normalized matrix
 normalize <- function(mat, what = "none") {
   if (what == "species") mat <- apply(mat, 2, function(x) {x / mean(x)})
   else if (what == "genes") mat <- t(apply(mat, 1, function(x) {x / mean(x)}))
@@ -419,6 +649,28 @@ normalize <- function(mat, what = "none") {
 }
 
 # Detection of complete outliers from phylo-mcoa
+
+
+#' detect.complete.outliers
+#' 
+#' Function to detect complete outliers (species and genes)
+#' 
+#' Must be runed before the detection of cell outliers detect.complete.outliers
+#' is a function taken from the method phylo-MCOA (de Vienne M.D., Ollier S. et
+#' Aguileta G. (2012) Phylo-MCOA: A Fast and Efficient Method to Detect Outlier
+#' Genes and Species in Phylogenomics Using Multiple Co-inertia Analysis.
+#' Molecular Biology and Evolution 29 : 1587 – 1598).
+#' 
+#' @param mat2WR the 2WR matrix obtained with the Dist2WR function.
+#' @param k the strength of outlier assignement. the Higher this value the more
+#' stringent the detection (less outliers detected).
+#' @param thres threshold above which genes or species are considered as
+#' complete outliers. 0.5 means that a gene or a species is a complete outlier
+#' if it is detected as outlier for more than 50\% of the species or genes
+#' respectively.
+#' @return "mat2WR" The 2WR matrix used to detect outliers. "outgn" Array
+#' containing all the complete outlier genes detected. "outsp" Array containing
+#' all the complete outlier species detected.
 detect.complete.outliers <- function(mat2WR, k = 1.5, thres = 0.5) {
   outl.sub <- function(x, k) {
     return(x > quantile(x)[4] + k * IQR(x) + 1e-10)
@@ -451,6 +703,24 @@ detect.complete.outliers <- function(mat2WR, k = 1.5, thres = 0.5) {
 }
 
 # Function to detect cell outliers (species and genes)
+
+
+#' detect.cell.outliers
+#' 
+#' Function to detect cell outliers (species and genes)
+#' 
+#' This function must be used after all complete outliers (species and genes)
+#' have been removed from the data. detect.cell.outliers is a function taken
+#' from the method phylo-MCOA (de Vienne M.D., Ollier S. et Aguileta G. (2012)
+#' Phylo-MCOA: A Fast and Efficient Method to Detect Outlier Genes and Species
+#' in Phylogenomics Using Multiple Co-inertia Analysis. Molecular Biology and
+#' Evolution 29 : 1587 – 1598)
+#' 
+#' @param mat2WR the 2WR matrix obtained with the Dist2WR function.
+#' @param k the strength of outlier assignement. the Higher this value the more
+#' stringent the detection (less outliers detected).
+#' @return "outcell" All cell-by-cell outliers as a matrix with two columns.
+#' Each line represents a cell-by-cell outliers
 detect.cell.outliers <- function(mat2WR, k = 3) {
   MAT <- mat2WR
   detect.island <- function(arr) {
@@ -551,6 +821,32 @@ detect.cell.outliers <- function(mat2WR, k = 3) {
 }
 # Fonction to plot 2WR matrix
 
+
+
+#' plot2WR
+#' 
+#' This function permits to plot the 2WR matrix.
+#' 
+#' 
+#' @param matrixWR2 The two-way reference matrix (2WR) from the Dist2WR
+#' function.
+#' @return Return a level plot of the 2WR matrix. It can be informative to look
+#' at the complete 2WR-matrix before doing any further analysis. It gives a
+#' visual idea of the overall congruence or incongruence in the dataset.
+#' @examples
+#' 
+#' # Detecting outliers of the dataset Fungi using nodal distances.
+#' # This data set doesn't contain any missing data.
+#' 
+#' data(Fungi)
+#' 
+#' Results <- PhylteR(Fungi, distance = "nodal", bvalue = 0, k = 3,
+#' thres = 0.6, gene.names = NULL, Norm = "NONE")
+#' 
+#' # you can visualize the 2WR matrices (genes x species) with the function plot2WR.
+#' 
+#' plot = plot2WR(Results$Complete$mat2WR)
+#' 
 plot2WR <- function(matrixWR2) {
   WR <- normalize(matrixWR2)
   names <- list()
@@ -590,6 +886,46 @@ plot2WR <- function(matrixWR2) {
 }
 
 # Function to plot species in Distatis compromise
+
+
+#' plotDistatisPartial
+#' 
+#' plotDistatisPartial plots maps of the factor scores of the observations from
+#' a distatis analysis.
+#' 
+#' Function GraphDistatisPartial from DistatisR package (DiSTATIS Three Way
+#' Metric Multidimensional Scaling by Derek Beaton (2015)).
+#' 
+#' @param trees A list of gene trees in multiphylo format.
+#' @param distance A method to generate distance matrices. It could be "nodal"
+#' to establish that the distance between two species is the number of nodes
+#' that separate them. Or "patristic" (default) if the distance between two
+#' species is be the sum of branch lengths between them.
+#' @param bvalue This argument is only used if trees contain bootstrap values.
+#' It determines under what bootstrap values the nodes should be collapsed.
+#' Value 0 (the default) means that no nodes are collapsed.
+#' @param gene.names List of gene names if the user want to renames the list of
+#' trees. NULL by default.
+#' @param method.imp The method used for missing data imputation. "IPCA" for
+#' imputation with iteractive PCA (Slower but more accurate) ."MEAN" for
+#' imputation by means (faster but less accurate). If there is too much missing
+#' data in your data set the iterative PCA ("IPCA") method may not converge.
+#' Please then use method.imp ⁼ "MEAN".
+#' @param ncp only used if method.imp = "IPCA". integer corresponding to the
+#' number of components used to to predict the missing entries.
+#' @param center only used if method.imp = "IPCA". boolean. By default FALSE
+#' leading to data not centered.
+#' @param scale only used if method.imp = "IPCA". boolean. By default FALSE
+#' leading to not a same weight for each variable.
+#' @param maxiter only used if method.imp = "IPCA". integer, maximum number of
+#' iteration for the algorithm.
+#' @param Norm Type of normalization used for the function mat2dist. Current
+#' options are NONE (default) or MFA (that normalizes each matrix so that its
+#' first eigenvalue is equal to one).
+#' @return \item{constraints}{A set of plot constraints that are returned.}
+#' \item{item.colors}{A set of colors for the observations are returned.}
+#' \item{participant.colors}{A set of colors for the participants are
+#' returned.}
 plotDistatisPartial <- function(trees, distance = "patristic", bvalue = 0, gene.names = NULL, method.imp = "IPCA", ncp = 3, center = FALSE, scale = FALSE, maxiter = 1000, Norm = "none") {
   trees <- rename.genes(trees, gene.names = gene.names)
   RES <- NULL
@@ -606,6 +942,38 @@ plotDistatisPartial <- function(trees, distance = "patristic", bvalue = 0, gene.
 
 # Function to vizualize a specific species
 
+
+
+#' VizualizeSpe
+#' 
+#' VizualizeSpe plots the distance between a chosen species and every other
+#' species (grey cirle) for every genes (red lines).
+#' 
+#' 
+#' @param trees A list of gene trees in multiphylo format.
+#' @param species The species to plot.
+#' @param distance A method to generate distance matrices. It could be "nodal"
+#' to establish that the distance between two species is the number of nodes
+#' that separate them. Or "patristic" (default) if the distance between two
+#' species is be the sum of branch lengths between them.
+#' @param bvalue This argument is only used if trees contain bootstrap values.
+#' It determines under what bootstrap values the nodes should be collapsed.
+#' Value 0 (the default) means that no nodes are collapsed.
+#' @param gene.names List of gene names if the user want to renames the list of
+#' trees. NULL by default.
+#' @param method.imp The method used for missing data imputation. "IPCA" for
+#' imputation with iteractive PCA (Slower but more accurate) ."MEAN" for
+#' imputation by means (faster but less accurate). If there is too much missing
+#' data in your data set the iterative PCA ("IPCA") method may not converge.
+#' Please then use method.imp ⁼ "MEAN".
+#' @param ncp only used if method.imp = "IPCA". integer corresponding to the
+#' number of components used to to predict the missing entries.
+#' @param center only used if method.imp = "IPCA". boolean. By default FALSE
+#' leading to data not centered.
+#' @param scale only used if method.imp = "IPCA". boolean. By default FALSE
+#' leading to not a same weight for each variable.
+#' @param maxiter only used if method.imp = "IPCA". integer, maximum number of
+#' iteration for the algorithm.
 VizualizeSpe <- function(trees, species, distance = "patristic", bvalue = 0, gene.names = NULL, method.imp = "IPCA", ncp = 3, center = FALSE, scale = FALSE, maxiter = 1000){
   matrices <- trees2matrices(trees, distance = distance, bvalue = bvalue)
   if (method.imp == "IPCA"){
@@ -671,6 +1039,38 @@ VizualizeSpe <- function(trees, species, distance = "patristic", bvalue = 0, gen
 }
 
 # Function to vizualize a specific gene
+
+
+#' VizualizeGene
+#' 
+#' VizualizeGene plots, for a given gene, the distance between each species
+#' (red lines) with every other species (red points)
+#' 
+#' 
+#' @param trees A list of gene trees in multiphylo format.
+#' @param gene The gene to plot.
+#' @param distance A method to generate distance matrices. It could be "nodal"
+#' to establish that the distance between two species is the number of nodes
+#' that separate them. Or "patristic" (default) if the distance between two
+#' species is be the sum of branch lengths between them.
+#' @param bvalue This argument is only used if trees contain bootstrap values.
+#' It determines under what bootstrap values the nodes should be collapsed.
+#' Value 0 (the default) means that no nodes are collapsed.
+#' @param gene.names List of gene names if the user want to renames the list of
+#' trees. NULL by default.
+#' @param method.imp The method used for missing data imputation. "IPCA" for
+#' imputation with iteractive PCA (Slower but more accurate) ."MEAN" for
+#' imputation by means (faster but less accurate). If there is too much missing
+#' data in your data set the iterative PCA ("IPCA") method may not converge.
+#' Please then use method.imp ⁼ "MEAN".
+#' @param ncp only used if method.imp = "IPCA". integer corresponding to the
+#' number of components used to to predict the missing entries.
+#' @param center only used if method.imp = "IPCA". boolean. By default FALSE
+#' leading to data not centered.
+#' @param scale only used if method.imp = "IPCA". boolean. By default FALSE
+#' leading to not a same weight for each variable.
+#' @param maxiter only used if method.imp = "IPCA". integer, maximum number of
+#' iteration for the algorithm.
 VizualizeGene <- function(trees, gene, distance = "patristic", bvalue = 0, gene.names = NULL, method.imp = "IPCA", ncp = 3, center = FALSE, scale = FALSE, maxiter = 1000){
   matrices <- trees2matrices(trees, distance = distance, bvalue = bvalue)
   if (method.imp == "IPCA"){
