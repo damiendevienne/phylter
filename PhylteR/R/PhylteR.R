@@ -125,7 +125,8 @@ rename.genes <- function(trees, gene.names = NULL) {
 #' @param Norm Norm = "none" (defaut) if we dont want to normalize data.  Norm
 #' = "mfa" to normalize data.
 #' @seealso \code{\link[DistatisR]{distatis}}
-mat2Dist <- function(matrices, Norm = "NONE") {
+mat2Dist <- function(matrices, Norm = "NONE", Distance = TRUE, RV = TRUE, 
+    nfact2keep = 3, compact = FALSE) {
   # transform the list of matrices to a cube
   row <- rownames(matrices[[1]])
   for (i in 1:length(matrices)) {
@@ -140,7 +141,8 @@ mat2Dist <- function(matrices, Norm = "NONE") {
   rownames(TheVeryBigCube) <- rownames(matrices[[1]])
   colnames(TheVeryBigCube) <- colnames(matrices[[1]])
   # Apply distatis on the cube and keep genes names in distatis results
-  Distatis <- distatis(TheVeryBigCube, Norm = Norm)
+  Distatis <- distatis(TheVeryBigCube, Norm = Norm, Distance = Distance, RV = RV, 
+    nfact2keep = nfact2keep, compact = compact)
   dimnames(Distatis$res4Splus$PartialF)[[3]] <- names(matrices)
   return(Distatis)
 }
@@ -163,7 +165,7 @@ mat2Dist <- function(matrices, Norm = "NONE") {
 #' variable.
 #' @param maxiter integer, maximum number of iteration for the algorithm.
 #' @return Return a list of matrices without missing data.
-impPCA.multi <- function(matrices, ncp = 3, center = FALSE, scale = FALSE, maxiter = 1000) {
+impPCA.multi <- function(matrices, ncp = 3, center = FALSE, scale = FALSE, maxiter = 1000, ...) {
   geneNames <- list()
   # Create a matrix with every species to fill : GrandeMatrice
   species<-unique(unlist(lapply(matrices, rownames)))
@@ -190,7 +192,7 @@ impPCA.multi <- function(matrices, ncp = 3, center = FALSE, scale = FALSE, maxit
     }
     mat <- do.call(cbind,matrices3)
     # estimating missing data
-    matIPCA <- imputePCA2(mat, center = center, scale = scale, maxiter = maxiter)
+    matIPCA <- imputePCA2(mat, center = center, scale = scale, maxiter = maxiter, ...)
     matIPCA <- matIPCA$completeObs
     matricesFT <- list()
     for (i in 1:length(matrices2)) {
@@ -433,7 +435,6 @@ Dist2WR <- function(Distatis) {
   matrixWR2 <- matrix(nrow = dim(Distatis$res4Splus$PartialF)[[1]], ncol = dim(Distatis$res4Splus$PartialF)[[3]])
   colnames(matrixWR2) <- dimnames(Distatis$res4Splus$PartialF)[[3]]
   rownames(matrixWR2) <- dimnames(Distatis$res4Splus$PartialF)[[1]]
-
   for (i in 1:length(dimnames(Distatis$res4Splus$PartialF)[[3]])){
     for (j in 1:length(dimnames(Distatis$res4Splus$PartialF)[[1]])){
       x <- (Distatis$res4Splus$PartialF[dimnames(Distatis$res4Splus$PartialF)[[1]][j], , dimnames(Distatis$res4Splus$PartialF)[[3]][i]] - Distatis$res4Splus$F[dimnames(Distatis$res4Splus$PartialF)[[1]][j], ]) ^ 2
@@ -617,6 +618,77 @@ PhylteR <- function(trees, distance = "patristic", bvalue = 0, method.imp = "IPC
   return(RES)
 }
 
+
+
+
+
+PhylteRRecursive <- function(trees, distance = "patristic", bvalue = 0, method.imp = "MEAN", ncp = 3, center = FALSE, scale = FALSE, maxiter = 1000, gene.names = NULL, Norm = "NONE") {
+  if (is.list(trees)) {
+    if (class(trees[[1]]) != "phylo") stop ("The trees should be in the \"phylo\" format!")
+  }
+  if (class(trees) == "character") {
+    trees <- read.tree(trees)
+  }
+  if (!is.null(gene.names) && length(gene.names) != length(trees)) stop ("The number of gene names and the number of trees differ!")
+  ##check for duplications
+  check.dup <- lapply(trees, function(x) {x$tip.label[duplicated(x$tip.label)]})
+  if (sum(unlist(lapply(check.dup, length))) > 0) {
+    cat ("-------- WARNING! There are some duplicated species in some of your trees: -------")
+    for (w in 1:length(trees)) {
+      if (length(check.dup[[w]]) > 0) cat(paste("\n     - Species ", check.dup[[w]], " present more than once in tree ", w, "\n\n", sep=""))
+    }
+    stop ("Remove or rename duplicated species and try again.\n\n", call.=FALSE)
+  }
+  trees <- rename.genes(trees, gene.names = gene.names)
+  RES <- NULL
+  matrices <- trees2matrices(trees, distance = distance, bvalue = bvalue)
+
+  if (method.imp == "IPCA"){
+    matrices <- impPCA.multi(matrices, ncp = ncp, center = center, scale = scale, maxiter = maxiter)
+  }
+  else if (method.imp == "MEAN"){
+    matrices <- impMean(matrices)
+  }
+  else{
+    stop ("You must choose an imputation method : MEAN or IPCA")
+  }
+  ###THIS IS WHERE THE WHOLE LOOP WILL START.
+  QUALITY<-NULL
+  #matrices <- impMean(matrices)
+  matrices<-impPCA.multi(matrices, ncp = ncp, center = center, scale = scale, maxiter = maxiter)
+  matricessave<-matrices
+  Dist <- mat2Dist(matrices, Norm = Norm)
+  WR <- Dist2WR(Dist)
+
+  for (k in seq(3,0.4,by=-0.2)) {
+    cat(".")
+    mm<-detect.cell.outliers(WR, k = k)$outcell
+    #remove all those outliers from matrix
+    matrices<-matricessave
+    for (i in 1:nrow(mm)) {
+      mmi<-mm[i,]
+      wherekeep<-mmi[1]!=rownames(matrices[[as.numeric(mmi[2])]])
+      matrices[[mmi[2]]]<-matrices[[mmi[2]]][wherekeep,wherekeep]
+    }
+    #matrices <- impMean(matrices)
+    matrices <- impPCA.multi(matrices, ncp = ncp, center = center, scale = scale, maxiter = maxiter)
+    Dist <- mat2Dist(matrices, Norm = Norm)
+    print (QUALITY)
+    QUALITY<-c(QUALITY, Dist$res4Cmat$eigValues[1]/length(matrices))
+   }
+#   plot2WR(WR)
+#   X11()
+
+  points(QUALITY, col="red")
+  # optimalk<-seq(1,0.05,by=-0.05)[which(QUALITY==max(QUALITY))]
+  # print(paste("optimal k value: ",optimalk, sep=""))
+  # return(detect.cell.outliers(WR, k = optimalk))
+}
+
+
+
+
+
 #This function normalizes the 2WR matrix (or any matrix) according to the species (rows) or to the genes (columns).
 
 
@@ -717,7 +789,7 @@ detect.complete.outliers <- function(mat2WR, k = 1.5, thres = 0.5) {
 #' Evolution 29 : 1587 – 1598)
 #' 
 #' @param mat2WR the 2WR matrix obtained with the Dist2WR function.
-#' @param k the strength of outlier assignement. the Higher this value the more
+#' @param k the strength of outlier assignement. the Higher this value the less
 #' stringent the detection (less outliers detected).
 #' @return "outcell" All cell-by-cell outliers as a matrix with two columns.
 #' Each line represents a cell-by-cell outliers
@@ -778,17 +850,17 @@ detect.cell.outliers <- function(mat2WR, k = 3) {
   MATspgn <- normalize(mat2WR, "genes") * normalize(mat2WR, "species")
   testspgn1 <- apply(MATspgn, 2, outl.sub, k = k)
   testspgn2 <- t(apply(MATspgn, 1, outl.sub, k = k))
-  testspgn <- testspgn1 * testspgn2
+  testspgn <- testspgn1 * testspgn2 #replacing this with a + makes it less specific but also maybe less biased?
   testFALSE <- testspgn
-  testFALSE[testFALSE == FALSE] <- 0
-  testFALSE[testFALSE == TRUE] <- 1
+  # testFALSE[testFALSE == FALSE] <- 0
+  # testFALSE[testFALSE == TRUE] <- 1
   if (sum(testFALSE) > 0) {
     out.list <- apply(testspgn, 2, detect.island)
     genes <- colnames(testspgn)
     res <- c(NA,NA)
     for (i in 1:length(out.list)) {
       if (!is.null(out.list[[i]])) {
-        for (j in 1:length(out.list[[i]])) {
+        for (j in 1:length(out.list[[i]])) { ##for each "island"
           if (length(out.list[[i]][[j]]) == 1) res <- rbind(res, c(out.list[[i]][[j]], genes[i]))
           if (length(out.list[[i]][[j]]) > 1) {
             vals <- MATspgn[out.list[[i]][[j]], genes[i]]
@@ -850,8 +922,8 @@ detect.cell.outliers <- function(mat2WR, k = 3) {
 plot2WR <- function(matrixWR2) {
   WR <- normalize(matrixWR2)
   names <- list()
-  names[[1]] <- "gene"
-  names[[2]] <- "specie"
+  names[[1]] <- "genes"
+  names[[2]] <- "species"
   names[[3]] <- "value"
   MAT <- matrix(nrow = length(WR), ncol = 3)
   colnames(MAT) <- names
@@ -877,8 +949,8 @@ plot2WR <- function(matrixWR2) {
   
   pl <- ggplot(MAT, aes(genes, species, z = values))
   pl <- pl + geom_tile(aes(fill = values)) + theme_bw() + scale_fill_gradient(low = "white", high = "blue")
-  pl <- pl + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 13, color = "black"))
-  pl <- pl + theme(axis.text.y = element_text(angle = 00, hjust = 1, size = 13, color = "black"))
+  pl <- pl + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 5, color = "black"))
+  pl <- pl + theme(axis.text.y = element_text(angle = 00, hjust = 1, size = 5, color = "black"))
   pl <- pl + theme(axis.title.y = element_text(size = rel(1.8), angle = 90))
   pl <- pl + theme(axis.title.x = element_text(size = rel(1.8), angle = 00))
   # pl + coord_fixed(ratio=1/5)
