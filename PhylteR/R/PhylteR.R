@@ -507,6 +507,7 @@ rm.cell.outliers <- function(trees, cells2rm) {
   for (gen in names(table(cells2rm[,2]))) {
     trees[[which(names(trees)==gen)]]<-drop.tip(trees[[which(names(trees)==gen)]],cells2rm[cells2rm[,2]==gen,1])
   }
+  class(trees)<-"multiPhylo"
   return(trees)
 }
 
