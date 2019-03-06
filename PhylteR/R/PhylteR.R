@@ -459,7 +459,7 @@ Dist2WR <- function(Distatis) {
 #' @param sp2rm species to remove as a list
 #' @param gn2rm genes to remove as a list
 #' @return Return a list of gene trees without the species or genes removed.
-rm.gene.and.species <- function(trees, sp2rm, gn2rm) {
+rm.gene.and.species <- function(trees, sp2rm=NULL, gn2rm=NULL) { ##gnsp is the cells that are identified.
   gene.names <- list()
   for (i in 1:length(labels(trees))) {
     gene.names[i] <- labels(trees)[i]
@@ -482,11 +482,37 @@ rm.gene.and.species <- function(trees, sp2rm, gn2rm) {
       }
     }
     names(trees2) <- genes2keep
-  } else {
+  }
+
+  else {
     trees2 <- trees
   }
   return(trees2)
 }
+
+# Suppress cell outliers (species/genes pairs) in trees.
+
+
+#' rm.cell.outliers
+#' 
+#' Suppress species/genes pairs in a list of trees.
+#' 
+#' 
+#' @param trees list of gene trees (in multiphylo format) from which we want to
+#' remove species or genes
+#' @param cells2rm two-columns matrix as returned by detect.cell.outliers()
+#' @return Return a list of gene trees with species/gene pairs removed.
+
+rm.cell.outliers <- function(trees, cells2rm) {
+  for (gen in names(table(cells2rm[,2]))) {
+    trees[[which(names(trees)==gen)]]<-drop.tip(trees[[which(names(trees)==gen)]],cells2rm[cells2rm[,2]==gen,1])
+  }
+  return(trees)
+}
+
+
+
+
 
 # Phylter Function to detect complete and cell outliers from a list of trees
 
@@ -886,7 +912,7 @@ detect.cell.outliers <- function(mat2WR, k = 3) {
     #RESULT$matspgn <- MATspgn
     #RESULT$matfinal <- MATfinal
     #RESULT$testFALSE <- testFALSE
-    RESULT$outcell <- res[2:nrow(res), ]
+    RESULT$outcell <- res[2:nrow(res), ,drop=FALSE]
     return(RESULT)
   } 
   else return(NULL)
@@ -949,7 +975,7 @@ plot2WR <- function(matrixWR2) {
   
   pl <- ggplot(MAT, aes(genes, species, z = values))
   pl <- pl + geom_tile(aes(fill = values)) + theme_bw() + scale_fill_gradient(low = "white", high = "blue")
-  pl <- pl + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 5, color = "black"))
+  pl <- pl + theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 10, color = "black"))
   pl <- pl + theme(axis.text.y = element_text(angle = 00, hjust = 1, size = 5, color = "black"))
   pl <- pl + theme(axis.title.y = element_text(size = rel(1.8), angle = 90))
   pl <- pl + theme(axis.title.x = element_text(size = rel(1.8), angle = 00))
