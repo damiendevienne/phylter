@@ -141,8 +141,10 @@ mat2Dist <- function(matrices, Norm = "NONE", Distance = TRUE, RV = TRUE,
   rownames(TheVeryBigCube) <- rownames(matrices[[1]])
   colnames(TheVeryBigCube) <- colnames(matrices[[1]])
   # Apply distatis on the cube and keep genes names in distatis results
-  Distatis <- distatis(TheVeryBigCube, Norm = Norm, Distance = Distance, RV = RV, 
-    nfact2keep = nfact2keep, compact = compact)
+#  Distatis <- distatis(TheVeryBigCube, Norm = Norm, Distance = Distance, RV = RV, nfact2keep = nfact2keep, compact = compact)
+  ##KEEP THE MAX NUMBER OF DIMENSIONS (length(row)-1)!
+  Distatis <- distatis(TheVeryBigCube, Norm = Norm, Distance = Distance, RV = RV, nfact2keep = length(row)-1, compact = compact)
+
   dimnames(Distatis$res4Splus$PartialF)[[3]] <- names(matrices)
   return(Distatis)
 }
@@ -435,8 +437,8 @@ Dist2WR <- function(Distatis) {
   matrixWR2 <- matrix(nrow = dim(Distatis$res4Splus$PartialF)[[1]], ncol = dim(Distatis$res4Splus$PartialF)[[3]])
   colnames(matrixWR2) <- dimnames(Distatis$res4Splus$PartialF)[[3]]
   rownames(matrixWR2) <- dimnames(Distatis$res4Splus$PartialF)[[1]]
-  for (i in 1:length(dimnames(Distatis$res4Splus$PartialF)[[3]])){
-    for (j in 1:length(dimnames(Distatis$res4Splus$PartialF)[[1]])){
+  for (i in 1:length(dimnames(Distatis$res4Splus$PartialF)[[3]])){ #for each gene
+    for (j in 1:length(dimnames(Distatis$res4Splus$PartialF)[[1]])){ #for each species
       x <- (Distatis$res4Splus$PartialF[dimnames(Distatis$res4Splus$PartialF)[[1]][j], , dimnames(Distatis$res4Splus$PartialF)[[3]][i]] - Distatis$res4Splus$F[dimnames(Distatis$res4Splus$PartialF)[[1]][j], ]) ^ 2
       matrixWR2[dimnames(Distatis$res4Splus$PartialF)[[1]][j], dimnames(Distatis$res4Splus$PartialF)[[3]][i]] <- sqrt(sum(x))
     }
@@ -483,10 +485,10 @@ rm.gene.and.species <- function(trees, sp2rm=NULL, gn2rm=NULL) { ##gnsp is the c
     }
     names(trees2) <- genes2keep
   }
-
   else {
     trees2 <- trees
   }
+  class(trees2)<-"multiPhylo"
   return(trees2)
 }
 
@@ -818,9 +820,12 @@ detect.complete.outliers <- function(mat2WR, k = 1.5, thres = 0.5) {
 #' @param mat2WR the 2WR matrix obtained with the Dist2WR function.
 #' @param k the strength of outlier assignement. the Higher this value the less
 #' stringent the detection (less outliers detected).
+#' @param test.island if True, only on representative of each 'island' of
+#' outliers is considered outlier. This is safer if one suggest recent HGTs in the data.
+
 #' @return "outcell" All cell-by-cell outliers as a matrix with two columns.
 #' Each line represents a cell-by-cell outliers
-detect.cell.outliers <- function(mat2WR, k = 3) {
+detect.cell.outliers <- function(mat2WR, k = 3, test.island=FALSE) {
   MAT <- mat2WR
   detect.island <- function(arr) {
     spi.names <- names(arr)
@@ -879,44 +884,45 @@ detect.cell.outliers <- function(mat2WR, k = 3) {
   testspgn2 <- t(apply(MATspgn, 1, outl.sub, k = k))
   testspgn <- testspgn1 * testspgn2 #replacing this with a + makes it less specific but also maybe less biased?
   testFALSE <- testspgn
-  # testFALSE[testFALSE == FALSE] <- 0
-  # testFALSE[testFALSE == TRUE] <- 1
+  #
+  RESULT<-NULL
+  #
   if (sum(testFALSE) > 0) {
-    out.list <- apply(testspgn, 2, detect.island)
-    genes <- colnames(testspgn)
-    res <- c(NA,NA)
-    for (i in 1:length(out.list)) {
-      if (!is.null(out.list[[i]])) {
-        for (j in 1:length(out.list[[i]])) { ##for each "island"
-          if (length(out.list[[i]][[j]]) == 1) res <- rbind(res, c(out.list[[i]][[j]], genes[i]))
-          if (length(out.list[[i]][[j]]) > 1) {
-            vals <- MATspgn[out.list[[i]][[j]], genes[i]]
-            multi = c(names(vals)[vals == max(vals)])
-            if(length(multi) > 1){
-              x = cbind(multi, rep(genes[i],length(multi)))
-              res <- rbind(res, x)
-            }
-            else{
-              res <- rbind(res, c(multi, genes[i]))
+    if (test.island==TRUE) {
+      out.list <- apply(testspgn, 2, detect.island)
+      genes <- colnames(testspgn)
+      res <- c(NA,NA)
+      for (i in 1:length(out.list)) {
+        if (!is.null(out.list[[i]])) {
+          for (j in 1:length(out.list[[i]])) { ##for each "island"
+            if (length(out.list[[i]][[j]]) == 1) res <- rbind(res, c(out.list[[i]][[j]], genes[i]))
+            if (length(out.list[[i]][[j]]) > 1) {
+              vals <- MATspgn[out.list[[i]][[j]], genes[i]]
+              multi = c(names(vals)[vals == max(vals)])
+              if(length(multi) > 1){
+                x = cbind(multi, rep(genes[i],length(multi)))
+                res <- rbind(res, x)
+              }
+              else{
+                res <- rbind(res, c(multi, genes[i]))
+              }
             }
           }
         }
       }
+      colnames(res) <- c("Species", "Genes")
+      ##we construct the MATfinal
+      MATfinal <- testspgn
+      MATfinal[,] <- 0
+      for (w in 2:nrow(res)) MATfinal[res[w, 1], res[w, 2]] <- 1
+      RESULT$outcell <- res[2:nrow(res), ,drop=FALSE]
     }
-    colnames(res) <- c("Species", "Genes")
-    ##we construct the MATfinal
-    MATfinal <- testspgn
-    MATfinal[,] <- 0
-    for (w in 2:nrow(res)) MATfinal[res[w, 1], res[w, 2]] <- 1
-    RESULT <- NULL
-    #RESULT$mat2WR <- mat2WR
-    #RESULT$matspgn <- MATspgn
-    #RESULT$matfinal <- MATfinal
-    #RESULT$testFALSE <- testFALSE
-    RESULT$outcell <- res[2:nrow(res), ,drop=FALSE]
-    return(RESULT)
-  } 
-  else return(NULL)
+    else { ##we return all cells viewed as outliers (more violent...)
+      perrow<-melt(testFALSE)
+      RESULT$outcell<-cbind(as.character(perrow[perrow$value==1,1]), as.character(perrow[perrow$value==1,2]))
+    }
+  }
+  return(RESULT)
 }
 # Fonction to plot 2WR matrix
 
@@ -1170,9 +1176,97 @@ VizualizeSpe <- function(trees, species, distance = "patristic", bvalue = 0, gen
 #' leading to not a same weight for each variable.
 #' @param maxiter only used if method.imp = "IPCA". integer, maximum number of
 #' iteration for the algorithm.
-VizualizeGene <- function(trees, gene, distance = "patristic", bvalue = 0, gene.names = NULL, method.imp = "IPCA", ncp = 3, center = FALSE, scale = FALSE, maxiter = 1000){
+VizualizeGene <- function(trees, gene, distance = "patristic", bvalue = 0, gene.names = NULL, method.imp = "MEAN", ncp = 3, center = FALSE, scale = FALSE, maxiter = 1000){
   matrices <- trees2matrices(trees, distance = distance, bvalue = bvalue)
+  print ("u")
   if (method.imp == "IPCA"){
+    TAB <- impPCA.multi(matrices, ncp = ncp, center = center, scale = scale, maxiter = maxiter)
+  }
+  else if (method.imp == "MEAN"){
+    TAB <- impMean(matrices)
+    print("din")
+  }
+  else{
+    stop ("You should choose an imputation method : MEAN or IPCA")
+  }
+  nam <- rownames(TAB[[1]])
+  listx = vector()
+  listy = vector()
+  for (j in 1:length(nam)) { ##for each speciew
+    SP <- nam[j]
+    T1 <- lapply(TAB, function(x) (x[SP,nam]))
+    T1m <- matrix(unlist(T1), nrow = length(trees), byrow = TRUE)
+    Means.T1m <- apply(T1m, 2, mean) #mean distance between each species and all others
+    genei <- T1m[gene,]/Means.T1m
+    alphas <- seq(0,2 * pi, length.out = length(nam) + 1)
+    alphas <- alphas[1:length(nam)]
+    x <- genei * cos(alphas)
+    y <- genei * sin(alphas)
+    x[is.na(x)] <- 0
+    y[is.na(y)] <- 0
+    listx = append(listx, x)
+    listy = append(listy, y)
+  }
+  plot(0, 0, type = "n", xlim = c(-max(abs(listx)) - 2, max(abs(listx)) + 2), ylim = c(-max(abs(listy)) - 2, max(abs(listy)) + 2), frame.plot = FALSE, axes = FALSE, xlab = "", ylab = "", col.main = "black", cex.main = 1.5)
+  title(gene)
+  for (j in 1:length(nam)) { ##for each speciew
+    SP <- nam[j]
+    T1 <- lapply(TAB, function(x,y) (x[SP,nam]))
+    T1m <- matrix(unlist(T1), nrow=length(trees), byrow=TRUE)
+    Means.T1m <- apply(T1m, 2, mean)
+    genei <- T1m[gene,]/Means.T1m
+    xc <- rep(1, length(nam) + 1) * cos(seq(0,2 * pi, length.out = length(nam) + 1))
+    yc <- rep(1, length(nam) + 1) * sin(seq(0,2 * pi, length.out = length(nam) + 1))#
+    ##we check angles
+    alphas <- seq(0,2 * pi, length.out = length(nam) + 1)
+    alphas <- alphas[1:length(nam)]
+    x <- genei * cos(alphas)
+    y <- genei * sin(alphas)
+    x[is.na(x)] <- xc[j]
+    y[is.na(y)] <- yc[j]
+    polygon(xc, yc, border="light grey", lwd = 0.5)
+    points(x, y, pch = 19, cex = 0.2, col = "red")
+    polygon(x, y, border ="red", lwd = 0.1)
+    polygon(xc, yc, border="light grey", lwd = 0.5)
+  }
+}
+
+
+#' VizualizeGene2
+#' 
+#' VizualizeGene plots, for a given gene, the distance between each species
+#' (red lines) with every other species (red points)
+#' 
+#' 
+#' @param trees A list of gene trees in multiphylo format.
+#' @param gene The gene to plot.
+#' @param distance A method to generate distance matrices. It could be "nodal"
+#' to establish that the distance between two species is the number of nodes
+#' that separate them. Or "patristic" (default) if the distance between two
+#' species is be the sum of branch lengths between them.
+#' @param bvalue This argument is only used if trees contain bootstrap values.
+#' It determines under what bootstrap values the nodes should be collapsed.
+#' Value 0 (the default) means that no nodes are collapsed.
+#' @param gene.names List of gene names if the user want to renames the list of
+#' trees. NULL by default.
+#' @param method.imp The method used for missing data imputation. "IPCA" for
+#' imputation with iteractive PCA (Slower but more accurate) ."MEAN" for
+#' imputation by means (faster but less accurate). If there is too much missing
+#' data in your data set the iterative PCA ("IPCA") method may not converge.
+#' Please then use method.imp ⁼ "MEAN".
+#' @param ncp only used if method.imp = "IPCA". integer corresponding to the
+#' number of components used to to predict the missing entries.
+#' @param center only used if method.imp = "IPCA". boolean. By default FALSE
+#' leading to data not centered.
+#' @param scale only used if method.imp = "IPCA". boolean. By default FALSE
+#' leading to not a same weight for each variable.
+#' @param maxiter only used if method.imp = "IPCA". integer, maximum number of
+#' iteration for the algorithm.
+VizualizeGene2 <- function(trees, gene, distance = "patristic", bvalue = 0, gene.names = NULL, method.imp = "MEAN", ncp = 3, center = FALSE, scale = FALSE, maxiter = 1000, nfact2keep=2){
+
+  matrices <- trees2matrices(trees, distance = distance, bvalue = bvalue)
+  print ("u")
+ if (method.imp == "IPCA"){
     TAB <- impPCA.multi(matrices, ncp = ncp, center = center, scale = scale, maxiter = maxiter)
   }
   else if (method.imp == "MEAN"){
@@ -1181,14 +1275,34 @@ VizualizeGene <- function(trees, gene, distance = "patristic", bvalue = 0, gene.
   else{
     stop ("You should choose an imputation method : MEAN or IPCA")
   }
-  nam <- rownames(TAB[[1]])
+  ########################
+  ## OTHER OPTION:      ##
+  ## COMPUTE THE COMPR- ##
+  ## OMISE AND USE THE  ##
+  ## S+ matrix to get   ##
+  ## average distance   ##
+  ## between species    ##
+  Dist <- mat2Dist(TAB, Norm = "NONE", nfact2keep=dim(TAB[[1]])[1]-1)
+  ##and compute 2WR
+  TAB2 <- MatricesFromPartialF(Dist) ##THIS WILL REPLACE TAB. IT IS PAIRWISE DISTANCE FOR EACH GENES BUT COMPUTED AFTER DISTATIS.
+  # print("o")
+  # s<-diag(Dist$res4Splus$Splus)
+  # D<-sweep(sweep(-2*(Dist$res4Splus$Splus),1,s,"+"),2,s,"+")
+  ##                    ##
+  ########################
+  DistInCompromise<-as.matrix(dist(Dist$res4Splus$F))
+
+  nam <- rownames(TAB2[[1]])
   listx = vector()
   listy = vector()
-    for (j in 1:length(nam)) { ##for each speciew
+    for (j in 1:length(nam)) { ##for each species
       SP <- nam[j]
-      T1 <- lapply(TAB, function(x,y) (x[SP,nam]))
+      T1 <- lapply(TAB2, function(x,y) (x[SP,nam]))
       T1m <- matrix(unlist(T1), nrow = length(trees), byrow = TRUE)
-      Means.T1m <- apply(T1m, 2, mean)
+      #Means.T1m <- apply(T1m, 2, mean) #mean distance between each species and all others
+      ##IN THIS option we need to replace Means.T1m by the distance BETWEEN SPECIES 
+      ##IN THE COMPROMISE. THI SIS DONE THIS WAY : 
+      Means.T1m<-DistInCompromise[SP,nam]
       genei <- T1m[gene,]/Means.T1m
       alphas <- seq(0,2 * pi, length.out = length(nam) + 1)
       alphas <- alphas[1:length(nam)]
@@ -1201,14 +1315,14 @@ VizualizeGene <- function(trees, gene, distance = "patristic", bvalue = 0, gene.
     }
   plot(0, 0, type = "n", xlim = c(-max(abs(listx)) - 2, max(abs(listx)) + 2), ylim = c(-max(abs(listy)) - 2, max(abs(listy)) + 2), frame.plot = FALSE, axes = FALSE, xlab = "", ylab = "", col.main = "black", cex.main = 1.5)
   title(gene)
-  for (j in 1:length(nam)) { ##for each speciew
+  for (j in 1:length(nam)) { ##for each species
     SP <- nam[j]
-    T1 <- lapply(TAB, function(x,y) (x[SP,nam]))
+    T1 <- lapply(TAB2, function(x,y) (x[SP,nam]))
     T1m <- matrix(unlist(T1), nrow=length(trees), byrow=TRUE)
-    Means.T1m <- apply(T1m, 2, mean)
+    Means.T1m <- DistInCompromise[SP,nam]
     genei <- T1m[gene,]/Means.T1m
     xc <- rep(1, length(nam) + 1) * cos(seq(0,2 * pi, length.out = length(nam) + 1))
-    yc <- rep(1, length(nam) + 1) * sin(seq(0,2 * pi, length.out = length(nam) + 1))
+    yc <- rep(1, length(nam) + 1) * sin(seq(0,2 * pi, length.out = length(nam) + 1))#
     ##we check angles
     alphas <- seq(0,2 * pi, length.out = length(nam) + 1)
     alphas <- alphas[1:length(nam)]
@@ -1220,4 +1334,24 @@ VizualizeGene <- function(trees, gene, distance = "patristic", bvalue = 0, gene.
     points(x, y, pch = 19, cex = 0.2, col = "red")
     polygon(x, y, border ="red", lwd = 0.1)
   }
+}
+
+
+
+#' MatricesFromPartialF
+#' 
+#' Get the species-species matrices for each gene but after projection in the Distatis space
+#' 
+#' 
+#' @param Distatis is the output of the fonction mat2Dist (or of distatis from
+#' the Distatis R package (Beaton D., Chin Fatt C., Abdi H. (2013) DistatisR:
+#' DISTATIS Three Way Metric Multidimensional Scaling. Package R))
+#' @return TAB matrix is a list of taxa x taxa matrix, in the order of the matrices used in previous step.
+#' specie for every gene trees.
+MatricesFromPartialF <- function(Distatis) {
+  TAB<-list()
+  for (i in 1:length(dimnames(Distatis$res4Splus$PartialF)[[3]])) { #for each gene
+    TAB[[i]]<-as.matrix(dist(Distatis$res4Splus$PartialF[,,dimnames(Distatis$res4Splus$PartialF)[[3]][i]]))
+  }
+  return(TAB)
 }
