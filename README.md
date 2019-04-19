@@ -1,7 +1,7 @@
 # Phylter, a tool for analyzing, visualizing and filtering phylogenomics datasets. 
 
-..*Phylter is written in R language with dependencies on the 'ape' and 'Rspectra' packages.
-..*Phylter relies on DIstatis (Abdi et al, 2005), an extension of multidimensional scaling to 3 dimensions. It allows comparing multiple distance matrices (on the same set of elements) at once. 
+..* Phylter is written in R language with dependencies on the 'ape' and 'Rspectra' packages.
+..* Phylter relies on DIstatis (Abdi et al, 2005), an extension of multidimensional scaling to 3 dimensions. It allows comparing multiple distance matrices (on the same set of elements) at once. 
 
 
 
