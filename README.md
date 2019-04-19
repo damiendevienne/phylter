@@ -1,4 +1,4 @@
- 	- Simulation.R + roseParam + WriteRose.pl = fichier nécessaires à la simulation de listes arbres de gènes.
+#Phylter is a tool for analyzing, visualizing and filtering Phylogenomics datasets. 
 
 SimOutliersHGT(tree, nbgn, outgn, outsp, outcell, sp = 0)
 SimOutliersLg(tree, nbgn, outgn, outsp, outcell, sp = 0)
