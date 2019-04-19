@@ -1,5 +1,16 @@
-# Phylter
-## a tool for analyzing, visualizing and filtering Phylogenomics datasets. 
+# Phylter, a tool for analyzing, visualizing and filtering phylogenomics datasets. 
+
+..*Phylter is written in R language with dependencies on the 'ape' and 'Rspectra' packages.
+..*Phylter relies on DIstatis (Abdi et al, 2005), an extension of multidimensional scaling to 3 dimensions. It allows comparing multiple distance matrices (on the same set of elements) at once. 
+
+
+
+---
+### references
+Abdi, H., Valentin, D., O’Toole, A.J., & Edelman, B. (2005). DISTATIS: The analysis of multiple distance matrices. Proceedings of the IEEE Computer Society: International Conference on Computer Vision and Pattern Recognition. (San Diego, CA, USA). pp. 42–47.
+
+
+
 
 SimOutliersHGT(tree, nbgn, outgn, outsp, outcell, sp = 0)
 SimOutliersLg(tree, nbgn, outgn, outsp, outcell, sp = 0)
