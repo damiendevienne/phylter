@@ -1,4 +1,5 @@
-#Phylter is a tool for analyzing, visualizing and filtering Phylogenomics datasets. 
+# Phylter
+## a tool for analyzing, visualizing and filtering Phylogenomics datasets. 
 
 SimOutliersHGT(tree, nbgn, outgn, outsp, outcell, sp = 0)
 SimOutliersLg(tree, nbgn, outgn, outsp, outcell, sp = 0)
