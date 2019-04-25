@@ -17,7 +17,7 @@ scores of the observations.}
 }
 \value{
 Returns a list contanining 
-\itemize {
+\itemize{
 	\item 'alpha': array of length K of the weight associated to each matrix.
 	\item 'RVmat': a KxK matrix with RV correlation coefficient computed between all
  pairs of matrices.

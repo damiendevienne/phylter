@@ -13,7 +13,7 @@
 #' @param factorskept Number of factors to keep for the computation of the factor 
 #' scores of the observations.
 #' @return Returns a list contanining 
-#' \itemize {
+#' \itemize{
 #' 	\item 'alpha': array of length K of the weight associated to each matrix.
 #'  \item 'lambda': array of length K of the normalization factors used for each matrix 
 #'  if Norm=TRUE.

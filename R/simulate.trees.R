@@ -6,6 +6,7 @@
 #' A first tree is generated with rtree() and is then modified according
 #' to the parameters chosen by the user.
 #' 
+#' @usage simulate.trees(Ngn, Nsp, Nsp.out = 0, Ngn.out = 0, Nb.cell.outlier = 0, brlen.sd = 0)
 #' @param Ngn Number of gene trees to simulate. 
 #' @param Nsp Number of species (tips) per tree.
 #' @param Nsp.out Number of outlier species (also called rogue taxa). 0 = none.
@@ -14,7 +15,7 @@
 #' @param brlen.sd Heterogeneity of branch lengths in trees. A value with mean 0 and standard
 #' deviation equal to brlen.sd is added to each branch length.
 #' @return A list of trees in 'multiPhylo' format.
-#' @export
+#' @export simulate.trees
 simulate.trees<-function(Ngn, Nsp, Nsp.out=0,Ngn.out=0,Nb.cell.outlier=0, brlen.sd=0) {
   gen.trees<-function(Ntrees, Ntiptotal, Nspmove, NbweirdGenes=0) {
     res<-list()

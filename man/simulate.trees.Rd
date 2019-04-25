@@ -4,8 +4,7 @@
 \alias{simulate.trees}
 \title{simulate.trees}
 \usage{
-\method{simulate}{trees}(Ngn, Nsp, Nsp.out = 0, Ngn.out = 0,
-  Nb.cell.outlier = 0, brlen.sd = 0)
+simulate.trees(Ngn, Nsp, Nsp.out = 0, Ngn.out = 0, Nb.cell.outlier = 0, brlen.sd = 0)
 }
 \arguments{
 \item{Ngn}{Number of gene trees to simulate.}
