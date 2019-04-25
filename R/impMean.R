@@ -10,8 +10,7 @@
 #' @param matrices A list of distance matrices. 
 #' @return Returns a list of matrices with same dimensions, with rows and columns 
 #' in the same order and missing data (if any) imputed.
-#' 
-
+#' @export
 impMean <- function(matrices) {
   AddColAndRow<-function(matrix, allrowsandcol) {
     newmat<-matrix(nrow=length(allrowsandcol), ncol=length(allrowsandcol), dimnames=list(allrowsandcol,allrowsandcol))

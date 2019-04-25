@@ -1,4 +1,3 @@
-
 #' normalize
 #' 
 #' This function normalizes the 2WR matrix (or any matrix) according to the
@@ -8,7 +7,6 @@
 #' in Phylogenomics Using Multiple Co-inertia Analysis. Molecular Biology 
 #' and Evolution 29 : 1587 – 1598)
 #' 
-#' 
 #' @param mat A matrix
 #' @param what Character string indicating whether the matrix should be
 #' normalized and how. If what="none", the matrix is not normalized (the
@@ -17,6 +15,7 @@
 #' so that the difference between genes is increased. Normalization consists
 #' in dividing each entry by either the mean of each row or of each column.
 #' @return A normalized matrix
+#' @export
 normalize <- function(mat, what = "none") {
   if (what == "species") mat <- apply(mat, 2, function(x) {x / mean(x)})
   else if (what == "genes") mat <- t(apply(mat, 1, function(x) {x / mean(x)}))

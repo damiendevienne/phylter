@@ -1,8 +1,5 @@
-
 # \code{Dist2WR} computes the 2WR matrix from the results obtaind with \code{DistatisFast}
 # (the fast version of distatis)
-
-
 
 #' Dist2WR
 #' 
@@ -14,7 +11,7 @@
 #' @return The 2WR matrix: a gene x species matrix. Each cell represents a 
 #' gene/species pair, whose value represents the distance between (i) the position of this species
 #' in this gene tree and (ii) the average position of this species in all other gene trees.
-#' 
+#' @export
 Dist2WR <- function(Distatis) {
   F<-Distatis$F
   PartialF<-Distatis$PartialF

@@ -8,3 +8,4 @@ License: GPL (>= 2)
 Description: Une description qui va bien.
 BugReports: https://github.com/damiendevienne/phylter/issues
 Encoding: UTF-8
+RoxygenNote: 6.1.1

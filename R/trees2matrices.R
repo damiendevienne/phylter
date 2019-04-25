@@ -22,6 +22,7 @@
 #' data(Fungi)
 #' matrices = trees2matrices(Fungi, distance = "patristic", bvalue = 0)
 #' 
+#' @export
 trees2matrices <- function(trees, distance = "patristic", bvalue = 0) {
   correction <- function(mat){
     mat<-mat-1

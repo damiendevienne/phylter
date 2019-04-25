@@ -12,6 +12,7 @@
 #' @param gene.names List of names to assign to the elements of X. Must be of the same length as length(X). 
 #' If NULL (the default) the object are numbered 1,2,...,length(X).
 #' @return X with name assigned to each element.
+#' @export
 rename.genes <- function(X, gene.names = NULL) {
   if(!is.null(gene.names)) {
     names(X) <- gene.names

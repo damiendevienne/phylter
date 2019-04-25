@@ -1,4 +1,3 @@
-
 # Detection of all types of outliers in the 2WR matrix  
 # Three functions here.
 
@@ -14,8 +13,6 @@
 #' in Phylogenomics Using Multiple Co-inertia Analysis. Molecular 
 #' Biology and Evolution 29 : 1587 – 1598.
 #' 
-#' @section Je ne comprends pas cette section 
-#' Et je ne sais pas quoi écrire ici.
 #' @describeIn detect.outliers \code{detect.outliers} is a simple wrapper
 #' to call the two other functions described, and return complete ouliers
 #' if any, or cell outliers if no complete outliers exist.
@@ -34,6 +31,7 @@
 #' is useful if all species are important in the dataset. Default to TRUE
 #' (all species are kept).
 #' @return A list of outliers.
+#' @export
 detect.outliers<-function(mat2WR, k=3, thres=0.3, test.island=TRUE, keep.species=TRUE) {
   #Test for complete outliers
   CELLS<-NULL
@@ -52,10 +50,9 @@ detect.outliers<-function(mat2WR, k=3, thres=0.3, test.island=TRUE, keep.species
   return(CELLS)
 }
 
-#' @section Je ne comprends pas cette section 
-#' Et je ne sais pas quoi écrire ici.
 #' @describeIn detect.outliers \code{detect.complete.outliers} detects
 #' if complete outliers exist in the 2WR matrix. See details.
+#' @export
 detect.complete.outliers <- function(mat2WR, k = 3, thres = 0.3, keep.species=TRUE) {
   RES<-NULL
   outl.sub <- function(x, k) {
@@ -89,10 +86,9 @@ detect.complete.outliers <- function(mat2WR, k = 3, thres = 0.3, keep.species=TR
   return(RES)
 }
 
-#' @section Je ne comprends pas cette section 
-#' Et je ne sais pas quoi écrire ici.
 #' @describeIn detect.outliers \code{detect.cell.outliers} detects
 #' if cell outliers exist in the 2WR matrix.
+#' @export
 detect.cell.outliers <- function(mat2WR, k = 3, test.island=TRUE) {
   MAT <- mat2WR
   detect.island <- function(arr) {
