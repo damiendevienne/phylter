@@ -1,0 +1,10 @@
+Package: phylter
+Title: un titre qui va bien
+Version: 0.9.0
+Imports: ape, RSpectra
+Author: Damien de Vienne, Stéphane Dray
+Maintainer: Aurélie Siberchicot <aurelie.siberchicot@univ-lyon1.fr>
+License: GPL (>= 2)
+Description: Une description qui va bien.
+BugReports: https://github.com/damiendevienne/phylter/issues
+Encoding: UTF-8
