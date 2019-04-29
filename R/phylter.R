@@ -35,12 +35,24 @@
 #' 
 #' @return A list with the 'Initial' (before filtering) and 'Final' (after filtering) states/
 phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, keep.species=TRUE, gene.names=NULL, test.island=TRUE, verbose=TRUE, stop.criteria=1e-5) {
-	ReplaceValueWithCompromise<-function(allmat, what, compro) {
+
+# bvalue=0
+# distance="patristic"
+# k=3
+# thres=0.3
+# Norm=TRUE
+# keep.species=TRUE
+# gene.names=NULL
+# test.island=TRUE
+# verbose=TRUE
+# stop.criteria=1e-5
+
+	ReplaceValueWithCompromise<-function(allmat, what, compro, lambda) {
 		for (i in 1:length(allmat)) {
 			whatsp<-what[what[,1]==i,2]
 			if (length(whatsp)>0) {
-				allmat[[i]][whatsp,]<-compro[whatsp,]
-				allmat[[i]][,whatsp]<-compro[,whatsp]
+				allmat[[i]][whatsp,]<-compro[whatsp,]*lambda[i]
+				allmat[[i]][,whatsp]<-compro[,whatsp]*lambda[i]
 			}
 		}
 		return(allmat)
@@ -70,12 +82,10 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, 
 		return(Out)
 	}
 	if (is.null(names(X))) X<-rename.genes(X, gene.names=gene.names)
-	if (class(trees[[1]])=="phylo") {
-		matrices <- trees2matrices(X, distance = distance, bvalue = bvalue)
-		Xsave<-matrices
-	}
-	else Xsave<-X #Xsave containe the original matrices
-	matrices <- impMean(matrices) ##impute missing values, if any. This also sorts rows and columns
+	if (class(X[[1]])=="phylo") matrices <- trees2matrices(X, distance = distance, bvalue = bvalue)
+	else matrices<-X
+	Xsave<-X #Xsave contains the original matrices
+	matrices <- impMean(matrices) ##impute missing values with mean (if any). This also sorts rows and columns, thus this step cannot be removed.
 	if (verbose) {
 		print(paste("Number of Genes:    ", length(matrices), sep=""))
 		print(paste("Number of Species:  ", nrow(matrices[[1]]), sep=""))
@@ -110,7 +120,7 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, 
 		if (verbose) print(paste("   ",nrow(NewCellsToRemove)," new cells removed."))
 		if (!is.null(NewCellsToRemove)) {
 			CELLSREMOVED.new<-rbind(CELLSREMOVED, NewCellsToRemove) 
-			matrices.new<-ReplaceValueWithCompromise(matrices, CELLSREMOVED.new, RES$compromise)
+			matrices.new<-ReplaceValueWithCompromise(matrices, CELLSREMOVED.new, RES$compromise, RES$lambda)
 			RES.new<-DistatisFast(matrices.new, Norm)
 			VAL.new<-c(VAL, RES.new$quality)
 			if (verbose) print(RES.new$quality)
@@ -154,5 +164,6 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, 
 
 	Result<-list(Initial=Initial, Final=Final)
 	class(Result)<-"phylter"
+	if (verbose) summary(Result)
 	return(Result)
 }

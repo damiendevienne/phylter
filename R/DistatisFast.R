@@ -64,7 +64,6 @@ DistatisFast<-function(matrices, Norm=TRUE, factorskept=2) {
 	Gn<-names(matrices)
 	nbSp<-length(Sp)
 	nbGn<-length(Gn)
-
 	### Compute weights
 	matrices.dblcent<-lapply(matrices, DblCenterDist)
 	# if (Norm) matrices.dblcent<-lapply(matrices.dblcent, MFAnormCP) ##normalize is asked
@@ -80,14 +79,13 @@ DistatisFast<-function(matrices, Norm=TRUE, factorskept=2) {
 	FirstEigenVector<-eigs_sym(RVmat, 1, which = "LM")
 	alpha <- FirstEigenVector$vectors[, 1]/sum(FirstEigenVector$vectors[, 1])
 	quality<-FirstEigenVector$values/nbGn
-
 	### Compute compromise matrix (C) and its projection (Splus)
 	WeightedMatrices<-sapply(1:nbGn, function(x,MAT,weight) MAT[[x]]*weight[x],MAT=matrices.dblcent, weight=alpha, simplify=FALSE)
 	WeightedMatrices.initial<-sapply(1:nbGn, function(x,MAT,weight) MAT[[x]]*weight[x],MAT=matrices, weight=alpha, simplify=FALSE)
 
 	Splus<-Reduce('+',WeightedMatrices)
 	# compromise<-Reduce('+',WeightedMatrices.initial)
-	# dimnames(Splus)<-list(Sp,Sp)
+	dimnames(Splus)<-list(Sp,Sp)
 	s<-diag(Splus)
 	compromise<-sweep(sweep(-2*(Splus),1,s,"+"),2,s,"+")
 	## ca fois me mambda c'est OK.
