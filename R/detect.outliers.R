@@ -88,6 +88,8 @@ detect.complete.outliers <- function(mat2WR, k = 3, thres = 0.3, keep.species=TR
 
 #' @describeIn detect.outliers \code{detect.cell.outliers} detects
 #' if cell outliers exist in the 2WR matrix.
+#' @importFrom stats dist quantile IQR
+#' @importFrom utils combn
 #' @export
 detect.cell.outliers <- function(mat2WR, k = 3, test.island=TRUE) {
   MAT <- mat2WR

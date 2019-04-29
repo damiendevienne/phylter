@@ -34,6 +34,9 @@
 #' than this value. Default to 1e-5.
 #' 
 #' @return A list with the 'Initial' (before filtering) and 'Final' (after filtering) states/
+#' @importFrom utils tail
+#' @importFrom stats hclust as.dist
+#' @importFrom graphics plot
 #' @export
 phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, keep.species=TRUE, gene.names=NULL, test.island=TRUE, verbose=TRUE, stop.criteria=1e-5) {
 

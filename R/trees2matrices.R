@@ -21,7 +21,8 @@
 #' # transforming a lsit of trees into a list of distances matrices using patristic distances:
 #' data(Fungi)
 #' matrices = trees2matrices(Fungi, distance = "patristic", bvalue = 0)
-#' 
+#' @importFrom ape Nnode Ntip di2multi compute.brlen
+#' @importFrom stats cophenetic
 #' @export
 trees2matrices <- function(trees, distance = "patristic", bvalue = 0) {
   correction <- function(mat){

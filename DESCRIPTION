@@ -1,7 +1,7 @@
 Package: phylter
 Title: Un Titre Qui Va Bien
 Version: 0.9.0
-Imports: ape, RSpectra
+Imports: ape, RSpectra, stats, utils
 Author: Damien de Vienne, Stéphane Dray
 Maintainer: Aurélie Siberchicot <aurelie.siberchicot@univ-lyon1.fr>
 License: GPL (>= 2)

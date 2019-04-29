@@ -30,6 +30,7 @@
 #' Proceedings of the IEEE Computer Society: International
 #' Conference on Computer Vision and Pattern Recognition_.  (San
 #' Diego, CA, USA). pp. 42-47.
+#' @importFrom RSpectra eigs_sym
 #' @export
 DistatisFast<-function(matrices, Norm=TRUE, factorskept=2) {
 	GetCmat <- function(OrderedMatrices, RV = TRUE) {

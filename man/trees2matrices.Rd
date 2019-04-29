@@ -29,5 +29,4 @@ trees2matrices changes a list of trees into a list of matrices.
 # transforming a lsit of trees into a list of distances matrices using patristic distances:
 data(Fungi)
 matrices = trees2matrices(Fungi, distance = "patristic", bvalue = 0)
-
 }
