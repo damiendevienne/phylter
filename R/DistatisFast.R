@@ -15,6 +15,8 @@
 #' @return Returns a list contanining 
 #' \itemize {
 #' 	\item 'alpha': array of length K of the weight associated to each matrix.
+#'  \item 'lambda': array of length K of the normalization factors used for each matrix 
+#'  if Norm=TRUE.
 #' 	\item 'RVmat': a KxK matrix with RV correlation coefficient computed between all
 #'  pairs of matrices.
 #' 	\item 'compromise': an IxI matrix representing the best compromise between all 
@@ -53,6 +55,10 @@ DistatisFast<-function(matrices, Norm=TRUE, factorskept=2) {
 	    Ynormed = Y/e1
 	    return(Ynormed)
 	}
+	GetLambdaForNorm <- function(Y) {
+	    e1 = eigs_sym(Y, 1, opts=list(retvec=FALSE))$values
+	    return(e1)
+	}
 
 	Sp<-rownames(matrices[[1]])
 	Gn<-names(matrices)
@@ -61,7 +67,15 @@ DistatisFast<-function(matrices, Norm=TRUE, factorskept=2) {
 
 	### Compute weights
 	matrices.dblcent<-lapply(matrices, DblCenterDist)
-	if (Norm) matrices.dblcent<-lapply(matrices.dblcent, MFAnormCP) ##normalize is asked
+	# if (Norm) matrices.dblcent<-lapply(matrices.dblcent, MFAnormCP) ##normalize is asked
+	if (Norm) {
+		lambda<-lapply(matrices.dblcent, GetLambdaForNorm)
+		matrices.dblcent<-Map("/", matrices.dblcent, lambda)
+		lambda<-unname(unlist(lambda))
+	}
+	else {
+		lambda<-rep(1,nbGn)
+	}
 	RVmat<-GetCmat(matrices.dblcent)
 	FirstEigenVector<-eigs_sym(RVmat, 1, which = "LM")
 	alpha <- FirstEigenVector$vectors[, 1]/sum(FirstEigenVector$vectors[, 1])
@@ -72,11 +86,11 @@ DistatisFast<-function(matrices, Norm=TRUE, factorskept=2) {
 	WeightedMatrices.initial<-sapply(1:nbGn, function(x,MAT,weight) MAT[[x]]*weight[x],MAT=matrices, weight=alpha, simplify=FALSE)
 
 	Splus<-Reduce('+',WeightedMatrices)
-	compromise<-Reduce('+',WeightedMatrices.initial)
+	# compromise<-Reduce('+',WeightedMatrices.initial)
 	# dimnames(Splus)<-list(Sp,Sp)
-	# s<-diag(Splus)
-	# compromise<-sweep(sweep(-2*(Splus),1,s,"+"),2,s,"+")
-
+	s<-diag(Splus)
+	compromise<-sweep(sweep(-2*(Splus),1,s,"+"),2,s,"+")
+	## ca fois me mambda c'est OK.
 	### Keep few (=factorskept) axes and project individual matrices
 	Nom2Factors<-paste("Factor", 1:factorskept)
 	eigenSplus = eigs_sym(Splus, factorskept) ##the 2 is the number of dim we really keep.
@@ -90,5 +104,5 @@ DistatisFast<-function(matrices, Norm=TRUE, factorskept=2) {
 
 	PartialF = lapply(matrices.dblcent, function(x,y) x %*% y, y=Proj)
 
-	return(list(F=F, PartialF=PartialF, alpha=alpha, RVmat=RVmat, compromise=compromise, quality=quality))
+	return(list(F=F, PartialF=PartialF, alpha=alpha, lambda=lambda, RVmat=RVmat, compromise=compromise, quality=quality))
 }
