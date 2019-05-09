@@ -40,16 +40,16 @@
 #' @export
 phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, keep.species=TRUE, gene.names=NULL, test.island=TRUE, verbose=TRUE, stop.criteria=1e-5) {
 
-# bvalue=0
-# distance="patristic"
-# k=3
-# thres=0.3
-# Norm=TRUE
-# keep.species=TRUE
-# gene.names=NULL
-# test.island=TRUE
-# verbose=TRUE
-# stop.criteria=1e-5
+bvalue=0
+distance="patristic"
+k=3
+thres=0.3
+Norm=TRUE
+keep.species=TRUE
+gene.names=NULL
+test.island=TRUE
+verbose=TRUE
+stop.criteria=1e-5
 
 	ReplaceValueWithCompromise<-function(allmat, what, compro, lambda) {
 		for (i in 1:length(allmat)) {
@@ -88,7 +88,7 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, 
 	if (is.null(names(X))) X<-rename.genes(X, gene.names=gene.names)
 	if (class(X[[1]])=="phylo") matrices <- trees2matrices(X, distance = distance, bvalue = bvalue)
 	else matrices<-X
-	Xsave<-X #Xsave contains the original matrices
+	Xsave<-matrices #Xsave contains the original matrices
 	matrices <- impMean(matrices) ##impute missing values with mean (if any). This also sorts rows and columns, thus this step cannot be removed.
 	if (verbose) {
 		print(paste("Number of Genes:    ", length(matrices), sep=""))
@@ -128,7 +128,7 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, 
 			RES.new<-DistatisFast(matrices.new, Norm)
 			VAL.new<-c(VAL, RES.new$quality)
 			if (verbose) print(RES.new$quality)
-			if (verbose) plot(VAL, type="o")				
+#			if (verbose) plot(VAL, type="o")				
 			gain<-VAL.new[length(VAL.new)]-VAL.new[length(VAL.new)-1]
 			if (gain<0) {
 				print("Gain too small (< 0). Quiting")
@@ -167,7 +167,7 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, 
 	Final$Outliers<-CompareBeforeAfter(Xsave, CELLSREMOVED, Final$species.order)
 
 	Result<-list(Initial=Initial, Final=Final)
-	class(Result)<-"phylter"
+	class(Result)<-c("phylter", "list")
 	if (verbose) summary(Result)
 	return(Result)
 }

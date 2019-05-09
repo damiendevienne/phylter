@@ -1,5 +1,5 @@
 Package: phylter
-Title: Un Titre Qui Va Bien
+Title: Detect Visualize and Remove Outliers in Phylogenomics Datasets
 Version: 0.9.0
 Imports: ape, RSpectra, stats, utils
 Author: Damien de Vienne, Stéphane Dray
