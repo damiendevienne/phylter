@@ -28,7 +28,7 @@
 #' @param test.island This should not be modified. If TRUE (the default), only the highest value in
 #' an 'island' of outliers is considered an outlier. This prevents non-outliers hitchhiked by outliers
 #' to be considered outliers themselves. 
-#' @param verbose If TRUE (the default), messages are written dugont the filtering process to get information
+#' @param verbose If TRUE (the default), messages are written duringt the filtering process to get information
 #' of what is happening
 #' @param stop.criteria The optimisation stops when the gain between round n and round n+1 is smaller
 #' than this value. Default to 1e-5.
@@ -39,18 +39,6 @@
 #' @importFrom graphics plot
 #' @export
 phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, keep.species=TRUE, gene.names=NULL, test.island=TRUE, verbose=TRUE, stop.criteria=1e-5) {
-
-bvalue=0
-distance="patristic"
-k=3
-thres=0.3
-Norm=TRUE
-keep.species=TRUE
-gene.names=NULL
-test.island=TRUE
-verbose=TRUE
-stop.criteria=1e-5
-
 	ReplaceValueWithCompromise<-function(allmat, what, compro, lambda) {
 		for (i in 1:length(allmat)) {
 			whatsp<-what[what[,1]==i,2]
@@ -80,7 +68,7 @@ stop.criteria=1e-5
 		return(NewCells)
 	}
 	CompareBeforeAfter<-function(InitialMatrices, AllOutliers, sp.order) {
-		cell.exists<-apply(AllOutliers, 1, function(x, sp) is.element(sp.order[x[2]],colnames(matrices[[x[1]]])), sp=sp.order)
+		cell.exists<-apply(AllOutliers, 1, function(x, sp) is.element(sp.order[x[2]],colnames(InitialMatrices[[x[1]]])), sp=sp.order)
 		AllOutliers<-AllOutliers[cell.exists,]
 		Out<-cbind(names(InitialMatrices[AllOutliers[,1]]), sp.order[AllOutliers[,2]])
 		return(Out)
@@ -165,8 +153,11 @@ stop.criteria=1e-5
 	Final$AllOptiScores<-VAL
 	Final$CELLSREMOVED<-CELLSREMOVED
 	Final$Outliers<-CompareBeforeAfter(Xsave, CELLSREMOVED, Final$species.order)
+	#store the way the function was called
+	call<-list(bvalue=bvalue, distance=distance, k=k, thres=thres, Norm=Norm, keep.species=keep.species, gene.names=gene.names, test.island=test.island, verbose=verbose, stop.criteria=stop.criteria)
 
-	Result<-list(Initial=Initial, Final=Final)
+
+	Result<-list(Initial=Initial, Final=Final, call=call)
 	class(Result)<-c("phylter", "list")
 	if (verbose) summary(Result)
 	return(Result)
