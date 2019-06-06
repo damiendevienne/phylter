@@ -48,7 +48,7 @@ trees2matrices <- function(trees, distance = "patristic", bvalue = 0) {
         }
         else {
           #tree <- di2multi(tree, tol = bvalue)
-          cat ("-------- ATTENTION!! There are no bootstraps values in your trees or your bvalue parameter does not correspond values in your trees ! -------")
+          cat ("-------- WARNING!! There are no bootstraps values in your trees or your bvalue parameter does not correspond to the values in the trees ! -------")
         }
       }
       tree.brlen <- compute.brlen(tree, 1)
@@ -67,7 +67,7 @@ trees2matrices <- function(trees, distance = "patristic", bvalue = 0) {
         }
         else {
           #tree <- di2multi(tree, tol = bvalue)
-          cat ("-------- ATTENTION!! There are no bootstraps values in your trees ! -------")
+          cat ("-------- WARNING!! There are no bootstraps values in the trees ! -------")
         }
       }
       tree.brlen <- tree
@@ -126,9 +126,10 @@ rename.genes <- function(trees, gene.names = NULL) {
 #' = "mfa" to normalize data.
 #' @seealso \code{\link[DistatisR]{distatis}}
 mat2Dist <- function(matrices, Norm = "NONE", Distance = TRUE, RV = TRUE, 
-    nfact2keep = 3, compact = FALSE) {
+    nfact2keep = "auto", compact = FALSE) {
   # transform the list of matrices to a cube
   row <- rownames(matrices[[1]])
+  if (nfact2keep=="auto") nfact2keep = length(row)-1  
   for (i in 1:length(matrices)) {
     matrices[[i]] <- matrices[[i]][row, row]
   }
@@ -143,7 +144,7 @@ mat2Dist <- function(matrices, Norm = "NONE", Distance = TRUE, RV = TRUE,
   # Apply distatis on the cube and keep genes names in distatis results
 #  Distatis <- distatis(TheVeryBigCube, Norm = Norm, Distance = Distance, RV = RV, nfact2keep = nfact2keep, compact = compact)
   ##KEEP THE MAX NUMBER OF DIMENSIONS (length(row)-1)!
-  Distatis <- distatis(TheVeryBigCube, Norm = Norm, Distance = Distance, RV = RV, nfact2keep = length(row)-1, compact = compact)
+  Distatis <- distatis(TheVeryBigCube, Norm = Norm, Distance = Distance, RV = RV, nfact2keep = nfact2keep, compact = compact)
 
   dimnames(Distatis$res4Splus$PartialF)[[3]] <- names(matrices)
   return(Distatis)
@@ -345,6 +346,7 @@ imputePCA2 <- function (X, ncp = 2, center = FALSE, scale = FALSE, method = c("R
 # Impute Missing datas by means
 
 
+
 #' impMean
 #' 
 #' Imputing missing data in matrices. A missing species for a gene is imputed
@@ -433,7 +435,12 @@ impMean <- function(matrices) {
 #' @return 2WR matrix is a gene x specie matrix. Each cell corresponds to the
 #' distance of a specie from a gene tree to the reference position of this
 #' specie for every gene trees.
-Dist2WR <- function(Distatis) {
+Dist2WR <- function(Distatis, nfact2keep="auto") {
+  #if auto, all axes are kept. Otherwise only the number given is kept
+  if (nfact2keep!="auto") {
+    Distatis$res4Splus$PartialF<-Distatis$res4Splus$PartialF[,1:nfact2keep,]
+    Distatis$res4Splus$F<-Distatis$res4Splus$F[,1:nfact2keep]
+  }
   matrixWR2 <- matrix(nrow = dim(Distatis$res4Splus$PartialF)[[1]], ncol = dim(Distatis$res4Splus$PartialF)[[3]])
   colnames(matrixWR2) <- dimnames(Distatis$res4Splus$PartialF)[[3]]
   rownames(matrixWR2) <- dimnames(Distatis$res4Splus$PartialF)[[1]]
@@ -919,7 +926,7 @@ detect.cell.outliers <- function(mat2WR, k = 3, test.island=FALSE) {
     }
     else { ##we return all cells viewed as outliers (more violent...)
       perrow<-melt(testFALSE)
-      RESULT$outcell<-cbind(as.character(perrow[perrow$value==1,1]), as.character(perrow[perrow$value==1,2]))
+      RESULT$outcell<-cbind(as.character(perrow[perrow$value>=1,1]), as.character(perrow[perrow$value>=1,2]))
     }
   }
   return(RESULT)
@@ -1079,7 +1086,7 @@ plotDistatisPartial <- function(trees, distance = "patristic", bvalue = 0, gene.
 #' leading to not a same weight for each variable.
 #' @param maxiter only used if method.imp = "IPCA". integer, maximum number of
 #' iteration for the algorithm.
-VizualizeSpe <- function(trees, species, distance = "patristic", bvalue = 0, gene.names = NULL, method.imp = "IPCA", ncp = 3, center = FALSE, scale = FALSE, maxiter = 1000){
+VizualizeSpe <- function(trees, species, distance = "patristic", bvalue = 0, gene.names = NULL, method.imp = "MEAN", ncp = 3, center = FALSE, scale = FALSE, maxiter = 1000){
   matrices <- trees2matrices(trees, distance = distance, bvalue = bvalue)
   if (method.imp == "IPCA"){
     TAB <- impPCA.multi(matrices, ncp = ncp, center = center, scale = scale, maxiter = maxiter)
@@ -1130,6 +1137,63 @@ VizualizeSpe <- function(trees, species, distance = "patristic", bvalue = 0, gen
   plot((max(abs(listx)) / max(xc)) * xc, (max(abs(listy)) / max(yc)) * yc, type = "n", xlim = c(-max(abs(listx)) - 2, max(abs(listx)) + 2), ylim = c(-max(abs(listy))-2, max(abs(listy)) + 2), frame.plot = FALSE, axes = FALSE, xlab = "", ylab = "")
   text((max(abs(listx)) / max(xc)) * xc, (max(abs(listy)) / max(yc)) * yc, labels = nam, col = "light grey")
   for (i in 1:length(trees)) {
+    genei <- T1m[i,] / Means.T1m
+    genei[is.na(genei)] <- 1
+    GENEi <- c(GENEi, genei)
+    x <- genei * cos(alphas)
+    y <- genei * sin(alphas)
+    x[is.na(x)] <- 0
+    y[is.na(y)] <- 0
+    polygon(xc, yc, border = "light grey", lwd = 0.54)
+    polygon(x, y, border = "red", lwd = 0.8)
+    text(-max(max(abs(listx)) / max(xc) * xc), -max(max(abs(listy)) / max(yc) * yc), SP, cex = 2)
+  }
+}
+
+VizualizeSpe2 <- function(matrices, Dist, species) {
+  s<-diag(Dist$res4Splus$Splus)
+  D<-sweep(sweep(-2*(Dist$res4Splus$Splus),1,s,"+"),2,s,"+")
+  TAB <- matrices
+  nam <- rownames(TAB[[1]])
+  listx = vector()
+  listy = vector()
+    GENEi<-NULL
+    SP<-species
+    T1 <- lapply(TAB, function(x) (x[SP, nam]))
+    T1m <- matrix(unlist(T1), nrow = length(matrices), byrow = TRUE)
+    Means.T1m <- D
+    alphas <- seq(0, 2 * pi, length.out = length(nam) + 1)
+    alphas <- alphas[1:length(nam)]
+    for (i in 1:length(matrices)) {
+      genei <- T1m[i, ] / Means.T1m
+      genei[is.na(genei)] <- 1
+      GENEi <- c(GENEi, genei)
+      x <- genei * cos(alphas)
+      y <- genei * sin(alphas)
+      x[is.na(x)] <- 0
+      y[is.na(y)] <- 0
+      listx = append(listx, x)
+      listy = append(listy, y)
+    }
+  SP <- species
+  GENEi <- NULL
+  T1 <- lapply(TAB, function(x) (x[SP, nam]))
+  T1m <- matrix(unlist(T1), nrow = length(matrices), byrow = TRUE)
+  ##T1m gives 1 plot corresponding to "Kla" for each gene.
+  Means.T1m <- apply(T1m, 2, mean)
+  ##we check angles
+  alphas <- seq(0, 2 * pi, length.out = length(nam) + 1)
+  alphas <- alphas[1:length(nam)]
+  ##CIRCLE:
+  xc <- rep(1, length(nam) + 1) * cos(seq(0, 2 * pi, length.out = length(nam) + 1))
+  yc <- rep(1, length(nam) + 1) * sin(seq(0, 2 * pi, length.out = length(nam) + 1))
+  ##we check angles
+  xc <- xc[1:length(nam)]
+  yc <- yc[1:length(nam)]
+  ##for each gene, the ray is given by the proportion:
+  plot((max(abs(listx)) / max(xc)) * xc, (max(abs(listy)) / max(yc)) * yc, type = "n", xlim = c(-max(abs(listx)) - 2, max(abs(listx)) + 2), ylim = c(-max(abs(listy))-2, max(abs(listy)) + 2), frame.plot = FALSE, axes = FALSE, xlab = "", ylab = "")
+  text((max(abs(listx)) / max(xc)) * xc, (max(abs(listy)) / max(yc)) * yc, labels = nam, col = "light grey")
+  for (i in 1:length(matrices)) {
     genei <- T1m[i,] / Means.T1m
     genei[is.na(genei)] <- 1
     GENEi <- c(GENEi, genei)
@@ -1214,6 +1278,52 @@ VizualizeGene <- function(trees, gene, distance = "patristic", bvalue = 0, gene.
     T1 <- lapply(TAB, function(x,y) (x[SP,nam]))
     T1m <- matrix(unlist(T1), nrow=length(trees), byrow=TRUE)
     Means.T1m <- apply(T1m, 2, mean)
+    genei <- T1m[gene,]/Means.T1m
+    xc <- rep(1, length(nam) + 1) * cos(seq(0,2 * pi, length.out = length(nam) + 1))
+    yc <- rep(1, length(nam) + 1) * sin(seq(0,2 * pi, length.out = length(nam) + 1))#
+    ##we check angles
+    alphas <- seq(0,2 * pi, length.out = length(nam) + 1)
+    alphas <- alphas[1:length(nam)]
+    x <- genei * cos(alphas)
+    y <- genei * sin(alphas)
+    x[is.na(x)] <- xc[j]
+    y[is.na(y)] <- yc[j]
+    polygon(xc, yc, border="light grey", lwd = 0.5)
+    points(x, y, pch = 19, cex = 0.2, col = "red")
+    polygon(x, y, border ="red", lwd = 0.1)
+    polygon(xc, yc, border="light grey", lwd = 0.5)
+  }
+}
+
+VizualizeGene3 <- function(matrices, Dist, gene){
+  s<-diag(Dist$res4Splus$Splus)
+  D<-sweep(sweep(-2*(Dist$res4Splus$Splus),1,s,"+"),2,s,"+")
+  TAB<-matrices
+  nam <- rownames(TAB[[1]])
+  listx = vector()
+  listy = vector()
+  for (j in 1:length(nam)) { ##for each species
+    SP <- nam[j]
+    T1 <- lapply(TAB, function(x) (x[SP,nam]))
+    T1m <- matrix(unlist(T1), nrow = length(trees), byrow = TRUE)
+    Means.T1m <- D[j,]
+    genei <- T1m[gene,]/Means.T1m
+    alphas <- seq(0,2 * pi, length.out = length(nam) + 1)
+    alphas <- alphas[1:length(nam)]
+    x <- genei * cos(alphas)
+    y <- genei * sin(alphas)
+    x[is.na(x)] <- 0
+    y[is.na(y)] <- 0
+    listx = append(listx, x)
+    listy = append(listy, y)
+  }
+  plot(0, 0, type = "n", xlim = c(-max(abs(listx)) - 2, max(abs(listx)) + 2), ylim = c(-max(abs(listy)) - 2, max(abs(listy)) + 2), frame.plot = FALSE, axes = FALSE, xlab = "", ylab = "", col.main = "black", cex.main = 1.5)
+  title(gene)
+  for (j in 1:length(nam)) { ##for each speciew
+    SP <- nam[j]
+    T1 <- lapply(TAB, function(x,y) (x[SP,nam]))
+    T1m <- matrix(unlist(T1), nrow=length(trees), byrow=TRUE)
+    Means.T1m <- D[j,]
     genei <- T1m[gene,]/Means.T1m
     xc <- rep(1, length(nam) + 1) * cos(seq(0,2 * pi, length.out = length(nam) + 1))
     yc <- rep(1, length(nam) + 1) * sin(seq(0,2 * pi, length.out = length(nam) + 1))#

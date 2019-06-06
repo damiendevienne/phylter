@@ -1,3 +1,4 @@
+''Phylter is an R package for analyzing and filtering phylogenomics datasets.''
  	- Simulation.R + roseParam + WriteRose.pl = fichier nécessaires à la simulation de listes arbres de gènes.
 
 SimOutliersHGT(tree, nbgn, outgn, outsp, outcell, sp = 0)
