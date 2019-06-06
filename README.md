@@ -85,8 +85,8 @@ writeOutput(results, file="phylter.out")
 ## Example
 A dataset is available in folder ```datasets``` for playing with phylter. It comes from Aguileta *et al.* (2008) paper: 246 genes, 21 species (fungi).
 ```R
-trees<-trees<-read.tree("datasets/Aguileta-et-al-2008_TREES.txt")
-results<-phylter(trees, distance="nodal", thres=0.2)
+trees<-read.tree("datasets/Aguileta-et-al-2008_TREES.txt")
+results<-phylter(trees, distance="nodal", thres=0.2) #for example
 ```
    
    
@@ -97,6 +97,6 @@ results<-phylter(trees, distance="nodal", thres=0.2)
 
 ---
 ### references
-Abdi, H., Valentin, D., O’Toole, A.J., & Edelman, B. (2005). DISTATIS: The analysis of multiple distance matrices. Proceedings of the IEEE Computer Society: International Conference on Computer Vision and Pattern Recognition. (San Diego, CA, USA). pp. 42–47.
+Abdi, H., Valentin, D., O’Toole, A.J., & Edelman, B. (2005). DISTATIS: The analysis of multiple distance matrices. Proceedings of the IEEE Computer Society: International Conference on Computer Vision and Pattern Recognition. (San Diego, CA, USA). pp. 42–47. https://www.utdallas.edu/~herve/abdi-distatis2005.pdf
 
 G Aguileta, S Marthey, H Chiapello, M.-H Lebrun, F Rodolphe, E Fournier, A Gendrault-Jacquemard, T Giraud, Assessing the Performance of Single-Copy Genes for Recovering Robust Phylogenies, Systematic Biology, Volume 57, Issue 4, August 2008, Pages 613–627, https://doi.org/10.1080/10635150802306527
