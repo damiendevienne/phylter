@@ -35,7 +35,7 @@ source("R/detect.outliers.R")
 source("R/phylter.R")
 source("R/simulate.trees.R")
 source("R/summary.phylter.R")
-source("R/plot2WR.R")
+source("R/plot.phylter.R")
 
 # Ready to use phylter!
 ```
