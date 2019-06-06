@@ -10,7 +10,7 @@
 **Phylter** is written in R language.
 
 ## Installation
-**Phylter** is not yet on CRAN. To use it, open a terminal and type: 
+**Phylter** is not yet on CRAN. To use it now, open a terminal and type: 
 ```console
 git clone https://github.com/damiendevienne/phylter.git
 cd phylter
@@ -55,7 +55,7 @@ results<-phylter(trees, gene.names=names)
 >```R
 >phylter(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, keep.species=TRUE, gene.names=NULL, test.island=TRUE, verbose=TRUE, stop.criteria=1e-5)
 >```
->Possible options are: 
+>Possible options are:    
 >```bvalue```: If X is a list of trees, nodes with a support below 'bvalue' will be collapsed prior to the outlier detection.  
 >```distance``` If X is a list of trees, type of distance used to compute the pairwise matrices for each tree. Can be "patristic" (sum of branch lengths separating tips, the default) or nodal (number of nodes separating tips).  
 >```k``` Strength of outlier detection. The higher this value the less outliers detected.  
@@ -67,11 +67,21 @@ results<-phylter(trees, gene.names=names)
 >```verbose``` If TRUE (the default), messages are written during the filtering process to get information on what is happening  
 >```stop.criteria``` The optimization stops when the gain (quality of compromise) between round *n* and round *n*+1 is smaller than this value. Default to 1e-5.  
 ### 4. Analyze the results 
-with ```summary(results)``` and all plotting functions available (```plot(results)```, ```plot2WR(results)```, ```plotDispersion(results)```, ```plotRV(results)```, ```plotopti(results)```, )
+Many functions allow looking at the outliers detected and comparing before and after:  
+```R
+summary(results) # Get a summary: nb of outliers, gain in concordance, etc.
+plot(results, "genes") # show the number of species in each gene, and how many per gene are outliers 
+plot(results, "species") # show the number of genes where each species is found, and how many are outliers
+plot2WR(results) # compare before and after genes x species matrices, highlighting missing data and outliers identified. 
+plotDispersion(results) # plot the dispersion of data before and after outlier removal. One dot represents one gene x species association.
+plotRV(results) # plot the genes x genes matrix showing pairwise correlation between genes. 
+plotopti(results) #plot optimization scores during optimization.
+```
 ### 5. Save the results
-To an external file for further analysis and raw data cleaning with ```writeOutput(results)```
-
-
+Save the results of the analysis to an external file, for example to perform cleaning on raw alignments based the results from phylter. 
+```R
+writeOutput(results, file="phylter.out")
+```
 
 
 ---
