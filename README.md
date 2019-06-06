@@ -12,10 +12,10 @@
 ## Installation
 **Phylter** is not yet on CRAN. To use it: 
 In the console: 
-```console
+```bash
 git clone https://github.com/damiendevienne/phylter.git
 cd phylter
-R #start R
+R
 ```
 And within R:
 ```R
