@@ -88,9 +88,9 @@ A dataset is available in folder ```datasets``` for playing with phylter. It com
 trees<-trees<-read.tree("datasets/Aguileta-et-al-2008_TREES.txt")
 results<-phylter(trees, distance="nodal", thres=0.2)
 ```
-
-
-
+   
+   
+   
 
 >For comments, suggestions and bug reports, please open an issue on this github repository.
 
@@ -99,4 +99,4 @@ results<-phylter(trees, distance="nodal", thres=0.2)
 ### references
 Abdi, H., Valentin, D., O’Toole, A.J., & Edelman, B. (2005). DISTATIS: The analysis of multiple distance matrices. Proceedings of the IEEE Computer Society: International Conference on Computer Vision and Pattern Recognition. (San Diego, CA, USA). pp. 42–47.
 
-
+G Aguileta, S Marthey, H Chiapello, M.-H Lebrun, F Rodolphe, E Fournier, A Gendrault-Jacquemard, T Giraud, Assessing the Performance of Single-Copy Genes for Recovering Robust Phylogenies, Systematic Biology, Volume 57, Issue 4, August 2008, Pages 613–627, https://doi.org/10.1080/10635150802306527
