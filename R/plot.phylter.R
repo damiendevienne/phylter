@@ -1,6 +1,6 @@
-# Plotting function for phylter objects
+# Plotting functions for phylter objects. 
 
-#' plot2WR
+#' plot.phylter
 #' 
 #' Plot the initial and final 2WR matrices side by side. Highlights missing data and detected outliers  
 #' 
