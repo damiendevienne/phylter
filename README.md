@@ -1,23 +1,26 @@
 # Phylter, a tool for analyzing, visualizing and filtering phylogenomics datasets. 
 
 **Phylter** is a tool that allows detecting, removing and visualizing outliers in phylogeneomics dataset by iteratively removing taxa in genes and optimizing a score of concordance between individual matrices. 
+
 **Phylter** relies on Distatis (Abdi et al, 2005), an extension of multidimensional scaling to 3 dimensions to compare multiple distance matrices at once.
+
 **Phylter** takes as input either a collection of phyloegenetic trees (that are converted to distance matrices by **Phylter**), or a directly a collection of pairwise distance matrices (that one can obtain from multiple sequence alignements).
+
 **Phylter** accepts data with missing values (missing taxa in some genes). 
+
 **Phylter** does not accept that the same taxa is present multiple times in the same gene. 
 
 
 **Phylter** is written in R language.
 
 ## Installation
-**Phylter** is not yet on CRAN. To use it: 
-In the console: 
-```bash
+**Phylter** is not yet on CRAN. To use it, open a terminal and type: 
+```console
 git clone https://github.com/damiendevienne/phylter.git
 cd phylter
 R
 ```
-And within R:
+Then within R:
 ```R
 # Load packages (install beforehand if not installed)
 require(ape)
