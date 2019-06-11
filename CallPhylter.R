@@ -19,13 +19,15 @@ source("R/plot.phylter.R")
 
 
 
-
+##############################################
+## TO REGENERATE NAMESPACE
 require(roxygen2)
 roxygenize(".",roclets=c("rd","namespace"))
-
-
-
-
+##############################################
+##############################################
+## TO CREATE A DATASET
+usethis::use_data(variablename, datasetname)
+##############################################
 
 
 
