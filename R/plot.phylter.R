@@ -10,7 +10,11 @@
 #' @param transpose Logical. If FALSE (the default), species are in rows and genes in columns. If TRUE, 
 #' rows and columns are inverted.
 #' @return A plot of the 2WR matrix.
+#' @importFrom grDevices dev.cur devAskNewPage
+#' @importFrom utils write.table
+#' @importFrom stats relevel
 #' @export
+
 
 plot.phylter<-function(X, what="all", layout=1) {
 	sum<-summary(X)
