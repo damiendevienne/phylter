@@ -10,12 +10,20 @@
 **Phylter** is written in R language.
 
 ## Installation
-**Phylter** is not yet on CRAN. To use it now, open a terminal and type: 
-```console
-git clone https://github.com/damiendevienne/phylter.git
-cd phylter
-R
+To install the development version of **phylter**:
+1.Install the release version of devtools from CRAN with `install.packages("devtools")`.
+2. Launch R and type 
+```R
+library(devtools)
+install_github("damiendevienne/phylter")
 ```
+3. Once installed the package can be loaded using:
+```R
+library("phylter")
+```
+
+**Phylter** is not yet on CRAN. To use it now, open a terminal and type: 
+
 Then within R:
 ```R
 # Load packages (install beforehand if not installed)
