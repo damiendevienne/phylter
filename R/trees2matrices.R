@@ -16,11 +16,6 @@
 #' It determines under what bootstrap values the nodes should be collapsed.
 #' Value 0 (the default) means that no nodes are collapsed.
 #' @return return a list of distance matrices
-#' @examples
-#' 
-#' # transforming a lsit of trees into a list of distances matrices using patristic distances:
-#' data(Fungi)
-#' matrices = trees2matrices(Fungi, distance = "patristic", bvalue = 0)
 #' @importFrom ape Nnode Ntip di2multi compute.brlen
 #' @importFrom stats cophenetic
 #' @export
