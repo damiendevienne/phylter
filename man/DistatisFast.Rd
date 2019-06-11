@@ -19,6 +19,8 @@ scores of the observations.}
 Returns a list contanining 
 \itemize{
 	\item 'alpha': array of length K of the weight associated to each matrix.
+ \item 'lambda': array of length K of the normalization factors used for each matrix 
+ if Norm=TRUE.
 	\item 'RVmat': a KxK matrix with RV correlation coefficient computed between all
  pairs of matrices.
 	\item 'compromise': an IxI matrix representing the best compromise between all 

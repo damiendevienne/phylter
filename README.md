@@ -11,7 +11,9 @@
 
 ## Installation
 **Phylter** is not yet on CRAN. To install the development version:    
-1.Install the release version of devtools from CRAN with `install.packages("devtools")`.    
+
+
+1. Install the release version of devtools from CRAN with `install.packages("devtools")`.    
 2. Launch R and type:
 ```R
 library(devtools)

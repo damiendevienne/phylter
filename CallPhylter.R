@@ -18,6 +18,18 @@ source("R/plot.phylter.R")
 
 
 
+
+
+require(roxygen2)
+roxygenize(".",roclets=c("rd","namespace"))
+
+
+
+
+
+
+
+
 genes<-readLines("AllEukTreeTom")
 genenames<-unlist(lapply(strsplit(genes,"/"), function(x) x[length(x)]))
 trees<-list()

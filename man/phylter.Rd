@@ -41,7 +41,7 @@ elements are named 1,2,..,length(X).}
 an 'island' of outliers is considered an outlier. This prevents non-outliers hitchhiked by outliers
 to be considered outliers themselves.}
 
-\item{verbose}{If TRUE (the default), messages are written dugont the filtering process to get information
+\item{verbose}{If TRUE (the default), messages are written duringt the filtering process to get information
 of what is happening}
 
 \item{stop.criteria}{The optimisation stops when the gain between round n and round n+1 is smaller
