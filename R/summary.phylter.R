@@ -5,7 +5,6 @@
 #' 
 #' summary.phylter TODO.
 #' 
-#' 
 #' @param X Object returned by function 'phylter()'.
 #' @return Print formatting
 #' @export
@@ -34,6 +33,14 @@ summary.phylter<-function(X) {
 	class(res)<-"summary.phylter"
 	res
 }
+
+#' print.summary.phylter
+#' 
+#' print.summary.phylter TODO.
+#' 
+#' @param X Object returned by function 'phylter()'.
+#' @return Print formatting
+#' @export
 
 print.summary.phylter<-function(x) {
 	if (!inherits(x, "summary.phylter"))
