@@ -10,9 +10,9 @@
 **Phylter** is written in R language.
 
 ## Installation
-To install the development version of **phylter**:
+**Phylter** is not yet on CRAN. To install the development version:
 1.Install the release version of devtools from CRAN with `install.packages("devtools")`.
-2. Launch R and type 
+2. Launch R and type:
 ```R
 library(devtools)
 install_github("damiendevienne/phylter")
@@ -20,32 +20,6 @@ install_github("damiendevienne/phylter")
 3. Once installed the package can be loaded using:
 ```R
 library("phylter")
-```
-
-**Phylter** is not yet on CRAN. To use it now, open a terminal and type: 
-
-Then within R:
-```R
-# Load packages (install beforehand if not installed)
-require(ape)
-require(RSpectra)
-require(ggplot2)
-require(reshape2)
-
-# source functions
-source("R/trees2matrices.R")
-source("R/rename.genes.R")
-source("R/impMean.R")
-source("R/DistatisFast.R")
-source("R/Dist2WR.R")
-source("R/normalize.R")
-source("R/detect.outliers.R")
-source("R/phylter.R")
-source("R/simulate.trees.R")
-source("R/summary.phylter.R")
-source("R/plot.phylter.R")
-
-# Ready to use phylter!
 ```
 
 ## Usage
