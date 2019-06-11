@@ -39,7 +39,7 @@ summary.phylter<-function(X) {
 #' print.summary.phylter TODO.
 #' 
 #' @param X Object returned by function 'phylter()'.
-#' @return Print formatting
+#' @return Print formatting   
 #' @export
 
 print.summary.phylter<-function(x) {
