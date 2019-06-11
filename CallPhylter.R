@@ -14,7 +14,7 @@ source("R/detect.outliers.R")
 source("R/phylter.R")
 source("R/simulate.trees.R")
 source("R/summary.phylter.R")
-source("R/plot2WR.R")
+source("R/plot.phylter.R")
 
 
 
@@ -24,7 +24,49 @@ trees<-list()
 for (i in 1:length(genes)) {
 	trees[[i]]<-read.tree(genes[i])
 }
-OK<-phylter(trees, gene.names=genenames)
+OK<-phylter(trees, gene.names=genenames, thres=0.2)
+pdf("dataTom_patristic_thres0.2_k3.pdf",width=20, height=15)
+plot(OK, "genes")
+plot(OK, "species")
+plot2WR(OK)
+dev.off()
+writeOutput(OK, file="dataTom_patristic_thres0.2_k3.out")
+write.tree(fastme.bal(OK$Initial$compromise), file="dataTom_patristic_thres0.2_k3.tre")
+write.tree(fastme.bal(OK$Final$compromise), file="dataTom_patristic_thres0.2_k3.tre", append=TRUE)
+
+
+OK<-phylter(trees, gene.names=genenames, thres=0.2, k=2)
+pdf("dataTom_patristic_thres0.2_k2.pdf",width=20, height=15)
+plot(OK, "genes")
+plot(OK, "species")
+plot2WR(OK)
+dev.off()
+writeOutput(OK, file="dataTom_patristic_thres0.2_k2.out")
+write.tree(fastme.bal(OK$Initial$compromise), file="dataTom_patristic_thres0.2_k2.tre")
+write.tree(fastme.bal(OK$Final$compromise), file="dataTom_patristic_thres0.2_k2.tre", append=TRUE)
+
+
+
+
+# OK<-phylter(trees, distance="nodal", gene.names=genenames, thres=0.2)
+# pdf("dataTom_nodal_thres0.2.pdf",width=20, height=15)
+# plot(OK, "genes")
+# plot(OK, "species")
+# plot2WR(OK)
+# dev.off()
+# writeOutput(OK, file="dataTom_nodal_thres0.2.out")
+
+# OK<-phylter(trees, distance="nodal", gene.names=genenames, thres=0.2, k=2)
+# pdf("dataTom_nodal_thres0.2_k2.pdf",width=20, height=15)
+# plot(OK, "genes")
+# plot(OK, "species")
+# plot2WR(OK)
+# dev.off()
+# writeOutput(OK, file="dataTom_nodal_thres0.2_k2.out")
+
+
+
+
 
 
 ok1<-plot2WR(OK, "Initial")

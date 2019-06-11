@@ -67,7 +67,10 @@ plot2WR<-function(X, show.missing=TRUE, show.outliers=TRUE, transpose=FALSE) {
 			missing<-as.data.frame(rbind(indexOfMissing_i, indexOfMissing_f))
 			missing$state<-"missing"
 		}
-		else show.missing<-FALSE
+		else {
+			missing<-NULL
+			show.missing<-FALSE
+		}
 		#get xy coordinates of outliers
 		matoutlier<-WRf2*0
 		matoutlier[cbind(match(X$Final$Outliers[,2], rownames(matoutlier)), match(X$Final$Outliers[,1], colnames(matoutlier)))]<-NA
@@ -164,6 +167,8 @@ plotRV<-function(X, what="Initial") {
 	# }	
 	if (what=="Initial") RV<-X$Initial$RV
 	if (what=="Final") RV<-X$Final$RV
+
+	RV<-RV[hclust(dist(RV))$order,hclust(dist(RV))$order]
 	p <- ggplot(melt(RV),aes(x=Var1, y=Var2,fill=value)) + geom_tile() + scale_fill_gradient2(name="RV coefficient", limits=c(-1, 1.01))
 	p <- p + theme(axis.text.x=element_text(angle = 90, hjust = 1)) + labs(x="Genes",y="Genes", title=what)
 	print(p)
