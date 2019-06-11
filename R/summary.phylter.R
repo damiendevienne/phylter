@@ -1,6 +1,15 @@
 # Summary and print functions for objects of class phylter, phylterfinal and phylterinitial 
 # No need to document those?
 
+#' summary.phylter
+#' 
+#' summary.phylter TODO.
+#' 
+#' 
+#' @param X Object returned by function 'phylter()'.
+#' @return Print formatting
+#' @export
+
 summary.phylter<-function(X) {
 	res<-NULL
 	percent.score.increase<-round((rev(X$Final$AllOptiScores)[1]-X$Final$AllOptiScores[1])*100, 2)
