@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/damiendevienne/phylter.svg?branch=master)](https://travis-ci.com/damiendevienne/phylter)
+
 # Phylter, a tool for analyzing, visualizing and filtering phylogenomics datasets. 
 
 **Phylter** is a tool that allows detecting, removing and visualizing outliers in phylogeneomics dataset by iteratively removing taxa in genes and optimizing a score of concordance between individual matrices.   
