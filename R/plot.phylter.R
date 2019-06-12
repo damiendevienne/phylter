@@ -2,14 +2,22 @@
 
 #' ABC
 #' 
-#' THESE functions all take the output of the phylter() function as input
-#' (object of class phylter) and display various summary plots
+#' These functions take objects of class phylter as input
+#' and display various plots summarizing the results obtained (see details)
 #' 
 #' 
-#' plot() or plot.phylter() plots the genes found in each species 
-#' or species found in each gene, as barplors, and highlights the outliers
-#' detected.
-#'
+#' \itemize{
+#'  \item plot(x) and plot.phylter(x) plot the genes found in each species or species 
+#' found in each gene as barplors, highlighting the outliers detected.
+#'  \item plot2WR(x) plots side by side the initial and the final gene x species 
+#' matrices (the 2WR matrices), highlighting missing data and detected outliers.
+#'  \item plotDispersion(x) plots dispersion of data before and after phylter, on a 2D
+#' space. Each dot represents a gene-species association. 
+#' \item writeOuput(x) write a summary of the phylter analysis to an easily parsable file.
+#' \item plotRV(x) plots the RV coefficient matrix that descibes all agains all correlations between gene matrices
+#' \item plotopti() plots the compromise matrix score at each step of the 
+#' optimization.  
+#'}
 #' @param x The object returned by the 'phylter()' function.
 #' @param what Specifies what to plot. If "species", a barplot will show how many
 #' genes each species is in, and what proportion of thoses were detected as outliers. 
@@ -21,13 +29,15 @@
 #' @param show.missing Logical. Should missing data be represented on the heatmap. If TRUE (the default), white dots show were these missing entries are in both the initial and final 2WR matrices.  
 #' @param show.outliers Logical. Should outliers be represented on the heatmap. If TRUE (the default), yellow dots indicate outliers on the final 2WR matrix.
 #' @param transpose Logical. If TRUE, the two matrices are piled up instaed of being displayed side by side. Default to FALSE.
+#' @param file Name of the file where to write the summary of the phylter output.
 #' @param ... Additional arguments to be passed to plot and print functions.
 #' @return The desired plots are returned. Note that you might want to call the pdf(),
 #'  png(), jpeg(), or tiff() function first if you want to save the plot(s) to an
 #' external file.
 #' @importFrom grDevices dev.cur devAskNewPage
 #' @importFrom stats relevel
-#' @importFrom ggplot2 ggplot aes geom_bar theme element_text labs
+#' @importFrom ggplot2 ggplot aes geom_bar theme element_text labs coord_flip geom_line geom_point geom_tile scale_color_manual scale_fill_gradient scale_fill_gradient2 
+#' @importFrom utils write.table
 #' @importFrom reshape2 melt 
 #' @export
 
@@ -68,12 +78,8 @@ plot.phylter<-function(x, what="all", layout=1, ...) {
 }
 
 #' plot2WR
-#' @section OUIUIOUIOUIO
-#' @describeIn plot.phylter Plot side by side the initial and the final gene x species matrices (the 2WR matrices), highlighting missing data and detected outliers.
-#' @return bkdfjkjiz
+#' @rdname plot.phylter
 #' @export
-
-
 
 plot2WR<-function(x, show.missing=TRUE, show.outliers=TRUE, transpose=FALSE) {
 		## for passing check filters
@@ -141,8 +147,8 @@ plot2WR<-function(x, show.missing=TRUE, show.outliers=TRUE, transpose=FALSE) {
 		print(p)
 }
 
-#' @describeIn plot.phylter Plot dispersion of data before and after phylter, on a 2D
-#' space. Each dot represent a gene-species association. 
+#' plotDispersion
+#' @rdname plot.phylter
 #' @export
 
 
@@ -175,7 +181,8 @@ plotDispersion<-function(x) {
 	print(p)
 }
 
-#' @describeIn plot.phylter Write a summary of the phylter analysis to an easily parsable file.  
+#' writeOutput
+#' @rdname plot.phylter
 #' @export
 
 writeOutput<-function(x, file="phylter.out") {
@@ -205,13 +212,14 @@ writeOutput<-function(x, file="phylter.out") {
 	write.table(x$Final$Outliers, quote=FALSE, col.names=FALSE, row.names=FALSE, sep="\t", file=file, append=TRUE)	
 }	
 
-#' @describeIn plot.phylter Plot the RV coefficient matrix that descibes all agains all correlations between gene matrices  
+#' plotRV
+#' @rdname plot.phylter
 #' @export
 
 plotRV<-function(x, what="Initial") {
 	## for passing check filters
-	x0<-NULL
-	y0<-NULL
+	Var1<-NULL
+	Var2<-NULL
 	value<-NULL
 	##
 	if (what=="Initial") RV<-x$Initial$RV
@@ -223,11 +231,16 @@ plotRV<-function(x, what="Initial") {
 	print(p)
 }
 
-#' @describeIn plot.phylter Plot the compromise matrix score at each step of the 
-#' optimization  
+#' plotopti
+#' @rdname plot.phylter
 #' @export
 
 plotopti<-function(x) {
+	## for passing check filters
+	step<-NULL
+	score<-NULL
+	##
+
 	df<-data.frame(step=1:length(x$Final$AllOptiScores), score=x$Final$AllOptiScores)
 	p <- ggplot(df, aes(x=step, y=score)) + geom_line() + geom_point() + labs(title="Evolution of the compromise score with the optimization steps")
 	print(p)
