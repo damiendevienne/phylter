@@ -25,6 +25,12 @@ require(roxygen2)
 roxygenize(".",roclets=c("rd","namespace"))
 ##############################################
 ##############################################
+## TO CHECK PACKAGE
+require(devtools)
+check(".")
+
+
+##############################################
 ## TO CREATE A DATASET
 usethis::use_data(variablename, datasetname)
 ##############################################
