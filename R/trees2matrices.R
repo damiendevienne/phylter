@@ -16,8 +16,7 @@
 #' It determines under what bootstrap values the nodes should be collapsed.
 #' Value 0 (the default) means that no nodes are collapsed.
 #' @return return a list of distance matrices
-#' @importFrom ape Nnode Ntip di2multi compute.brlen
-#' @importFrom stats cophenetic
+#' @importFrom ape Nnode Ntip di2multi compute.brlen cophenetic.phylo
 #' @export
 trees2matrices <- function(trees, distance = "patristic", bvalue = 0) {
   correction <- function(mat){
@@ -68,7 +67,7 @@ trees2matrices <- function(trees, distance = "patristic", bvalue = 0) {
     }
     list.trees[[i]] <- tree.brlen
   }
-  TRS <- lapply(list.trees, cophenetic)
+  TRS <- lapply(list.trees, cophenetic.phylo)
   if (distance == "nodal"){
     TRS <- lapply(TRS, correction)
   }

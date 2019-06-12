@@ -1,30 +1,52 @@
 # Plotting functions for phylter objects. 
 
-#' plot.phylter
+#' ABC
 #' 
-#' Plot the initial and final 2WR matrices side by side. Highlights missing data and detected outliers  
+#' THESE functions all take the output of the phylter() function as input
+#' (object of class phylter) and display various summary plots
 #' 
-#' @param X The object returned by the 'phylter' function.
-#' @param show.missing Logical. Should missing data be represented by white dots? 
-#' @param show.outliers Logical. Should outliers be represented by black dots on the final matrix?
-#' @param transpose Logical. If FALSE (the default), species are in rows and genes in columns. If TRUE, 
-#' rows and columns are inverted.
-#' @return A plot of the 2WR matrix.
+#' 
+#' plot() or plot.phylter() plots the genes found in each species 
+#' or species found in each gene, as barplors, and highlights the outliers
+#' detected.
+#'
+#' @param x The object returned by the 'phylter()' function.
+#' @param what Specifies what to plot. If "species", a barplot will show how many
+#' genes each species is in, and what proportion of thoses were detected as outliers. 
+#' If "genes", a barplot shows how many species contains each gene and how many of 
+#' them has been detected as outliers. If "all" (the defaut), the two plots
+#' described above are displayed one after the other, prompting the user to press 
+#' ENTER to display the next one.  
+#' @param layout What layout to use. Do not change if you don't know what it is. 
+#' @param show.missing Logical. Should missing data be represented on the heatmap. If TRUE (the default), white dots show were these missing entries are in both the initial and final 2WR matrices.  
+#' @param show.outliers Logical. Should outliers be represented on the heatmap. If TRUE (the default), yellow dots indicate outliers on the final 2WR matrix.
+#' @param transpose Logical. If TRUE, the two matrices are piled up instaed of being displayed side by side. Default to FALSE.
+#' @param ... Additional arguments to be passed to plot and print functions.
+#' @return The desired plots are returned. Note that you might want to call the pdf(),
+#'  png(), jpeg(), or tiff() function first if you want to save the plot(s) to an
+#' external file.
 #' @importFrom grDevices dev.cur devAskNewPage
-#' @importFrom utils write.table
 #' @importFrom stats relevel
+#' @importFrom ggplot2 ggplot aes geom_bar theme element_text labs
+#' @importFrom reshape2 melt 
 #' @export
 
-
-plot.phylter<-function(X, what="all", layout=1) {
-	sum<-summary(X)
+plot.phylter<-function(x, what="all", layout=1, ...) {
+	## for passing check filters
+	namespecies<-NULL
+	namegene<-NULL
+	number<-NULL
+	Species<-NULL
+	Genes<-NULL
+	##
+	sum<-summary(x)
 	nbg<-length(sum$initial.nb.sp.per.mat)
 	DF_genes<-data.frame(namegene=rep(names(sum$initial.nb.sp.per.mat),2), number=c(sum$nb.sp.removed.per.gene, sum$initial.nb.sp.per.mat-sum$nb.sp.removed.per.gene), Species=c(rep("Removed",nbg), rep("Kept", nbg)))
 	DF_genes$Species<-relevel(DF_genes$Species, "Removed")
 	p_genes <- ggplot(DF_genes, aes(x=namegene, y=number, fill=Species)) + geom_bar(stat="identity") + theme(axis.text.x=element_text(angle = 90, hjust = 1)) + labs(title="Species per gene", x ="Genes", y = "Number of Species")
-	speciesintables<-table(unlist(lapply(X$Initial$mat.data, rownames)))
+	speciesintables<-table(unlist(lapply(x$Initial$mat.data, rownames)))
 	nbs<-length(speciesintables)
-	speciesinoutliers<-table(X$Final$Outliers[,2])
+	speciesinoutliers<-table(x$Final$Outliers[,2])
 	speciesinoutliers_reordered<-speciesinoutliers[match(names(speciesintables), names(speciesinoutliers))]
 	speciesinoutliers_reordered[is.na(speciesinoutliers_reordered)]<-0
 	names(speciesinoutliers_reordered)<-names(speciesintables)
@@ -45,21 +67,32 @@ plot.phylter<-function(X, what="all", layout=1) {
 
 }
 
-plot2WR<-function(X, show.missing=TRUE, show.outliers=TRUE, transpose=FALSE) {
-		WRi<-X$Initial$WR
-		WRf<-X$Final$WR
+#' plot2WR
+#' @section OUIUIOUIOUIO
+#' @describeIn plot.phylter Plot side by side the initial and the final gene x species matrices (the 2WR matrices), highlighting missing data and detected outliers.
+#' @return bkdfjkjiz
+#' @export
+
+
+
+plot2WR<-function(x, show.missing=TRUE, show.outliers=TRUE, transpose=FALSE) {
+		## for passing check filters
+		value<-NULL
+		Species<-NULL
+		Genes<-NULL
+		state<-NULL
+		##
+		WRi<-x$Initial$WR
+		WRf<-x$Final$WR
 		sporder<-hclust(dist(WRi))$order
 		gnorder<-hclust(dist(t(WRi)))$order
 		#we reorder both matrices according to this. 
 		WRi2<-WRi[sporder, gnorder]
 		WRf2<-WRf[sporder, gnorder]
-		# for (i in 1:nrow(X$Final$Outliers)) {
-		# 	WRf2[X$Final$Outliers[i,2],X$Final$Outliers[i,1]]<--diff(range(WRf2, na.rm=TRUE))/100
-		# }
 		#get xy coordinates of missing data to add to the heatmap
-		ExistOrNot<-t(do.call(rbind, lapply(X$Initial$mat.data, function(x,y) match(y, colnames(x)),y=rownames(WRi2))))*0
+		ExistOrNot<-t(do.call(rbind, lapply(x$Initial$mat.data, function(x,y) match(y, colnames(x)),y=rownames(WRi2))))*0
 		ExistOrNot<-ExistOrNot[,gnorder]
-		indexOfMissing_i<-which(is.na(ExistOrNot), arr.in=TRUE)
+		indexOfMissing_i<-which(is.na(ExistOrNot), arr.ind=TRUE)
 		indexOfMissing_f<-indexOfMissing_i
 		if (!transpose) {
 			indexOfMissing_f[,2]<-indexOfMissing_f[,2]+ncol(WRf2)+1
@@ -77,8 +110,8 @@ plot2WR<-function(X, show.missing=TRUE, show.outliers=TRUE, transpose=FALSE) {
 		}
 		#get xy coordinates of outliers
 		matoutlier<-WRf2*0
-		matoutlier[cbind(match(X$Final$Outliers[,2], rownames(matoutlier)), match(X$Final$Outliers[,1], colnames(matoutlier)))]<-NA
-		outliers<-which(is.na(matoutlier), arr.in=TRUE)
+		matoutlier[cbind(match(x$Final$Outliers[,2], rownames(matoutlier)), match(x$Final$Outliers[,1], colnames(matoutlier)))]<-NA
+		outliers<-which(is.na(matoutlier), arr.ind=TRUE)
 		if (!transpose) outliers[,2]<-outliers[,2]+ncol(WRf2)+1
 		outliers<-as.data.frame(outliers)
 		outliers$state<-"outliers"
@@ -108,18 +141,28 @@ plot2WR<-function(X, show.missing=TRUE, show.outliers=TRUE, transpose=FALSE) {
 		print(p)
 }
 
-plotDispersion<-function(X) {
-	step1i<-do.call(rbind, X$Initial$PartialF)
-	step2i<-cbind(step1i, X$Initial$F[match(rownames(step1i), rownames( X$Initial$F)),])
-	step1f<-do.call(rbind, X$Final$PartialF)
-	step2f<-cbind(step1f, X$Final$F[match(rownames(step1f), rownames( X$Final$F)),])
+#' @describeIn plot.phylter Plot dispersion of data before and after phylter, on a 2D
+#' space. Each dot represent a gene-species association. 
+#' @export
+
+
+plotDispersion<-function(x) {
+	## for passing check filters
+	x0<-NULL
+	y0<-NULL
+	state<-NULL
+	##
+	step1i<-do.call(rbind, x$Initial$PartialF)
+	step2i<-cbind(step1i, x$Initial$F[match(rownames(step1i), rownames( x$Initial$F)),])
+	step1f<-do.call(rbind, x$Final$PartialF)
+	step2f<-cbind(step1f, x$Final$F[match(rownames(step1f), rownames( x$Final$F)),])
 	COO<-rbind(step2i,step2f)
 	colnames(COO)<-c("x0","y0","x1","y1")
 	COO<-as.data.frame(COO)
 	COO$state<-c(rep("Initial", nrow(step2i)), rep("Final", nrow(step2i)))
-	COO$genes<-rep(rep(names(X$Final$PartialF), each=length(X$Final$species.order)),2)
-	COO$species<-rep(rep(X$Final$species.order,length(X$Final$PartialF)),2)
-	COO$outlier<-is.element(paste(COO$species, COO$genes, sep="&&&"), paste(X$Final$Outliers[,2], X$Final$Outliers[,1], sep="&&&")) * (COO$state=="Initial") * 0.25
+	COO$genes<-rep(rep(names(x$Final$PartialF), each=length(x$Final$species.order)),2)
+	COO$species<-rep(rep(x$Final$species.order,length(x$Final$PartialF)),2)
+	COO$outlier<-is.element(paste(COO$species, COO$genes, sep="&&&"), paste(x$Final$Outliers[,2], x$Final$Outliers[,1], sep="&&&")) * (COO$state=="Initial") * 0.25
 	rownames(COO)<-NULL
 	#center:
 	COO$x0<-COO$x0-COO$x1
@@ -132,23 +175,25 @@ plotDispersion<-function(X) {
 	print(p)
 }
 
-##function to write to an easily parsable file the parameters used and the results obtained
-writeOutput<-function(X, file="phylter.out") {
+#' @describeIn plot.phylter Write a summary of the phylter analysis to an easily parsable file.  
+#' @export
+
+writeOutput<-function(x, file="phylter.out") {
 	##head
 	cat(paste("# \n",sep=""),file=file)
 	cat(paste("# -- Phylter v. 0.9 -- \n",sep=""),file=file, append=TRUE)
 	cat(paste("# ",date(),"\n", sep=""),file=file, append=TRUE)
 	cat(paste("# \n# \n# \n",sep=""),file=file, append=TRUE)
-	parameters<-X$call[(names(X$call)!="gene.names")&(names(X$call)!="call")]
+	parameters<-x$call[(names(x$call)!="gene.names")&(names(x$call)!="call")]
 	cat(paste("# PARAMETERS\n# \n",sep=""),file=file, append=TRUE)
 	cat(paste("# ",paste(names(parameters),parameters, sep="="),sep=""), sep="\n",file=file, append=TRUE)
-	phylter_summary<-summary(X)
+	phylter_summary<-summary(x)
 	cat(paste("# \n# SUMMARY\n# \n",sep=""),file=file, append=TRUE)
 	cat(paste("# Total number of outliers detected: ",phylter_summary$nb.outlier.cells,"\n", sep=""),file=file, append=TRUE)
 	cat(paste("# Number of complete gene outliers : ",length(phylter_summary$ComplOutGN),"\n", sep=""),file=file, append=TRUE)
 	cat(paste("# Number of complete species outliers : ",length(phylter_summary$ComplOutSP),"\n", sep=""),file=file, append=TRUE)
-	cat(paste("# Initial score of the compromise: ",X$Final$AllOptiScores[1],"\n", sep=""),file=file, append=TRUE)	
-	cat(paste("# Final score of the compromise: ",rev(X$Final$AllOptiScores)[1],"\n", sep=""),file=file, append=TRUE)	
+	cat(paste("# Initial score of the compromise: ",x$Final$AllOptiScores[1],"\n", sep=""),file=file, append=TRUE)	
+	cat(paste("# Final score of the compromise: ",rev(x$Final$AllOptiScores)[1],"\n", sep=""),file=file, append=TRUE)	
 	cat(paste("# Gain: ",phylter_summary$percent.score.increase,"% \n", sep=""),file=file, append=TRUE)
 	cat(paste("# Loss (data filtering): ",phylter_summary$percent.data.filtered,"% \n", sep=""),file=file, append=TRUE)
 	#	
@@ -157,20 +202,20 @@ writeOutput<-function(X, file="phylter.out") {
 	
 	cat(paste("# \n# OUTLIERS (contains complete outliers)\n# \n",sep=""),file=file, append=TRUE)
 	cat(paste("# Genes\tSpecies\n",sep=""),file=file, append=TRUE)
-	write.table(OK$Final$Outliers, quote=FALSE, col.names=FALSE, row.names=FALSE, sep="\t", file=file, append=TRUE)	
+	write.table(x$Final$Outliers, quote=FALSE, col.names=FALSE, row.names=FALSE, sep="\t", file=file, append=TRUE)	
 }	
 
-plotRV<-function(X, what="Initial") {
-	# if (what=="Initial") {
-	# 	ord<-hclust(dist(X$Initial$RV))$order
-	# 	RV<-X$Initial$RV[ord,ord]
-	# }
-	# if (what=="Final") {
-	# 	ord<-hclust(dist(X$Final$RV))$order
-	# 	RV<-X$Final$RV[ord,ord]
-	# }	
-	if (what=="Initial") RV<-X$Initial$RV
-	if (what=="Final") RV<-X$Final$RV
+#' @describeIn plot.phylter Plot the RV coefficient matrix that descibes all agains all correlations between gene matrices  
+#' @export
+
+plotRV<-function(x, what="Initial") {
+	## for passing check filters
+	x0<-NULL
+	y0<-NULL
+	value<-NULL
+	##
+	if (what=="Initial") RV<-x$Initial$RV
+	if (what=="Final") RV<-x$Final$RV
 
 	RV<-RV[hclust(dist(RV))$order,hclust(dist(RV))$order]
 	p <- ggplot(melt(RV),aes(x=Var1, y=Var2,fill=value)) + geom_tile() + scale_fill_gradient2(name="RV coefficient", limits=c(-1, 1.01))
@@ -178,8 +223,12 @@ plotRV<-function(X, what="Initial") {
 	print(p)
 }
 
-plotopti<-function(X) {
-	df<-data.frame(step=1:length(X$Final$AllOptiScores), score=X$Final$AllOptiScores)
+#' @describeIn plot.phylter Plot the compromise matrix score at each step of the 
+#' optimization  
+#' @export
+
+plotopti<-function(x) {
+	df<-data.frame(step=1:length(x$Final$AllOptiScores), score=x$Final$AllOptiScores)
 	p <- ggplot(df, aes(x=step, y=score)) + geom_line() + geom_point() + labs(title="Evolution of the compromise score with the optimization steps")
 	print(p)
 }

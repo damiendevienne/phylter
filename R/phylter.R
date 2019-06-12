@@ -1,6 +1,6 @@
 # Detect and filter outliers in a list of trees or distance matrices. 
 
-#' phylter
+#' filter phylogenomics datasets
 #' 
 #' Detection and filtering out of outliers in a list of trees 
 #' or distance matrices.
