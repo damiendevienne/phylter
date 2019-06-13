@@ -139,12 +139,13 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, 
 				if (verbose) cat("\n   Gain too small (< 0). Stopping optimization.")
 				continue<-FALSE #we do worse than before. We break without updating WR and RES
 			}
-			# else {
-			# 	RES<-RES.new
-			# 	matrices<-matrices.new
-			# 	CELLSREMOVED<-CELLSREMOVED.new
-			# 	VAL<-VAL.new
-			# 	WR<-Dist2WR(RES)
+			else {
+				RES<-RES.new
+				matrices<-matrices.new
+				CELLSREMOVED<-CELLSREMOVED.new
+				VAL<-VAL.new
+				WR<-Dist2WR(RES)
+			}
 			# 	if(gain<stop.criteria) {
 			# 		cat("\n   Gain too small. Stopping optimization. ")
 			# 		continue<-FALSE
