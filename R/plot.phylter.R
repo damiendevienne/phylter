@@ -1,6 +1,6 @@
 # Plotting functions for phylter objects. 
 
-#' ABC
+#' Plot phylter objects
 #' 
 #' These functions take objects of class phylter as input
 #' and display various plots summarizing the results obtained (see details)
@@ -13,7 +13,6 @@
 #' matrices (the 2WR matrices), highlighting missing data and detected outliers.
 #'  \item plotDispersion(x) plots dispersion of data before and after phylter, on a 2D
 #' space. Each dot represents a gene-species association. 
-#' \item writeOuput(x) write a summary of the phylter analysis to an easily parsable file.
 #' \item plotRV(x) plots the RV coefficient matrix that descibes all agains all correlations between gene matrices
 #' \item plotopti() plots the compromise matrix score at each step of the 
 #' optimization.  
@@ -31,7 +30,6 @@
 #' @param show.missing Logical. Should missing data be represented on the heatmap. If TRUE (the default), white dots show were these missing entries are in both the initial and final 2WR matrices.  
 #' @param show.outliers Logical. Should outliers be represented on the heatmap. If TRUE (the default), yellow dots indicate outliers on the final 2WR matrix.
 #' @param transpose Logical. If TRUE, the two matrices are piled up instaed of being displayed side by side. Default to FALSE.
-#' @param file Name of the file where to write the summary of the phylter output.
 #' @param ... Additional arguments to be passed to plot and print functions.
 #' @return The desired plots are returned. Note that you might want to call the pdf(),
 #'  png(), jpeg(), or tiff() function first if you want to save the plot(s) to an
@@ -39,7 +37,6 @@
 #' @importFrom grDevices dev.cur devAskNewPage
 #' @importFrom stats relevel
 #' @importFrom ggplot2 ggplot aes geom_bar theme element_text labs coord_flip geom_line geom_point geom_tile scale_color_manual scale_fill_gradient scale_fill_gradient2 
-#' @importFrom utils write.table
 #' @importFrom reshape2 melt 
 #' @export
 
@@ -195,36 +192,6 @@ plotDispersion<-function(x) {
 	print(p)
 }
 
-#' writeOutput
-#' @rdname plot.phylter
-#' @export
-
-writeOutput<-function(x, file="phylter.out") {
-	##head
-	cat(paste("# \n",sep=""),file=file)
-	cat(paste("# -- Phylter v. 0.9 -- \n",sep=""),file=file, append=TRUE)
-	cat(paste("# ",date(),"\n", sep=""),file=file, append=TRUE)
-	cat(paste("# \n# \n# \n",sep=""),file=file, append=TRUE)
-	parameters<-x$call[(names(x$call)!="gene.names")&(names(x$call)!="call")]
-	cat(paste("# PARAMETERS\n# \n",sep=""),file=file, append=TRUE)
-	cat(paste("# ",paste(names(parameters),parameters, sep="="),sep=""), sep="\n",file=file, append=TRUE)
-	phylter_summary<-summary(x)
-	cat(paste("# \n# SUMMARY\n# \n",sep=""),file=file, append=TRUE)
-	cat(paste("# Total number of outliers detected: ",phylter_summary$nb.outlier.cells,"\n", sep=""),file=file, append=TRUE)
-	cat(paste("# Number of complete gene outliers : ",length(phylter_summary$ComplOutGN),"\n", sep=""),file=file, append=TRUE)
-	cat(paste("# Number of complete species outliers : ",length(phylter_summary$ComplOutSP),"\n", sep=""),file=file, append=TRUE)
-	cat(paste("# Initial score of the compromise: ",x$Final$AllOptiScores[1],"\n", sep=""),file=file, append=TRUE)	
-	cat(paste("# Final score of the compromise: ",rev(x$Final$AllOptiScores)[1],"\n", sep=""),file=file, append=TRUE)	
-	cat(paste("# Gain: ",phylter_summary$percent.score.increase,"% \n", sep=""),file=file, append=TRUE)
-	cat(paste("# Loss (data filtering): ",phylter_summary$percent.data.filtered,"% \n", sep=""),file=file, append=TRUE)
-	#	
-	if (length(phylter_summary$ComplOutGN)>0) cat(paste("# Outlier gene(s) detected: ",paste(phylter_summary$ComplOutGN, collapse=";"),"\n", sep=""),file=file, append=TRUE)
-	if (length(phylter_summary$ComplOutSP)>0) cat(paste("# Outlier species detected: ",paste(phylter_summary$ComplOutSP, collapse=";"),"\n", sep=""),file=file, append=TRUE)
-	
-	cat(paste("# \n# OUTLIERS (contains complete outliers)\n# \n",sep=""),file=file, append=TRUE)
-	cat(paste("# Genes\tSpecies\n",sep=""),file=file, append=TRUE)
-	write.table(x$Final$Outliers, quote=FALSE, col.names=FALSE, row.names=FALSE, sep="\t", file=file, append=TRUE)	
-}	
 
 #' plotRV
 #' @rdname plot.phylter
