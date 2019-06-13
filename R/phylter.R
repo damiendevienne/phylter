@@ -133,21 +133,23 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, 
 			if (verbose) cat(paste("-> New score: ",round(RES.new$quality, digits=ceiling(abs(log10(stop.criteria)))), "\n", sep=""))
 #			if (verbose) plot(VAL, type="o")				
 			gain<-VAL.new[length(VAL.new)]-VAL.new[length(VAL.new)-1]
-			if (gain<0) {
+#			if (gain<0) {
+			if (gain<stop.criteria) {
+
 				if (verbose) cat("\n   Gain too small (< 0). Stopping optimization.")
 				continue<-FALSE #we do worse than before. We break without updating WR and RES
 			}
-			else {
-				RES<-RES.new
-				matrices<-matrices.new
-				CELLSREMOVED<-CELLSREMOVED.new
-				VAL<-VAL.new
-				WR<-Dist2WR(RES)
-				if(gain<stop.criteria) {
-					cat("\n   Gain too small. Stopping optimization. ")
-					continue<-FALSE
-				}
-			}
+			# else {
+			# 	RES<-RES.new
+			# 	matrices<-matrices.new
+			# 	CELLSREMOVED<-CELLSREMOVED.new
+			# 	VAL<-VAL.new
+			# 	WR<-Dist2WR(RES)
+			# 	if(gain<stop.criteria) {
+			# 		cat("\n   Gain too small. Stopping optimization. ")
+			# 		continue<-FALSE
+			# 	}
+			# }
 		}
 		else {
 			cat ("\n   No more outlier detected")
