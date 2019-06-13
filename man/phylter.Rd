@@ -2,7 +2,7 @@
 % Please edit documentation in R/phylter.R
 \name{phylter}
 \alias{phylter}
-\title{phylter}
+\title{filter phylogenomics datasets}
 \usage{
 phylter(X, bvalue = 0, distance = "patristic", k = 3, thres = 0.3,
   Norm = TRUE, keep.species = TRUE, gene.names = NULL,

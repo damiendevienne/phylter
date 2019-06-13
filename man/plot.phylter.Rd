@@ -2,23 +2,68 @@
 % Please edit documentation in R/plot.phylter.R
 \name{plot.phylter}
 \alias{plot.phylter}
-\title{plot.phylter}
+\alias{plot2WR}
+\alias{plotDispersion}
+\alias{writeOutput}
+\alias{plotRV}
+\alias{plotopti}
+\title{ABC}
 \usage{
-\method{plot}{phylter}(X, what = "all", layout = 1)
+\method{plot}{phylter}(x, what = "all", layout = 1, ...)
+
+plot2WR(x, show.missing = TRUE, show.outliers = TRUE,
+  transpose = FALSE)
+
+plotDispersion(x)
+
+writeOutput(x, file = "phylter.out")
+
+plotRV(x, what = "Initial")
+
+plotopti(x)
 }
 \arguments{
-\item{X}{The object returned by the 'phylter' function.}
+\item{x}{The object returned by the 'phylter()' function.}
 
-\item{show.missing}{Logical. Should missing data be represented by white dots?}
+\item{what}{Specifies what to plot. If "species", a barplot will show how many
+genes each species is in, and what proportion of thoses were detected as outliers. 
+If "genes", a barplot shows how many species contains each gene and how many of 
+them has been detected as outliers. If "all" (the defaut), the two plots
+described above are displayed one after the other, prompting the user to press 
+ENTER to display the next one.}
 
-\item{show.outliers}{Logical. Should outliers be represented by black dots on the final matrix?}
+\item{layout}{What layout to use. Do not change if you don't know what it is.}
 
-\item{transpose}{Logical. If FALSE (the default), species are in rows and genes in columns. If TRUE, 
-rows and columns are inverted.}
+\item{...}{Additional arguments to be passed to plot and print functions.}
+
+\item{show.missing}{Logical. Should missing data be represented on the heatmap. If TRUE (the default), white dots show were these missing entries are in both the initial and final 2WR matrices.}
+
+\item{show.outliers}{Logical. Should outliers be represented on the heatmap. If TRUE (the default), yellow dots indicate outliers on the final 2WR matrix.}
+
+\item{transpose}{Logical. If TRUE, the two matrices are piled up instaed of being displayed side by side. Default to FALSE.}
+
+\item{file}{Name of the file where to write the summary of the phylter output.}
 }
 \value{
-A plot of the 2WR matrix.
+The desired plots are returned. Note that you might want to call the pdf(),
+ png(), jpeg(), or tiff() function first if you want to save the plot(s) to an
+external file.
 }
 \description{
-Plot the initial and final 2WR matrices side by side. Highlights missing data and detected outliers
+These functions take objects of class phylter as input
+and display various plots summarizing the results obtained (see details)
+}
+\details{
+\itemize{
+ \item plot(x) and plot.phylter(x) plot the genes found in each species or species 
+found in each gene as barplors, highlighting the outliers detected.
+ \item plot2WR(x) plots side by side the initial and the final gene x species 
+matrices (the 2WR matrices), highlighting missing data and detected outliers.
+ \item plotDispersion(x) plots dispersion of data before and after phylter, on a 2D
+space. Each dot represents a gene-species association. 
+\item writeOuput(x) write a summary of the phylter analysis to an easily parsable file.
+\item plotRV(x) plots the RV coefficient matrix that descibes all agains all correlations between gene matrices
+\item plotopti() plots the compromise matrix score at each step of the 
+optimization.  
+}
 }

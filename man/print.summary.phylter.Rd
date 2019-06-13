@@ -4,10 +4,12 @@
 \alias{print.summary.phylter}
 \title{print.summary.phylter}
 \usage{
-\method{print}{summary.phylter}(x)
+\method{print}{summary.phylter}(x, ...)
 }
 \arguments{
-\item{X}{Object returned by function 'phylter()'.}
+\item{x}{Object returned by function 'summary.phylter()'.}
+
+\item{...}{Additional arguments.}
 }
 \value{
 Print formatting
