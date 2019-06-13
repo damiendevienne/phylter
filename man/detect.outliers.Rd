@@ -4,7 +4,7 @@
 \alias{detect.outliers}
 \alias{detect.complete.outliers}
 \alias{detect.cell.outliers}
-\title{detect.outliers}
+\title{Detect outliers}
 \usage{
 detect.outliers(mat2WR, k = 3, thres = 0.3, test.island = TRUE,
   keep.species = TRUE)
@@ -45,18 +45,18 @@ outliers. These types of outliers are described in:
 de Vienne M.D., Ollier S. et Aguileta G. (2012) Phylo-MCOA: 
 A Fast and Efficient Method to Detect Outlier Genes and Species
 in Phylogenomics Using Multiple Co-inertia Analysis. Molecular 
-Biology and Evolution 29 : 1587 – 1598.
+Biology and Evolution 29 : 1587-1598.
 }
 \section{Functions}{
 \itemize{
-\item \code{detect.outliers}: \code{detect.outliers} is a simple wrapper
+\item \code{detect.outliers}: a simple wrapper
 to call the two other functions described, and return complete ouliers
 if any, or cell outliers if no complete outliers exist.
 
-\item \code{detect.complete.outliers}: \code{detect.complete.outliers} detects
+\item \code{detect.complete.outliers}: detects
 if complete outliers exist in the 2WR matrix. See details.
 
-\item \code{detect.cell.outliers}: \code{detect.cell.outliers} detects
+\item \code{detect.cell.outliers}: detects
 if cell outliers exist in the 2WR matrix.
 }}
 

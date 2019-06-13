@@ -4,19 +4,17 @@
 \alias{plot.phylter}
 \alias{plot2WR}
 \alias{plotDispersion}
-\alias{writeOutput}
 \alias{plotRV}
 \alias{plotopti}
-\title{ABC}
+\title{Plot phylter objects}
 \usage{
-\method{plot}{phylter}(x, what = "all", layout = 1, ...)
+\method{plot}{phylter}(x, what = "all", layout = 1, sorted = TRUE,
+  ...)
 
 plot2WR(x, show.missing = TRUE, show.outliers = TRUE,
   transpose = FALSE)
 
 plotDispersion(x)
-
-writeOutput(x, file = "phylter.out")
 
 plotRV(x, what = "Initial")
 
@@ -34,6 +32,9 @@ ENTER to display the next one.}
 
 \item{layout}{What layout to use. Do not change if you don't know what it is.}
 
+\item{sorted}{Logical. Should bars be sorted by the number of outliers detected. Default
+to TRUE}
+
 \item{...}{Additional arguments to be passed to plot and print functions.}
 
 \item{show.missing}{Logical. Should missing data be represented on the heatmap. If TRUE (the default), white dots show were these missing entries are in both the initial and final 2WR matrices.}
@@ -41,8 +42,6 @@ ENTER to display the next one.}
 \item{show.outliers}{Logical. Should outliers be represented on the heatmap. If TRUE (the default), yellow dots indicate outliers on the final 2WR matrix.}
 
 \item{transpose}{Logical. If TRUE, the two matrices are piled up instaed of being displayed side by side. Default to FALSE.}
-
-\item{file}{Name of the file where to write the summary of the phylter output.}
 }
 \value{
 The desired plots are returned. Note that you might want to call the pdf(),
@@ -61,7 +60,6 @@ found in each gene as barplors, highlighting the outliers detected.
 matrices (the 2WR matrices), highlighting missing data and detected outliers.
  \item plotDispersion(x) plots dispersion of data before and after phylter, on a 2D
 space. Each dot represents a gene-species association. 
-\item writeOuput(x) write a summary of the phylter analysis to an easily parsable file.
 \item plotRV(x) plots the RV coefficient matrix that descibes all agains all correlations between gene matrices
 \item plotopti() plots the compromise matrix score at each step of the 
 optimization.  
