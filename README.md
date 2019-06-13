@@ -27,12 +27,12 @@ library("phylter")
 ```
 
 ## Usage
-### 1. Read trees from external file and save as a list called ```trees```
+1. Read trees from external file and save as a list called ```trees```
 ```R
 trees<-read.tree("treefile.tre")
 ```
-### 2. (optional) Read or get gene names somewhere (same order as the trees) and save it as a vector called ```names```
-### 3. Run phylter on your trees (see details below for possible options)
+2. (optional) Read or get gene names somewhere (same order as the trees) and save it as a vector called ```names```
+3. Run phylter on your trees (see details below for possible options)
 ```R
 results<-phylter(trees, gene.names=names)
 ```
@@ -52,7 +52,7 @@ results<-phylter(trees, gene.names=names)
 >```test.island``` This should not be modified. If TRUE (the default), only the highest value in an 'island' of outliers is considered an outlier. This prevents non-outliers hitchhiked by outliers to be considered outliers themselves.   
 >```verbose``` If TRUE (the default), messages are written during the filtering process to get information on what is happening  
 >```stop.criteria``` The optimization stops when the gain (quality of compromise) between round *n* and round *n*+1 is smaller than this value. Default to 1e-5.  
-### 4. Analyze the results 
+4. Analyze the results 
 Many functions allow looking at the outliers detected and comparing before and after:  
 ```R
 summary(results) # Get a summary: nb of outliers, gain in concordance, etc.
@@ -63,10 +63,10 @@ plotDispersion(results) # plot the dispersion of data before and after outlier r
 plotRV(results) # plot the genes x genes matrix showing pairwise correlation between genes. 
 plotopti(results) #plot optimization scores during optimization.
 ```
-### 5. Save the results
+5. Save the results
 Save the results of the analysis to an external file, for example to perform cleaning on raw alignments based the results from phylter. 
 ```R
-writeOutput(results, file="phylter.out")
+write.phylter(results, file="phylter.out")
 ```
 ## Example
 A fungal dataset comprised of  246 genes for 21 species (Aguileta *et al.* 2008) is included in the package. To load it and test **phylter** on it: 
@@ -76,13 +76,12 @@ results<-phylter(fungi, distance="nodal", thres=0.2) #for example
 ```
    
    
-   
-
->For comments, suggestions and bug reports, please open an issue on this github repository.
-
-
 ---
 ### references
 Abdi, H., Valentin, D., O’Toole, A.J., & Edelman, B. (2005). DISTATIS: The analysis of multiple distance matrices. Proceedings of the IEEE Computer Society: International Conference on Computer Vision and Pattern Recognition. (San Diego, CA, USA). pp. 42–47. https://www.utdallas.edu/~herve/abdi-distatis2005.pdf
 
 G Aguileta, S Marthey, H Chiapello, M.-H Lebrun, F Rodolphe, E Fournier, A Gendrault-Jacquemard, T Giraud, Assessing the Performance of Single-Copy Genes for Recovering Robust Phylogenies, Systematic Biology, Volume 57, Issue 4, August 2008, Pages 613–627, https://doi.org/10.1080/10635150802306527
+
+---
+>For comments, suggestions and bug reports, please open an issue on this github repository.
+
