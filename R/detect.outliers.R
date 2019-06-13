@@ -2,7 +2,7 @@
 # Three functions here.
 
 
-#' detect.outliers 
+#' Detect outliers
 #' 
 #' Functions to detect outliers, either complete or cell (see details). 
 #' 
@@ -11,9 +11,9 @@
 #' de Vienne M.D., Ollier S. et Aguileta G. (2012) Phylo-MCOA: 
 #' A Fast and Efficient Method to Detect Outlier Genes and Species
 #' in Phylogenomics Using Multiple Co-inertia Analysis. Molecular 
-#' Biology and Evolution 29 : 1587 – 1598.
+#' Biology and Evolution 29 : 1587-1598.
 #' 
-#' @describeIn detect.outliers \code{detect.outliers} is a simple wrapper
+#' @describeIn detect.outliers a simple wrapper
 #' to call the two other functions described, and return complete ouliers
 #' if any, or cell outliers if no complete outliers exist.
 #' 
@@ -50,7 +50,7 @@ detect.outliers<-function(mat2WR, k=3, thres=0.3, test.island=TRUE, keep.species
   return(CELLS)
 }
 
-#' @describeIn detect.outliers \code{detect.complete.outliers} detects
+#' @describeIn detect.outliers detects
 #' if complete outliers exist in the 2WR matrix. See details.
 #' @export
 detect.complete.outliers <- function(mat2WR, k = 3, thres = 0.3, keep.species=TRUE) {
@@ -86,7 +86,7 @@ detect.complete.outliers <- function(mat2WR, k = 3, thres = 0.3, keep.species=TR
   return(RES)
 }
 
-#' @describeIn detect.outliers \code{detect.cell.outliers} detects
+#' @describeIn detect.outliers detects
 #' if cell outliers exist in the 2WR matrix.
 #' @importFrom stats dist quantile IQR
 #' @importFrom utils combn

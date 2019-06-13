@@ -26,6 +26,8 @@
 #' described above are displayed one after the other, prompting the user to press 
 #' ENTER to display the next one.  
 #' @param layout What layout to use. Do not change if you don't know what it is. 
+#' @param sorted Logical. Should bars be sorted by the number of outliers detected. Default
+#' to TRUE
 #' @param show.missing Logical. Should missing data be represented on the heatmap. If TRUE (the default), white dots show were these missing entries are in both the initial and final 2WR matrices.  
 #' @param show.outliers Logical. Should outliers be represented on the heatmap. If TRUE (the default), yellow dots indicate outliers on the final 2WR matrix.
 #' @param transpose Logical. If TRUE, the two matrices are piled up instaed of being displayed side by side. Default to FALSE.
@@ -41,7 +43,7 @@
 #' @importFrom reshape2 melt 
 #' @export
 
-plot.phylter<-function(x, what="all", layout=1, ...) {
+plot.phylter<-function(x, what="all", layout=1, sorted=TRUE, ...) {
 	## for passing check filters
 	namespecies<-NULL
 	namegene<-NULL
@@ -51,8 +53,15 @@ plot.phylter<-function(x, what="all", layout=1, ...) {
 	##
 	sum<-summary(x)
 	nbg<-length(sum$initial.nb.sp.per.mat)
+
 	DF_genes<-data.frame(namegene=rep(names(sum$initial.nb.sp.per.mat),2), number=c(sum$nb.sp.removed.per.gene, sum$initial.nb.sp.per.mat-sum$nb.sp.removed.per.gene), Species=c(rep("Removed",nbg), rep("Kept", nbg)))
 	DF_genes$Species<-relevel(DF_genes$Species, "Removed")
+
+	if (sorted) {
+		GoodOrderGenes<-names(sort(sum$nb.sp.removed.per.gene, decreasing=T))	
+		DF_genes$namegene<-factor(DF_genes$namegene, levels=GoodOrderGenes)
+	}
+	
 	p_genes <- ggplot(DF_genes, aes(x=namegene, y=number, fill=Species)) + geom_bar(stat="identity") + theme(axis.text.x=element_text(angle = 90, hjust = 1)) + labs(title="Species per gene", x ="Genes", y = "Number of Species")
 	speciesintables<-table(unlist(lapply(x$Initial$mat.data, rownames)))
 	nbs<-length(speciesintables)
@@ -62,6 +71,12 @@ plot.phylter<-function(x, what="all", layout=1, ...) {
 	names(speciesinoutliers_reordered)<-names(speciesintables)
 	DF_species<-data.frame(namespecies=rep(names(speciesintables),2), number=c(speciesinoutliers_reordered, speciesintables-speciesinoutliers_reordered), Genes=c(rep("Removed",nbs), rep("Kept", nbs)))
 	DF_species$Genes<-relevel(DF_species$Genes, "Removed")
+
+	if (sorted) {
+		GoodOrderSpecies<-names(sort(speciesinoutliers_reordered, decreasing=T))
+		DF_species$namespecies<-factor(DF_species$namespecies, levels=GoodOrderSpecies)
+	}
+
 	p_species <- ggplot(DF_species, aes(x=namespecies, y=number, fill=Genes)) + geom_bar(stat="identity") + theme(axis.text.x=element_text(angle = 90, hjust = 1)) + labs(title="Genes per species",x ="Species", y = "Number of Genes")
 	if (what=="genes") print(p_genes)
 	if (what=="species") print(p_species)
@@ -74,7 +89,6 @@ plot.phylter<-function(x, what="all", layout=1, ...) {
 		print(p_genes)
 		print(p_species)
 	}
-
 }
 
 #' plot2WR
