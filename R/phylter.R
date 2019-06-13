@@ -123,7 +123,7 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, 
 		CellsToRemove<-ReoderBackTheCells(CellsToRemove, OrderWRrow)
 		NewCellsToRemove<-FindNewCells(CellsToRemove$cells, CELLSREMOVED)
 		if (verbose & !is.null(nrow(NewCellsToRemove))) {
-			cat(paste("   ",nrow(NewCellsToRemove)," new cells removed "))
+			cat(paste("   ",nrow(NewCellsToRemove)," new cells to remove "))
 		}
 		if (!is.null(NewCellsToRemove)) {
 			CELLSREMOVED.new<-rbind(CELLSREMOVED, NewCellsToRemove) 
@@ -135,11 +135,12 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, 
 			gain<-VAL.new[length(VAL.new)]-VAL.new[length(VAL.new)-1]
 #			if (gain<0) {
 			if (gain<stop.criteria) {
-
-				if (verbose) cat("\n   Gain too small (< 0). Stopping optimization.")
+				if (verbose) cat(" -> OK")
+				if (verbose) cat("\n   Gain too small. Stopping optimization.")
 				continue<-FALSE #we do worse than before. We break without updating WR and RES
 			}
 			else {
+				if (verbose) cat(" -> NO")
 				RES<-RES.new
 				matrices<-matrices.new
 				CELLSREMOVED<-CELLSREMOVED.new
