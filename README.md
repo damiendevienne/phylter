@@ -69,10 +69,10 @@ Save the results of the analysis to an external file, for example to perform cle
 writeOutput(results, file="phylter.out")
 ```
 ## Example
-A dataset is available in folder ```datasets``` for playing with phylter. It comes from Aguileta *et al.* (2008) paper: 246 genes, 21 species (fungi).
+A fungal dataset comprised of  246 genes for 21 species (Aguileta *et al.* 2008) is included in the package. To load it and test **phylter** on it: 
 ```R
-trees<-read.tree("datasets/Aguileta-et-al-2008_TREES.txt")
-results<-phylter(trees, distance="nodal", thres=0.2) #for example
+data(fungi)
+results<-phylter(fungi, distance="nodal", thres=0.2) #for example
 ```
    
    
