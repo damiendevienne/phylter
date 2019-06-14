@@ -130,17 +130,17 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, 
 			matrices.new<-ReplaceValueWithCompromise(matrices, CELLSREMOVED.new, RES$compromise, RES$lambda)
 			RES.new<-DistatisFast(matrices.new, Norm)
 			VAL.new<-c(VAL, RES.new$quality)
-			if (verbose) cat(paste("-> New score: ",round(RES.new$quality, digits=ceiling(abs(log10(stop.criteria)))), "\n", sep=""))
+			if (verbose) cat(paste("-> New score: ",round(RES.new$quality, digits=ceiling(abs(log10(stop.criteria)))), sep=""))
 #			if (verbose) plot(VAL, type="o")				
 			gain<-VAL.new[length(VAL.new)]-VAL.new[length(VAL.new)-1]
 #			if (gain<0) {
 			if (gain<stop.criteria) {
-				if (verbose) cat(" -> OK")
+				if (verbose) cat(" -> NO")
 				if (verbose) cat("\n   Gain too small. Stopping optimization.")
-				continue<-FALSE #we do worse than before. We break without updating WR and RES
+				continue<-FALSE
 			}
 			else {
-				if (verbose) cat(" -> NO")
+				if (verbose) cat(" -> OK")
 				RES<-RES.new
 				matrices<-matrices.new
 				CELLSREMOVED<-CELLSREMOVED.new
@@ -154,7 +154,7 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, 
 			# }
 		}
 		else {
-			cat ("\n   No more outlier detected")
+			cat ("\n   No more outlier detected. Stopping optimization.")
 			break
 			continue<-FALSE
 		}
