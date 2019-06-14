@@ -140,7 +140,7 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, 
 				continue<-FALSE
 			}
 			else {
-				if (verbose) cat(" -> OK")
+				if (verbose) cat(" -> OK\n")
 				RES<-RES.new
 				matrices<-matrices.new
 				CELLSREMOVED<-CELLSREMOVED.new
