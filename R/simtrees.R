@@ -19,7 +19,7 @@
 #' @importFrom stats rnorm
 #' @export
 simtrees<-function(Ngn, Nsp, Nsp.out=0,Ngn.out=0,Nb.cell.outlier=0, brlen.sd=0) {
-  gen.trees<-function(Ntrees, Ntiptotal, Nspmove, NbweirdGenes=0) {
+  gen.trees<-function(Ntrees, Ntiptotal, Nspmove, NbweirdGenes, brlen.sd) {
     res<-list()
     selec<-NULL
     anames<-NULL
@@ -88,10 +88,10 @@ simtrees<-function(Ngn, Nsp, Nsp.out=0,Ngn.out=0,Nb.cell.outlier=0, brlen.sd=0) 
     return(RES)
   }
   SlightChangeInTreeBrLen<-function(tr, brlen.sd) {
-    tr$edge.length<-tr$edge.length+rnorm(length(tr$edge.length), sd=brlen.sd)
+    tr$edge.length<-abs(tr$edge.length+rnorm(length(tr$edge.length), sd=brlen.sd))
     tr
   }
-  tr<-gen.trees(Ngn,Nsp,Nsp.out,Ngn.out)
+  tr<-gen.trees(Ngn,Nsp,Nsp.out,Ngn.out, brlen.sd)
   if (Nb.cell.outlier>0) trees<-add.outliers(tr$trees, Nb.cell.outlier)$trees
   else trees<-tr$trees
   return(trees)
