@@ -32,13 +32,15 @@
 #' of what is happening
 #' @param stop.criteria The optimisation stops when the gain between round n and round n+1 is smaller
 #' than this value. Default to 1e-5.
+#' @param InitialOnly Logical. If TRUE, only the Initial state of teh data is computed. The optimization and 
+#' outlier detection is NOT performed. Useful to get an idea about the initial state of th data.
 #' 
 #' @return A list with the 'Initial' (before filtering) and 'Final' (after filtering) states/
 #' @importFrom utils tail
 #' @importFrom stats hclust as.dist
 #' @importFrom graphics plot
 #' @export
-phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, keep.species=TRUE, gene.names=NULL, test.island=TRUE, verbose=TRUE, stop.criteria=1e-5) {
+phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, keep.species=TRUE, gene.names=NULL, test.island=TRUE, verbose=TRUE, stop.criteria=1e-5, InitialOnly=FALSE) {
 	ReplaceValueWithCompromise<-function(allmat, what, compro, lambda) {
 		for (i in 1:length(allmat)) {
 			whatsp<-what[what[,1]==i,2]
@@ -98,6 +100,9 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, 
 	RES<-DistatisFast(matrices, Norm)
 	WR<-Dist2WR(RES)
 	##Store Initial State
+	KKK<-t(apply(WR,1, outl.sub, k=3))
+
+	##qfdkjùjfq
 	Initial<-NULL
 	Initial$mat.data<-Xsave
 	Initial$WR<-WR
@@ -106,6 +111,12 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, 
 	Initial$compromise<-RES$compromise
 	Initial$F<-RES$F
 	Initial$PartialF<-RES$PartialF
+
+	if (InitialOnly) {
+		class(Initial)<-c("phylterinitial", "list")
+		return(Initial)
+	}
+
 	maxWR<-max(WR) ##for plotting purpose
 	if (verbose) cat(paste("Initial score: ",round(RES$quality, digits=ceiling(abs(log10(stop.criteria)))), "\n", sep=""))
 	VAL<-RES$quality #First Quality value
