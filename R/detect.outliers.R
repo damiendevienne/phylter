@@ -186,3 +186,110 @@ detect.cell.outliers <- function(mat2WR, k = 3, test.island=TRUE) {
   }
   return(RESULT)
 }
+
+
+# #' @describeIn detect.outliers detects
+# #' if cell outliers exist in the 2WR matrix. New version.
+# #' @importFrom stats dist quantile IQR
+# #' @importFrom utils combn
+# #' @export
+# detect.cell.outliers2 <- function(mat2WR, k = 3, test.island=TRUE) {
+#   MAT <- mat2WR
+#   detect.island <- function(arr) {
+#     spi.names <- names(arr)
+#     spi <- 1:length(spi.names)
+#     names(spi) <- spi.names
+#     true.names <- names(arr)[arr == TRUE]
+#     if (length(true.names) == 1) {
+#       return(list(true.names))
+#     }
+#     else if (length(true.names) > 1) {
+#       true.i <- spi[true.names]
+#       res<-dist(true.i)
+#       table.i <- cbind(t(combn(attributes(res)$Labels, 2)), array(res))
+#       in.island<-NULL
+#       if (length(table.i[table.i[, 3] == "1", 3]) == 0) {
+#         in.island <- "nopair"
+#         list.i <- NULL
+#       }
+#       if (length(table.i[table.i[,3] == "1", 3]) == 1) {
+#         in.island <- table.i[table.i[,3] == "1", c(1, 2)]
+#         list.i <- list(in.island)
+#       }
+#       if (is.null(in.island)) {
+#         table.small <- table.i[table.i[,3] == "1",c(1,2)]
+#         list.i <- list()
+#         for (i in 1:nrow(table.small)) list.i[[i]] <- table.small[i, ]
+#         for (i in 1:(length(list.i) - 1)) {
+#           for (j in (i+1):length(list.i)) {
+#             if (length(intersect(list.i[[i]], list.i[[j]])) > 0) {
+#               list.i[[i]] <- c(list.i[[i]], list.i[[j]])
+#               list.i[[j]] <- "out"
+#               list.i[[i]] <- unique(list.i[[i]])
+#             }
+#           }
+#         }
+#         list.i2 <- list()
+#         w <- 0
+#         for (i in 1:length(list.i)) {
+#           if ((length(list.i[[i]]) > 1)&&(list.i[[i]][1] != "out")) {
+#             w <- w+1
+#             list.i2[[w]] <- list.i[[i]]
+#             in.island <- c(in.island, list.i[[i]])
+#           }
+#         }
+#         list.i <- list.i2
+#       }
+#       out.island <- as.list(setdiff(true.names, in.island))
+#       return(c(list.i, out.island))
+#     }
+#   }
+#   outl.sub <- function(x, k) {
+#     return(x > quantile(x)[4] + k * IQR(x) + 1e-10)
+#   }
+#   ### IN THIS NEW VERSION, BEING A CELL OUTLIER IS BEING AN OUTLIER
+#   ### BOTH AT THE GENE LEVEL AND AT THE SPECIES LEVEL.
+#   matSP<-apply(normalize(mat2WR,"species"),1,outl.sub,k=k)
+#   matGN<-t(apply(normalize(mat2WR,"genes"),2,outl.sub,k=k))
+
+#   MATspgn <- normalize(mat2WR, "genes") * normalize(mat2WR, "species")
+#   testspgn1 <- apply(MATspgn, 2, outl.sub, k = k)
+#   testspgn2 <- t(apply(MATspgn, 1, outl.sub, k = k))
+#   testspgn <- testspgn1 * testspgn2 
+#   testFALSE <- testspgn
+#   #
+#   RESULT<-NULL
+#   #
+#   if (sum(testFALSE) > 0) {
+#     if (test.island==TRUE) {
+#       out.list <- apply(testspgn, 2, detect.island)
+#       genes <- colnames(testspgn)
+#       res <- c(NA,NA)
+#       for (i in 1:length(out.list)) {
+#         if (!is.null(out.list[[i]])) {
+#           for (j in 1:length(out.list[[i]])) { ##for each "island"
+#             if (length(out.list[[i]][[j]]) == 1) res <- rbind(res, c(out.list[[i]][[j]], genes[i]))
+#             if (length(out.list[[i]][[j]]) > 1) {
+#               vals <- MATspgn[out.list[[i]][[j]], genes[i]]
+#               multi = c(names(vals)[vals == max(vals)])
+#               if(length(multi) > 1){
+#                 x = cbind(multi, rep(genes[i],length(multi)))
+#                 res <- rbind(res, x)
+#               }
+#               else{
+#                 res <- rbind(res, c(multi, genes[i]))
+#               }
+#             }
+#           }
+#         }
+#       }
+#       colnames(res) <- c("Species", "Genes")
+#       RESULT$cells<-cbind(match(res[,2][-1], colnames(mat2WR)),match(res[,1][-1], rownames(mat2WR)))
+#     }
+#     else { ##we return all cells viewed as outliers (more violent...)
+#       cells<-which(testFALSE!=0,arr.ind = TRUE, useNames=FALSE)
+#       RESULT$cells<-cells[,c(2,1)]
+#     }
+#   }
+#   return(RESULT)
+# }
