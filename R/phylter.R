@@ -100,9 +100,6 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, 
 
 	RES<-DistatisFast(matrices, Norm)
 	WR<-Dist2WR(RES)
-	##Store Initial State
-	KKK<-t(apply(WR,1, outl.sub, k=3))
-
 	##qfdkjùjfq
 	Initial<-NULL
 	Initial$mat.data<-Xsave
