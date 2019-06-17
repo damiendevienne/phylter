@@ -6,7 +6,8 @@
 \usage{
 phylter(X, bvalue = 0, distance = "patristic", k = 3, thres = 0.3,
   Norm = TRUE, keep.species = TRUE, gene.names = NULL,
-  test.island = TRUE, verbose = TRUE, stop.criteria = 1e-05)
+  test.island = TRUE, verbose = TRUE, stop.criteria = 1e-05,
+  InitialOnly = FALSE)
 }
 \arguments{
 \item{X}{A list of phylogenetic trees (phylo object) or a list 
@@ -46,9 +47,13 @@ of what is happening}
 
 \item{stop.criteria}{The optimisation stops when the gain between round n and round n+1 is smaller
 than this value. Default to 1e-5.}
+
+\item{InitialOnly}{Logical. If TRUE, only the Initial state of teh data is computed. The optimization and 
+outlier detection is NOT performed. Useful to get an idea about the initial state of th data.}
 }
 \value{
-A list with the 'Initial' (before filtering) and 'Final' (after filtering) states/
+A list of class 'phylter' with the 'Initial' (before filtering) and 'Final' (after filtering) states, 
+or a list of class 'phylterinitial' only, if InitialOnly=TRUE.
 }
 \description{
 Detection and filtering out of outliers in a list of trees 
