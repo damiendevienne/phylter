@@ -35,7 +35,8 @@
 #' @param InitialOnly Logical. If TRUE, only the Initial state of teh data is computed. The optimization and 
 #' outlier detection is NOT performed. Useful to get an idea about the initial state of th data.
 #' 
-#' @return A list with the 'Initial' (before filtering) and 'Final' (after filtering) states/
+#' @return A list of class 'phylter' with the 'Initial' (before filtering) and 'Final' (after filtering) states, 
+#' or a list of class 'phylterinitial' only, if InitialOnly=TRUE. 
 #' @importFrom utils tail
 #' @importFrom stats hclust as.dist
 #' @importFrom graphics plot
