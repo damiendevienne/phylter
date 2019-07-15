@@ -35,14 +35,14 @@
 detect.outliers<-function(mat2WR, k=3, thres=0.3, test.island=TRUE, keep.species=TRUE) {
   #Test for complete outliers
   CELLS<-NULL
-  CompOutl <- detect.complete.outliers(mat2WR, k = k, thres = thres, keep.species=keep.species)
+  CompOutl <- detect.complete.outliers2(mat2WR, k = k, thres = thres, keep.species=keep.species)
   if (nrow(CompOutl$cells)>0) {
     CELLS$outgn<-CompOutl$outgn
     CELLS$outsp<-CompOutl$outsp
     CELLS$cells<-CompOutl$cells
   }
   else {
-    CellOutl <- detect.cell.outliers(mat2WR, k = k, test.island=test.island)
+    CellOutl <- detect.cell.outliers2(mat2WR, k = k, test.island=test.island)
     CELLS$outgn<-NULL
     CELLS$outsp<-NULL
     CELLS$cells<-CellOutl$cells
@@ -85,6 +85,39 @@ detect.complete.outliers <- function(mat2WR, k = 3, thres = 0.3, keep.species=TR
   dimnames(RES$cells)<-NULL
   return(RES)
 }
+
+#' @describeIn detect.outliers detects
+#' if complete outliers exist in the 2WR matrix. New version.
+#' @export
+detect.complete.outliers2 <- function(mat2WR, k = 3, thres = 0.3, keep.species=TRUE) {
+  RES<-NULL
+  outl.sub <- function(x, k) {
+    return(x > quantile(x)[4] + k * IQR(x) + 1e-10)
+    ##note: the 1e-10 ,is because when all values are similar except one, the first one is considered as equal to the third quartile... May be a bug in quantile function?
+  }
+
+  mat2WR_normalized<-t(apply(mat2WR,1,function(x) x/mean(x))) #nroamlize by row
+  testspgn<-apply(mat2WR_normalized,2,function(x) outl.sub(x,k=k)) + 0
+  score.genes <- apply(testspgn, 2, mean)
+  out.genes <- which(score.genes > thres)
+  RES$outgn <- out.genes
+  cells.outgn<-cbind(rep(out.genes, each=nrow(mat2WR)),rep(1:nrow(mat2WR), length(out.genes))) 
+  if (!keep.species) {
+    score.species <- apply(testspgn, 1, mean)
+    out.species <- which(score.species > thres)
+    # RES$outsp <- names(out.species)
+    RES$outsp <- out.species
+    cells.outsp<-cbind(rep(1:ncol(mat2WR), length(out.species)), rep(out.species, each=ncol(mat2WR)))
+  }
+  else {
+    RES$outsp<-NULL 
+    cells.outsp<-NULL
+  }
+  RES$cells <- rbind(cells.outgn, cells.outsp)  #Col 1 = gn; col 2 = sp
+  dimnames(RES$cells)<-NULL
+  return(RES)
+}
+
 
 #' @describeIn detect.outliers detects
 #' if cell outliers exist in the 2WR matrix.
@@ -246,18 +279,16 @@ detect.cell.outliers2 <- function(mat2WR, k = 3, test.island=TRUE) {
   outl.sub <- function(x, k) {
     return(x > quantile(x)[4] + k * IQR(x) + 1e-10)
   }
-  ### IN THIS NEW VERSION, BEING A CELL OUTLIER IS BEING AN OUTLIER
-  ### BOTH AT THE GENE LEVEL AND AT THE SPECIES LEVEL.
-  ### THE CHOICE THE HIGHEST VALUE PER ISLAND IS DONE ON THE ORIGINAL WR MATRIX
+  ### IN THIS NEW VERSION, WE NORMALIZE FIRST SO THAT ALL SPECIES HAVE THE SAME MEAN
+  ### THEN WE DETECT THE OUTLIERS BY COLUMNS, INDEPENDENTLY FOR EACH. 
+  ### 
 
-  matSP<-t(apply(normalize(mat2WR,"species"),1,outl.sub,k=k))
-  matGN<-apply(normalize(mat2WR,"genes"),2,outl.sub,k=k)
-  testspgn <- matSP*matGN
-  testFALSE <- testspgn
+  mat2WR_normalized<-t(apply(mat2WR,1,function(x) x/mean(x))) #nroamlize by row
+  testspgn<-apply(mat2WR_normalized,2,function(x) outl.sub(x,k=k)) + 0
   #
   RESULT<-NULL
   #
-  if (sum(testFALSE) > 0) {
+  if (sum(testspgn) > 0) {
     if (test.island==TRUE) {
       out.list <- apply(testspgn, 2, detect.island)
       genes <- colnames(testspgn)
@@ -284,7 +315,7 @@ detect.cell.outliers2 <- function(mat2WR, k = 3, test.island=TRUE) {
       RESULT$cells<-cbind(match(res[,2][-1], colnames(mat2WR)),match(res[,1][-1], rownames(mat2WR)))
     }
     else { ##we return all cells viewed as outliers (more violent...)
-      cells<-which(testFALSE!=0,arr.ind = TRUE, useNames=FALSE)
+      cells<-which(testspgn!=0,arr.ind = TRUE, useNames=FALSE)
       RESULT$cells<-cells[,c(2,1)]
     }
   }
