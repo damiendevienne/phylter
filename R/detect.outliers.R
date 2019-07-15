@@ -44,7 +44,7 @@ detect.outliers<-function(mat2WR, k=3, thres=0.3, test.island=TRUE, keep.species
     CELLS$cells<-CompOutl$cells
   }
   else {
-  if (outlier.detection.method==1) CellOutl <- detect.cell.outliers1(mat2WR, k = k, test.island=test.island)
+  if (outlier.detection.method==1) CellOutl <- detect.cell.outliers(mat2WR, k = k, test.island=test.island)
   if (outlier.detection.method==2) CellOutl <- detect.cell.outliers2(mat2WR, k = k, test.island=test.island)
     CELLS$outgn<-NULL
     CELLS$outsp<-NULL

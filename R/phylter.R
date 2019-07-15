@@ -127,7 +127,7 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, 
 		# reorder rows according to row clustering
 		WR.reordered<-WR[OrderWRrow,]
 		# detct outliers (complete and cell by cell)
-		CellsToRemove<-detect.outliers(WR.reordered, k=k,thres=thres,test.island=test.island,keep.species=keep.species)
+		CellsToRemove<-detect.outliers(WR.reordered, k=k,thres=thres,test.island=test.island,keep.species=keep.species, outlier.detection.method=outlier.detection.method)
 		# reorder to previous order
 		CellsToRemove<-ReoderBackTheCells(CellsToRemove, OrderWRrow)
 		NewCellsToRemove<-FindNewCells(CellsToRemove$cells, CELLSREMOVED)
