@@ -3,6 +3,7 @@
 \name{detect.outliers}
 \alias{detect.outliers}
 \alias{detect.complete.outliers}
+\alias{detect.complete.outliers2}
 \alias{detect.cell.outliers}
 \alias{detect.cell.outliers2}
 \title{Detect outliers}
@@ -11,6 +12,9 @@ detect.outliers(mat2WR, k = 3, thres = 0.3, test.island = TRUE,
   keep.species = TRUE)
 
 detect.complete.outliers(mat2WR, k = 3, thres = 0.3,
+  keep.species = TRUE)
+
+detect.complete.outliers2(mat2WR, k = 3, thres = 0.3,
   keep.species = TRUE)
 
 detect.cell.outliers(mat2WR, k = 3, test.island = TRUE)
@@ -58,6 +62,9 @@ if any, or cell outliers if no complete outliers exist.
 
 \item \code{detect.complete.outliers}: detects
 if complete outliers exist in the 2WR matrix. See details.
+
+\item \code{detect.complete.outliers2}: detects
+if complete outliers exist in the 2WR matrix. New version.
 
 \item \code{detect.cell.outliers}: detects
 if cell outliers exist in the 2WR matrix.
