@@ -34,14 +34,14 @@
 #' than this value. Default to 1e-5.
 #' @param InitialOnly Logical. If TRUE, only the Initial state of teh data is computed. The optimization and 
 #' outlier detection is NOT performed. Useful to get an idea about the initial state of th data.
-#' 
+#' @param outlier.detection.method Method used to detect outliers from the 2WR matrix. Default to 1.
 #' @return A list of class 'phylter' with the 'Initial' (before filtering) and 'Final' (after filtering) states, 
 #' or a list of class 'phylterinitial' only, if InitialOnly=TRUE. 
 #' @importFrom utils tail
 #' @importFrom stats hclust as.dist
 #' @importFrom graphics plot
 #' @export
-phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, keep.species=TRUE, gene.names=NULL, test.island=TRUE, verbose=TRUE, stop.criteria=1e-5, InitialOnly=FALSE) {
+phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, keep.species=TRUE, gene.names=NULL, test.island=TRUE, verbose=TRUE, stop.criteria=1e-5, InitialOnly=FALSE, outlier.detection.method=1) {
 	ReplaceValueWithCompromise<-function(allmat, what, compro, lambda) {
 		for (i in 1:length(allmat)) {
 			whatsp<-what[what[,1]==i,2]

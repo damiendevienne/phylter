@@ -9,7 +9,7 @@
 \title{Detect outliers}
 \usage{
 detect.outliers(mat2WR, k = 3, thres = 0.3, test.island = TRUE,
-  keep.species = TRUE)
+  keep.species = TRUE, outlier.detection.method = 1)
 
 detect.complete.outliers(mat2WR, k = 3, thres = 0.3,
   keep.species = TRUE)
@@ -39,6 +39,8 @@ removed. See details.}
 \item{keep.species}{should species be prevented from being removed. This
 is useful if all species are important in the dataset. Default to TRUE
 (all species are kept).}
+
+\item{outlier.detection.method}{Method used to detect outliers from the 2WR matrix. Default to 1.}
 }
 \value{
 A list of outliers.

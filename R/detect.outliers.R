@@ -30,19 +30,22 @@
 #' @param keep.species should species be prevented from being removed. This
 #' is useful if all species are important in the dataset. Default to TRUE
 #' (all species are kept).
+#' @param outlier.detection.method Method used to detect outliers from the 2WR matrix. Default to 1.
 #' @return A list of outliers.
 #' @export
-detect.outliers<-function(mat2WR, k=3, thres=0.3, test.island=TRUE, keep.species=TRUE) {
+detect.outliers<-function(mat2WR, k=3, thres=0.3, test.island=TRUE, keep.species=TRUE, outlier.detection.method=1) {
   #Test for complete outliers
   CELLS<-NULL
-  CompOutl <- detect.complete.outliers2(mat2WR, k = k, thres = thres, keep.species=keep.species)
+  if (outlier.detection.method==1) CompOutl <- detect.complete.outliers(mat2WR, k = k, thres = thres, keep.species=keep.species)
+  if (outlier.detection.method==2) CompOutl <- detect.complete.outliers2(mat2WR, k = k, thres = thres, keep.species=keep.species)
   if (nrow(CompOutl$cells)>0) {
     CELLS$outgn<-CompOutl$outgn
     CELLS$outsp<-CompOutl$outsp
     CELLS$cells<-CompOutl$cells
   }
   else {
-    CellOutl <- detect.cell.outliers2(mat2WR, k = k, test.island=test.island)
+  if (outlier.detection.method==1) CellOutl <- detect.cell.outliers1(mat2WR, k = k, test.island=test.island)
+  if (outlier.detection.method==2) CellOutl <- detect.cell.outliers2(mat2WR, k = k, test.island=test.island)
     CELLS$outgn<-NULL
     CELLS$outsp<-NULL
     CELLS$cells<-CellOutl$cells

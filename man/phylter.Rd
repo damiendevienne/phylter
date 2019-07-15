@@ -7,7 +7,7 @@
 phylter(X, bvalue = 0, distance = "patristic", k = 3, thres = 0.3,
   Norm = TRUE, keep.species = TRUE, gene.names = NULL,
   test.island = TRUE, verbose = TRUE, stop.criteria = 1e-05,
-  InitialOnly = FALSE)
+  InitialOnly = FALSE, outlier.detection.method = 1)
 }
 \arguments{
 \item{X}{A list of phylogenetic trees (phylo object) or a list 
@@ -50,6 +50,8 @@ than this value. Default to 1e-5.}
 
 \item{InitialOnly}{Logical. If TRUE, only the Initial state of teh data is computed. The optimization and 
 outlier detection is NOT performed. Useful to get an idea about the initial state of th data.}
+
+\item{outlier.detection.method}{Method used to detect outliers from the 2WR matrix. Default to 1.}
 }
 \value{
 A list of class 'phylter' with the 'Initial' (before filtering) and 'Final' (after filtering) states, 
