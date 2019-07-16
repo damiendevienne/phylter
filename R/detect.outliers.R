@@ -286,10 +286,10 @@ detect.cell.outliers2 <- function(mat2WR, k = 3, test.island=TRUE) {
   ### 
 
   mat2WR_normalized1<-t(apply(mat2WR,1,function(x) x/mean(x))) #nroamlize by row
-  testspgn1<-apply(mat2WR_normalized,2,function(x) outl.sub(x,k=k)) + 0
+  testspgn1<-apply(mat2WR_normalized1,2,function(x) outl.sub(x,k=k)) + 0
 
   mat2WR_normalized2<-apply(mat2WR,2,function(x) x/mean(x)) #nroamlize by row
-  testspgn2<-t(apply(mat2WR_normalized,1,function(x) outl.sub(x,k=k))) + 0
+  testspgn2<-t(apply(mat2WR_normalized2,1,function(x) outl.sub(x,k=k))) + 0
 
   testspgn<-testspgn1*testspgn2
 
