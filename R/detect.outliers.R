@@ -36,8 +36,7 @@
 detect.outliers<-function(mat2WR, k=3, thres=0.3, test.island=TRUE, keep.species=TRUE, outlier.detection.method=1) {
   #Test for complete outliers
   CELLS<-NULL
-  if (outlier.detection.method==1) CompOutl <- detect.complete.outliers(mat2WR, k = k, thres = thres, keep.species=keep.species)
-  if (outlier.detection.method==2) CompOutl <- detect.complete.outliers2(mat2WR, k = k, thres = thres, keep.species=keep.species)
+  CompOutl <- detect.complete.outliers(mat2WR, k = k, thres = thres, keep.species=keep.species)
   if (nrow(CompOutl$cells)>0) {
     CELLS$outgn<-CompOutl$outgn
     CELLS$outsp<-CompOutl$outsp
@@ -286,8 +285,14 @@ detect.cell.outliers2 <- function(mat2WR, k = 3, test.island=TRUE) {
   ### THEN WE DETECT THE OUTLIERS BY COLUMNS, INDEPENDENTLY FOR EACH. 
   ### 
 
-  mat2WR_normalized<-t(apply(mat2WR,1,function(x) x/mean(x))) #nroamlize by row
-  testspgn<-apply(mat2WR_normalized,2,function(x) outl.sub(x,k=k)) + 0
+  mat2WR_normalized1<-t(apply(mat2WR,1,function(x) x/mean(x))) #nroamlize by row
+  testspgn1<-apply(mat2WR_normalized,2,function(x) outl.sub(x,k=k)) + 0
+
+  mat2WR_normalized2<-apply(mat2WR,2,function(x) x/mean(x)) #nroamlize by row
+  testspgn2<-t(apply(mat2WR_normalized,1,function(x) outl.sub(x,k=k))) + 0
+
+  testspgn<-testspgn1*testspgn2
+
   #
   RESULT<-NULL
   #
