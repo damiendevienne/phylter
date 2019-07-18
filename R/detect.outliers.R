@@ -351,7 +351,7 @@ detect.cell.outliers2 <- function(mat2WR, k = 3, test.island=TRUE) {
 
 
 #' @describeIn detect.outliers detects
-#' if cell outliers exist in the 2WR matrix. New version.
+#' if cell outliers exist in the 2WR matrix. New New version.
 #' @importFrom stats dist quantile IQR
 #' @importFrom utils combn
 #' @export
