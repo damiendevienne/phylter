@@ -34,7 +34,7 @@ describes how much of the variance of the K matrices is captured by the compromi
 New implementation of the DISTATIS method for K matrices of dimension IxI.
 This version of distatis is faster than the original one because only the minimum required number
 of eigenvalues and eigenvectors is calculated. The difference in speed 
-is particularly visible when the number of matricesis big.
+is particularly visible when the number of matrices is large.
 }
 \references{
 Abdi, H., Valentin, D., O'Toole, A.J., & Edelman, B. (2005).

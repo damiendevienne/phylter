@@ -54,7 +54,7 @@ Functions to detect outliers, either complete or cell (see details).
 \details{
 These methods are similar to those described in phylo-MCOA for detecting
 outliers. These types of outliers are described in:
-de Vienne M.D., Ollier S. et Aguileta G. (2012) Phylo-MCOA: 
+de Vienne D.M., Ollier S. et Aguileta G. (2012) Phylo-MCOA: 
 A Fast and Efficient Method to Detect Outlier Genes and Species
 in Phylogenomics Using Multiple Co-inertia Analysis. Molecular 
 Biology and Evolution 29 : 1587-1598.
@@ -81,3 +81,9 @@ if cell outliers exist in the 2WR matrix. New version.
 if cell outliers exist in the 2WR matrix. New New version.
 }}
 
+\references{
+de Vienne D.M., Ollier S. et Aguileta G. (2012) Phylo-MCOA: 
+A Fast and Efficient Method to Detect Outlier Genes and Species
+in Phylogenomics Using Multiple Co-inertia Analysis. Molecular 
+Biology and Evolution 29 : 1587-1598.
+}

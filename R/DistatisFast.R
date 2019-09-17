@@ -5,7 +5,7 @@
 #' New implementation of the DISTATIS method for K matrices of dimension IxI.
 #' This version of distatis is faster than the original one because only the minimum required number
 #' of eigenvalues and eigenvectors is calculated. The difference in speed 
-#' is particularly visible when the number of matricesis big.  
+#' is particularly visible when the number of matrices is large.  
 #' 
 #' @param matrices A list of K distance matrices, all of the same dimension (IxI).
 #' @param Norm Should the matrices be normalized. If TRUE (the default), 

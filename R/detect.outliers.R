@@ -8,7 +8,7 @@
 #' 
 #' These methods are similar to those described in phylo-MCOA for detecting
 #' outliers. These types of outliers are described in:
-#' de Vienne M.D., Ollier S. et Aguileta G. (2012) Phylo-MCOA: 
+#' de Vienne D.M., Ollier S. et Aguileta G. (2012) Phylo-MCOA: 
 #' A Fast and Efficient Method to Detect Outlier Genes and Species
 #' in Phylogenomics Using Multiple Co-inertia Analysis. Molecular 
 #' Biology and Evolution 29 : 1587-1598.
@@ -32,7 +32,12 @@
 #' (all species are kept).
 #' @param outlier.detection.method Method used to detect outliers from the 2WR matrix. Default to 1.
 #' @return A list of outliers.
+#' @references de Vienne D.M., Ollier S. et Aguileta G. (2012) Phylo-MCOA: 
+#' A Fast and Efficient Method to Detect Outlier Genes and Species
+#' in Phylogenomics Using Multiple Co-inertia Analysis. Molecular 
+#' Biology and Evolution 29 : 1587-1598.
 #' @export
+#' 
 detect.outliers<-function(mat2WR, k=3, thres=0.3, test.island=TRUE, keep.species=TRUE, outlier.detection.method=1) {
   #Test for complete outliers
   CELLS<-NULL
