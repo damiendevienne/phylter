@@ -51,7 +51,7 @@ DistatisFast<-function(matrices, Norm=TRUE, factorskept=2) {
 		return(S)	 
 	}
 	MFAnormCP <- function(Y) {
-	    e1 = eigs_sym(Y, 1, opts=list(retvec=FALSE))$values
+	    e1 = eigs_sym(Y, 1, opts=list(retvec=FALSE), which="LA")$values
 	    Ynormed = Y/e1
 	    return(Ynormed)
 	}
