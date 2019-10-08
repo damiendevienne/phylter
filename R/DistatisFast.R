@@ -56,7 +56,7 @@ DistatisFast<-function(matrices, Norm=TRUE, factorskept=2) {
 	    return(Ynormed)
 	}
 	GetLambdaForNorm <- function(Y) {
-	    e1 = eigs_sym(Y, 1, opts=list(retvec=FALSE))$values
+	    e1 = eigs_sym(Y, 1, opts=list(retvec=FALSE), which="LA")$values
 	    return(e1)
 	}
 
