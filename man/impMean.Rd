@@ -16,5 +16,5 @@ in the same order and missing data (if any) imputed.
 \description{
 Impute missing data in a list of matrices. Matrices are first given the same dimension, 
 then missing entries are computed by taking the average value in non-missing corresponding
-entries.
+entries in all matrices.
 }

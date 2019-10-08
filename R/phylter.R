@@ -109,6 +109,8 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, 
 	Initial$compromise<-RES$compromise
 	Initial$F<-RES$F
 	Initial$PartialF<-RES$PartialF
+	##New
+	Initial$matrices<-matrices
 
 	if (InitialOnly) {
 		class(Initial)<-c("phylterinitial", "list")
@@ -183,6 +185,9 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, 
 	Final$Outliers<-CompareBeforeAfter(Xsave, CELLSREMOVED, Final$species.order, which="all")
 	Final$CompleteOutliers<-CompareBeforeAfter(Xsave, Final$Outliers, Final$species.order, which="complete")
 	#store the way the function was called
+	##New 
+	Final$matrices<-matrices
+
 	call<-list(call=match.call(), bvalue=bvalue, distance=distance, k=k, thres=thres, Norm=Norm, keep.species=keep.species, gene.names=gene.names, test.island=test.island, verbose=verbose, stop.criteria=stop.criteria)
 
 	Result<-list(Initial=Initial, Final=Final, call=call)

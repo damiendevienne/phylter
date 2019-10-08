@@ -4,7 +4,7 @@
 #' 
 #' Impute missing data in a list of matrices. Matrices are first given the same dimension, 
 #' then missing entries are computed by taking the average value in non-missing corresponding
-#' entries.
+#' entries in all matrices.
 #' 
 #' 
 #' @param matrices A list of distance matrices. 
