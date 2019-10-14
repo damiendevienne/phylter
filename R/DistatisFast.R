@@ -33,19 +33,19 @@
 #' @importFrom RSpectra eigs_sym
 #' @export
 DistatisFast<-function(matrices, Norm=TRUE, factorskept=2) {
-	GetCmat <- function(OrderedMatrices, RV = TRUE) {
-		CP2<-do.call(cbind, lapply(OrderedMatrices, array))
-		C <- crossprod(CP2) #faster than using t(CP2) %*% CP2
-	    if (RV) {
-	        laNorm = sqrt(apply(CP2^2, 2, sum))
-	        C = C/(t(t(laNorm)) %*% laNorm)
-	    }
-	    rownames(C) <- colnames(C) <- names(OrderedMatrices)
-	    return(C)
-	}
+	# GetCmat <- function(OrderedMatrices, RV = TRUE) {
+	# 	CP2<-do.call(cbind, lapply(OrderedMatrices, array))
+	# 	C <- crossprod(CP2) #faster than using t(CP2) %*% CP2
+	#     if (RV) {
+	#         laNorm = sqrt(apply(CP2^2, 2, sum))
+	#         C = C/(t(t(laNorm)) %*% laNorm)
+	#     }
+	#     rownames(C) <- colnames(C) <- names(OrderedMatrices)
+	#     return(C)
+	# }
 	## Faster function that is useful for symmetric matrices
 	## (compute only on the upper part of the matrix)
-	GetCmat2 <- function(OrderedMatrices, RV = TRUE) {
+	GetCmat <- function(OrderedMatrices, RV = TRUE) {
 	    CP2.diag <-do.call(cbind, lapply(OrderedMatrices, diag))
 	    CP2.upper <- do.call(cbind, lapply(OrderedMatrices, function(x) x[upper.tri(x)]))
 	    C <- crossprod(CP2.diag) + 2 * crossprod(CP2.upper)
@@ -97,7 +97,7 @@ DistatisFast<-function(matrices, Norm=TRUE, factorskept=2) {
 	else {
 		lambda<-rep(1,nbGn)
 	}
-	RVmat<-GetCmat2(matrices.dblcent)
+	RVmat<-GetCmat(matrices.dblcent)
 	FirstEigenVector<-eigs_sym(RVmat, 1, which = "LM")
 	alpha <- FirstEigenVector$vectors[, 1]/sum(FirstEigenVector$vectors[, 1])
 	quality<-FirstEigenVector$values/nbGn
