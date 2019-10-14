@@ -43,12 +43,34 @@ DistatisFast<-function(matrices, Norm=TRUE, factorskept=2) {
 	    rownames(C) <- colnames(C) <- names(OrderedMatrices)
 	    return(C)
 	}
+	GetCmat2 <- function(OrderedMatrices, RV = TRUE) {
+		dim1<-nrow(OrderedMatrices[[1]])
+		index<-unlist(sapply(1:dim1,function(x, n) (x:n)+(x-1)*n, n=dim1))		
+		CP2<-do.call(cbind, lapply(OrderedMatrices, function(x,y) array(x)[y], y=index))
+		C <- crossprod(CP2) #faster than using t(CP2) %*% CP2
+	    if (RV) {
+	        laNorm = sqrt(apply(CP2^2, 2, sum))
+	        C = C/(t(t(laNorm)) %*% laNorm)
+	    }
+	    rownames(C) <- colnames(C) <- names(OrderedMatrices)
+	    return(C)
+	}
+
 	DblCenterDist <- function(Y) {
-		nI = nrow(Y)
-		CentMat = diag(nI) - (1/nI) * matrix(1, nI, nI)
-		S = -(1/2) * (CentMat %*% Y %*% CentMat)
-		dimnames(S)<-dimnames(Y)
-		return(S)	 
+		##ACCELERATION POSSIBLE ? VOIR BICENTER DANS ADE4
+		# nI = nrow(Y)
+		# CentMat = diag(nI) - (1/nI) * matrix(1, nI, nI)
+		# S = -(1/2) * (CentMat %*% Y %*% CentMat)
+		# dimnames(S)<-dimnames(Y)
+		# return(S)	 
+
+		col.mean<-colMeans(Y)
+		row.mean<-rowMeans(Y)
+    	Y <- sweep(Y, 2, col.mean)
+	    Y <- sweep(Y, 1, row.mean)
+    	Y <- Y + mean(col.mean)
+    	return(-Y/2)
+
 	}
 	MFAnormCP <- function(Y) {
 	    e1 = eigs_sym(Y, 1, opts=list(retvec=FALSE), which="LA")$values
