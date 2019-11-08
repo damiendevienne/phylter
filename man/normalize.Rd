@@ -4,7 +4,7 @@
 \alias{normalize}
 \title{normalize}
 \usage{
-normalize(mat, what = "none")
+normalize(mat, what = "none", by = "mean")
 }
 \arguments{
 \item{mat}{A matrix}

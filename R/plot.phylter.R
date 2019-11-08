@@ -210,6 +210,10 @@ plotRV<-function(x, what="Initial") {
 	p <- ggplot(melt(RV),aes(x=Var1, y=Var2,fill=value)) + geom_tile() + scale_fill_gradient2(name="RV coefficient", limits=c(-1, 1.01))
 	p <- p + theme(axis.text.x=element_text(angle = 90, hjust = 1)) + labs(x="Genes",y="Genes", title=what)
 	print(p)
+
+#	heatmap(OK$Initial$RV, scale="none", col=magma(100), breaks=seq(-1,1,length.out=101), labCol="", labRow="")
+#	require(gplots)
+#	heatmap.2(OK$Initial$RV, scale="none", col=magma(100), breaks=seq(-1,1,length.out=101), labCol="", labRow="", density.info="none", trace="none")
 }
 
 #' plotopti

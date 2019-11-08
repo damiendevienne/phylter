@@ -7,6 +7,7 @@
 \alias{detect.cell.outliers}
 \alias{detect.cell.outliers2}
 \alias{detect.cell.outliers3}
+\alias{detect.cell.outliers4}
 \title{Detect outliers}
 \usage{
 detect.outliers(mat2WR, k = 3, thres = 0.3, test.island = TRUE,
@@ -23,6 +24,8 @@ detect.cell.outliers(mat2WR, k = 3, test.island = TRUE)
 detect.cell.outliers2(mat2WR, k = 3, test.island = TRUE)
 
 detect.cell.outliers3(mat2WR, k = 3, test.island = TRUE)
+
+detect.cell.outliers4(mat2WR, k = 3, test.island = TRUE)
 }
 \arguments{
 \item{mat2WR}{the 2WR matrix obtained with the Dist2WR function.}
@@ -78,6 +81,9 @@ if cell outliers exist in the 2WR matrix.
 if cell outliers exist in the 2WR matrix. New version.
 
 \item \code{detect.cell.outliers3}: detects
+if cell outliers exist in the 2WR matrix. New New version.
+
+\item \code{detect.cell.outliers4}: detects
 if cell outliers exist in the 2WR matrix. New New version.
 }}
 

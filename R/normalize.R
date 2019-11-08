@@ -16,7 +16,7 @@
 #' in dividing each entry by either the mean of each row or of each column.
 #' @return A normalized matrix
 #' @export
-normalize <- function(mat, what = "none") {
+normalize <- function(mat, what = "none", by="mean") {
   if (what == "species") mat <- apply(mat, 2, function(x) {x / mean(x)})
   else if (what == "genes") mat <- t(apply(mat, 1, function(x) {x / mean(x)}))
   else if (what == "none") {
