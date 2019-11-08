@@ -13,10 +13,10 @@
 #' default), if what="species", the matrix is normalized so that the difference
 #' between species is increased, and if what="genes", the matrix is normalized
 #' so that the difference between genes is increased. Normalization consists
-#' in dividing each entry by either the mean of each row or of each column.
+#' in dividing each entry by either the mean of each row or the meab of each column.
 #' @return A normalized matrix
 #' @export
-normalize <- function(mat, what = "none", by="mean") {
+normalize <- function(mat, what = "none") {
   if (what == "species") mat <- apply(mat, 2, function(x) {x / mean(x)})
   else if (what == "genes") mat <- t(apply(mat, 1, function(x) {x / mean(x)}))
   else if (what == "none") {
