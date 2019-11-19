@@ -30,6 +30,8 @@
 #' @param show.missing Logical. Should missing data be represented on the heatmap. If TRUE (the default), white dots show were these missing entries are in both the initial and final 2WR matrices.  
 #' @param show.outliers Logical. Should outliers be represented on the heatmap. If TRUE (the default), yellow dots indicate outliers on the final 2WR matrix.
 #' @param transpose Logical. If TRUE, the two matrices are piled up instaed of being displayed side by side. Default to FALSE.
+#' @param labelnames Logical. If TRUE, the names of labels are indicated on the heatmap. If FALSE they are removed. 
+#' This is conveninent when the names of the genes are very long for instance. 
 #' @param ... Additional arguments to be passed to plot and print functions.
 #' @return The desired plots are returned. Note that you might want to call the pdf(),
 #'  png(), jpeg(), or tiff() function first if you want to save the plot(s) to an
@@ -197,7 +199,7 @@ plotDispersion<-function(x) {
 #' @rdname plot.phylter
 #' @export
 
-plotRV<-function(x, what="Initial") {
+plotRV<-function(x, what="Initial", labelnames=TRUE) {
 	## for passing check filters
 	Var1<-NULL
 	Var2<-NULL
@@ -208,7 +210,14 @@ plotRV<-function(x, what="Initial") {
 
 	RV<-RV[hclust(dist(RV))$order,hclust(dist(RV))$order]
 	p <- ggplot(melt(RV),aes(x=Var1, y=Var2,fill=value)) + geom_tile() + scale_fill_gradient2(name="RV coefficient", limits=c(-1, 1.01))
-	p <- p + theme(axis.text.x=element_text(angle = 90, hjust = 1)) + labs(x="Genes",y="Genes", title=what)
+	if (!labelnames) {
+		p <- p + theme(axis.text.x=element_blank(), axis.text.y=element_blank(), axis.ticks.x=element_blank(), axis.ticks.y=element_blank())
+	}
+	else {
+		p <- p + theme(axis.text.x=element_text(angle = 90, hjust = 1))
+	}	
+
+	p <- p + labs(x="Genes",y="Genes", title=what)
 	print(p)
 
 #	heatmap(OK$Initial$RV, scale="none", col=magma(100), breaks=seq(-1,1,length.out=101), labCol="", labRow="")

@@ -48,10 +48,10 @@ detect.outliers<-function(mat2WR, k=3, thres=0.3, test.island=TRUE, keep.species
     CELLS$cells<-CompOutl$cells
   }
   else {
-  if (outlier.detection.method==1) CellOutl <- detect.cell.outliers(mat2WR, k = k, test.island=test.island)
-  if (outlier.detection.method==2) CellOutl <- detect.cell.outliers2(mat2WR, k = k, test.island=test.island)
-  if (outlier.detection.method==3) CellOutl <- detect.cell.outliers3(mat2WR, k = k, test.island=test.island)
-  if (outlier.detection.method==4) CellOutl <- detect.cell.outliers4(mat2WR, k = k, test.island=test.island)
+    if (outlier.detection.method==1) CellOutl <- detect.cell.outliers(mat2WR, k = k, test.island=test.island)
+    if (outlier.detection.method==2) CellOutl <- detect.cell.outliers2(mat2WR, k = k, test.island=test.island)
+    if (outlier.detection.method==3) CellOutl <- detect.cell.outliers3(mat2WR, k = k, test.island=test.island)
+    if (outlier.detection.method==4) CellOutl <- detect.cell.outliers4(mat2WR, k = k, test.island=test.island)
 
     CELLS$outgn<-NULL
     CELLS$outsp<-NULL
@@ -503,8 +503,8 @@ detect.cell.outliers4 <- function(mat2WR, k = 3, test.island=TRUE) {
   }
   ### Normalize by row: 
   mat2WR.normalized<-normalize(mat2WR, "species")
-  testspgn1<-apply(WR.reordered.n,2,function(x) x==max(x))+0
-  testspgn2<-t(apply(WR.reordered.n,1,function(x) x==max(x)))+0
+  testspgn1<-apply(mat2WR.normalized,2,function(x) x==max(x))+0
+  testspgn2<-t(apply(mat2WR.normalized,1,function(x) x==max(x)))+0
   testspgn<-testspgn1*testspgn2
 
   #

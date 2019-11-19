@@ -16,7 +16,7 @@ plot2WR(x, show.missing = TRUE, show.outliers = TRUE,
 
 plotDispersion(x)
 
-plotRV(x, what = "Initial")
+plotRV(x, what = "Initial", labelnames = TRUE)
 
 plotopti(x)
 }
@@ -42,6 +42,9 @@ to TRUE}
 \item{show.outliers}{Logical. Should outliers be represented on the heatmap. If TRUE (the default), yellow dots indicate outliers on the final 2WR matrix.}
 
 \item{transpose}{Logical. If TRUE, the two matrices are piled up instaed of being displayed side by side. Default to FALSE.}
+
+\item{labelnames}{Logical. If TRUE, the names of labels are indicated on the heatmap. If FALSE they are removed. 
+This is conveninent when the names of the genes are very long for instance.}
 }
 \value{
 The desired plots are returned. Note that you might want to call the pdf(),
