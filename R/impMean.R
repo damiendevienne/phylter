@@ -34,6 +34,8 @@ impMean <- function(matrices) {
   if (qual == 1) {
     matrices.extended<-lapply(matrices, AddColAndRow, allrowsandcol=listsp) #grows matrices and add NA to missing cells
     MEANMAT<-Reduce('+',lapply(matrices.extended, function(x) replace(x,is.na(x),0)))/Reduce("+", lapply(matrices.extended, Negate(is.na)))
+    ##if NA in MEANMAT, it means that thre are distance that have a mean of 0 in all trees...
+    MEANMAT<-replace(MEANMAT, is.na(MEANMAT), 0)
     ALL<-lapply(matrices.extended, ReplaceMissingValue, matrix2=MEANMAT)
   }
   else { ##it is a simple reordering of the columnss and rows
