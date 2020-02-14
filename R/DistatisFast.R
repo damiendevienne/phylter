@@ -63,7 +63,6 @@ DistatisFast<-function(matrices, Norm=TRUE, factorskept=2) {
 		# S = -(1/2) * (CentMat %*% Y %*% CentMat)
 		# dimnames(S)<-dimnames(Y)
 		# return(S)	 
-
 		col.mean<-colMeans(Y)
 		row.mean<-rowMeans(Y)
     	Y <- sweep(Y, 2, col.mean)

@@ -10,6 +10,7 @@
 #' @param matrices A list of distance matrices. 
 #' @return Returns a list of matrices with same dimensions, with rows and columns 
 #' in the same order and missing data (if any) imputed.
+#' @importFrom reshape2 melt
 #' @export
 impMean <- function(matrices) {
   AddColAndRow<-function(matrix, allrowsandcol) {
@@ -25,6 +26,23 @@ impMean <- function(matrices) {
     matrix1[is.na(matrix1)]<-matrix2[is.na(matrix1)]
     matrix1
   }
+  ImputeFromClosestNeighbors<-function(sp1,sp2,mat) {
+    closest2sp1<-sp1
+    closest2sp2<-sp2
+    i<-1
+    j<-1
+    while(is.na(mat[sp1,closest2sp2])) {
+      i<-i+1
+      closest2sp2<-names(sort(mat[sp2,])[i])
+    }
+    while(is.na(mat[sp2,closest2sp1])) {
+      j<-j+1
+      closest2sp1<-names(sort(mat[sp1,])[j])
+    }
+    imputeddist<-mean(mat[sp1,closest2sp2],mat[sp2,closest2sp1]) 
+    imputeddist
+  }
+
   qual <- 0
   sp.per.mat<-lapply(matrices, rownames)
   listsp <- unique(unlist(sp.per.mat))
@@ -34,8 +52,14 @@ impMean <- function(matrices) {
   if (qual == 1) {
     matrices.extended<-lapply(matrices, AddColAndRow, allrowsandcol=listsp) #grows matrices and add NA to missing cells
     MEANMAT<-Reduce('+',lapply(matrices.extended, function(x) replace(x,is.na(x),0)))/Reduce("+", lapply(matrices.extended, Negate(is.na)))
-    ##if NA in MEANMAT, it means that thre are distance that have a mean of 0 in all trees...
-    MEANMAT<-replace(MEANMAT, is.na(MEANMAT), 0)
+    #If NA are present in this matrix, it means that some species were never found together in any tree. If so we need to find a way to imputethe distance by looking at the distance of their close neighbors (and print a warning). 
+    if(anyNA(MEANMAT)) {
+      tmpM<-melt(MEANMAT)
+      pairs2correct<-tmpM[is.na(tmpM$value),1:2]
+      newval<-apply(pairs2correct,1, function(x,y) ImputeFromClosestNeighbors(x[1],x[2],y), y=MEANMAT)
+      MEANMAT[as.numeric(rownames(pairs2correct))]<-newval
+      cat("\nWARNING: some pairs of species are never found together in trees. \nMean distances are thus infered using their closest neighbors.\n")
+    }
     ALL<-lapply(matrices.extended, ReplaceMissingValue, matrix2=MEANMAT)
   }
   else { ##it is a simple reordering of the columnss and rows

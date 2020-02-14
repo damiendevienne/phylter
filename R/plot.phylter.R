@@ -38,7 +38,8 @@
 #' external file.
 #' @importFrom grDevices dev.cur devAskNewPage
 #' @importFrom stats relevel
-#' @importFrom ggplot2 ggplot aes geom_bar theme element_text labs coord_flip geom_line geom_point geom_tile scale_color_manual scale_fill_gradient scale_fill_gradient2 
+#' @importFrom ggplot2 ggplot aes geom_bar theme element_text labs coord_flip 
+#' geom_line geom_point geom_tile scale_color_manual scale_fill_gradient scale_fill_gradient2 element_blank 
 #' @importFrom reshape2 melt 
 #' @export
 
