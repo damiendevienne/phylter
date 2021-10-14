@@ -52,6 +52,7 @@ detect.outliers<-function(mat2WR, k=3, thres=0.3, test.island=TRUE, keep.species
     if (outlier.detection.method==2) CellOutl <- detect.cell.outliers2(mat2WR, k = k, test.island=test.island)
     if (outlier.detection.method==3) CellOutl <- detect.cell.outliers3(mat2WR, k = k, test.island=test.island)
     if (outlier.detection.method==4) CellOutl <- detect.cell.outliers4(mat2WR, k = k, test.island=test.island)
+    if (outlier.detection.method==5) CellOutl <- detect.cell.outliers5(mat2WR, k = k, test.island=test.island)
 
     CELLS$outgn<-NULL
     CELLS$outsp<-NULL
@@ -542,4 +543,29 @@ detect.cell.outliers4 <- function(mat2WR, k = 3, test.island=TRUE) {
     }
   }
   return(RESULT)
+
+#' @describeIn detect.outliers detects
+#' if cell outliers exist in the 2WR matrix. New New version.
+#' @importFrom stats dist quantile IQR
+#' @importFrom utils combn
+#' @export
+detect.cell.outliers5 <- function(mat2WR, k = 3, test.island=TRUE) {
+  outl.sub <- function(x, k) {
+    return(x > quantile(x)[4] + k * IQR(x) + 1e-10)
+  }
+  MATspgn <- normalize(mat2WR, "genes") * normalize(mat2WR, "species")
+  testspgn1 <- apply(MATspgn, 2, outl.sub, k = k)
+  testspgn2 <- t(apply(MATspgn, 1, outl.sub, k = k))
+  testspgn <- testspgn1 * testspgn2 
+  testFALSE <- testspgn
+  #
+  RESULT<-NULL
+  #
+  if (sum(testspgn) > 0) {
+      cells<-which(testspgn!=0,arr.ind = TRUE, useNames=FALSE)
+      cells<-cells[which.max(mat2WR[cells]),,drop=FALSE]
+      RESULT$cells<-cells[,c(2,1)]
+  }
+  return(RESULT)
+
 }

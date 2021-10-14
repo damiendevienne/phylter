@@ -89,6 +89,7 @@ DistatisFast<-function(matrices, Norm=TRUE, factorskept=2) {
 	matrices.dblcent<-lapply(matrices, DblCenterDist)
 	# if (Norm) matrices.dblcent<-lapply(matrices.dblcent, MFAnormCP) ##normalize is asked
 	if (Norm) {
+		print("NORMMMMM")
 		lambda<-lapply(matrices.dblcent, GetLambdaForNorm)
 		matrices.dblcent<-Map("/", matrices.dblcent, lambda)
 		lambda<-unname(unlist(lambda))
