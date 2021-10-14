@@ -543,6 +543,7 @@ detect.cell.outliers4 <- function(mat2WR, k = 3, test.island=TRUE) {
     }
   }
   return(RESULT)
+}
 
 #' @describeIn detect.outliers detects
 #' if cell outliers exist in the 2WR matrix. New New version.
@@ -567,5 +568,6 @@ detect.cell.outliers5 <- function(mat2WR, k = 3, test.island=TRUE) {
       RESULT$cells<-cells[,c(2,1)]
   }
   return(RESULT)
-
 }
+
+
