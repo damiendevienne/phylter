@@ -8,11 +8,9 @@
 \alias{plotopti}
 \title{Plot phylter objects}
 \usage{
-\method{plot}{phylter}(x, what = "all", layout = 1, sorted = TRUE,
-  ...)
+\method{plot}{phylter}(x, what = "all", layout = 1, sorted = TRUE, ...)
 
-plot2WR(x, show.missing = TRUE, show.outliers = TRUE,
-  transpose = FALSE)
+plot2WR(x, show.missing = TRUE, show.outliers = TRUE, transpose = FALSE)
 
 plotDispersion(x)
 

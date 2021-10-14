@@ -4,7 +4,9 @@
 \name{fungi}
 \alias{fungi}
 \title{246 genes trees for 21 fungal species}
-\format{A list of trees of class multiPhylo}
+\format{
+A list of trees of class multiPhylo
+}
 \source{
 \url{https://academic.oup.com/sysbio/article/57/4/613/1632046}
 }

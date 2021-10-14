@@ -4,10 +4,21 @@
 \alias{phylter}
 \title{filter phylogenomics datasets}
 \usage{
-phylter(X, bvalue = 0, distance = "patristic", k = 3, thres = 0.3,
-  Norm = TRUE, keep.species = TRUE, gene.names = NULL,
-  test.island = TRUE, verbose = TRUE, stop.criteria = 1e-05,
-  InitialOnly = FALSE, outlier.detection.method = 1)
+phylter(
+  X,
+  bvalue = 0,
+  distance = "patristic",
+  k = 3,
+  thres = 0.3,
+  Norm = TRUE,
+  keep.species = TRUE,
+  gene.names = NULL,
+  test.island = TRUE,
+  verbose = TRUE,
+  stop.criteria = 1e-05,
+  InitialOnly = FALSE,
+  outlier.detection.method = 1
+)
 }
 \arguments{
 \item{X}{A list of phylogenetic trees (phylo object) or a list 

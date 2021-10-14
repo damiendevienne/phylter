@@ -10,14 +10,18 @@
 \alias{detect.cell.outliers4}
 \title{Detect outliers}
 \usage{
-detect.outliers(mat2WR, k = 3, thres = 0.3, test.island = TRUE,
-  keep.species = TRUE, outlier.detection.method = 1)
+detect.outliers(
+  mat2WR,
+  k = 3,
+  thres = 0.3,
+  test.island = TRUE,
+  keep.species = TRUE,
+  outlier.detection.method = 1
+)
 
-detect.complete.outliers(mat2WR, k = 3, thres = 0.3,
-  keep.species = TRUE)
+detect.complete.outliers(mat2WR, k = 3, thres = 0.3, keep.species = TRUE)
 
-detect.complete.outliers2(mat2WR, k = 3, thres = 0.3,
-  keep.species = TRUE)
+detect.complete.outliers2(mat2WR, k = 3, thres = 0.3, keep.species = TRUE)
 
 detect.cell.outliers(mat2WR, k = 3, test.island = TRUE)
 

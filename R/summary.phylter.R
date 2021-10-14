@@ -105,7 +105,8 @@ print.phylterinitial<-function(x, ...) {
 		"Weight of each gene in the compromise",
 		"Species x Species compromise matrix",
 		"Distatis coordinates of compromise",
-		"Distatis coordinates of gene matrices (list)"
+		"Distatis coordinates of gene matrices (list)", 
+		"Species x Species gene matrices (list)"
 		)
 	DF<-data.frame(Object, Dimension, Content, row.names=NULL)
 	print(DF, right=FALSE)
@@ -139,7 +140,8 @@ print.phylterfinal<-function(x, ...) {
 		paste("Evolution of quality of compromise (",length(x$AllOptiScores)," steps)",sep=""),
 		"Index of cells removed (may contain imputed cells)",
 		"Outliers detected (one row = one outlier cell)",
-		"Complete outliers (Gene and Species, if any)"
+		"Complete outliers (Gene and Species, if any)",
+		"Species x Species gene matrices (list)"
 		)
 	DF<-data.frame(Object, Dimension, Content, row.names=NULL)
 	print(DF, right=FALSE)
