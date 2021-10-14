@@ -43,6 +43,7 @@ detect.outliers<-function(mat2WR, k=3, thres=0.3, test.island=TRUE, keep.species
   CELLS<-NULL
   CompOutl <- detect.complete.outliers(mat2WR, k = k, thres = thres, keep.species=keep.species)
   if (nrow(CompOutl$cells)>0) {
+    print("yesyindeed")
     CELLS$outgn<-CompOutl$outgn
     CELLS$outsp<-CompOutl$outsp
     CELLS$cells<-CompOutl$cells
@@ -558,15 +559,13 @@ detect.cell.outliers5 <- function(mat2WR, k = 3, test.island=TRUE) {
   testspgn1 <- apply(MATspgn, 2, outl.sub, k = k)
   testspgn2 <- t(apply(MATspgn, 1, outl.sub, k = k))
   testspgn <- testspgn1 * testspgn2 
-  print(testspgn)
   #
   RESULT<-NULL
   #
   if (sum(testspgn) > 0) {
       cells<-which(testspgn!=0,arr.ind = TRUE, useNames=FALSE)
       cells<-cells[which.max(mat2WR[cells]),,drop=FALSE]
-      print(cells)
-      RESULT$cells<-cells[,c(2,1)]
+      RESULT$cells<-cells[,c(2,1), drop=FALSE]
   }
   return(RESULT)
 }
