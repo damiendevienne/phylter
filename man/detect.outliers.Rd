@@ -2,34 +2,12 @@
 % Please edit documentation in R/detect.outliers.R
 \name{detect.outliers}
 \alias{detect.outliers}
-\alias{detect.complete.outliers}
-\alias{detect.complete.outliers2}
-\alias{detect.cell.outliers}
-\alias{detect.cell.outliers2}
-\alias{detect.cell.outliers3}
-\alias{detect.cell.outliers4}
+\alias{detect.outliers.array}
 \title{Detect outliers}
 \usage{
-detect.outliers(
-  mat2WR,
-  k = 3,
-  thres = 0.3,
-  test.island = TRUE,
-  keep.species = TRUE,
-  outlier.detection.method = 1
-)
+detect.outliers(mat2WR, k = 3, test.island = TRUE, old = FALSE)
 
-detect.complete.outliers(mat2WR, k = 3, thres = 0.3, keep.species = TRUE)
-
-detect.complete.outliers2(mat2WR, k = 3, thres = 0.3, keep.species = TRUE)
-
-detect.cell.outliers(mat2WR, k = 3, test.island = TRUE)
-
-detect.cell.outliers2(mat2WR, k = 3, test.island = TRUE)
-
-detect.cell.outliers3(mat2WR, k = 3, test.island = TRUE)
-
-detect.cell.outliers4(mat2WR, k = 3, test.island = TRUE)
+detect.outliers.array(arr, nbsp, k = 3)
 }
 \arguments{
 \item{mat2WR}{the 2WR matrix obtained with the Dist2WR function.}
@@ -37,20 +15,15 @@ detect.cell.outliers4(mat2WR, k = 3, test.island = TRUE)
 \item{k}{the strength of outlier detection. High values (typically 3) 
 correspond to less outliers detected than with lower ones (e.g. 1.5).}
 
-\item{thres}{threshold above which genes or species are considered as
-complete outliers. 0.3 means that a gene (resp. species) is a
-complete outlier if it is detected as outlier for more than 30\% of 
-its species (resp. genes).}
-
 \item{test.island}{should islands of outliers be treated as such. 
-Default to TRUE, i.e. only the highest value in the island is 
-removed. See details.}
+Default to FALSE. If TRUE, only the highest value in the island is 
+removed (This option may be deprecated soon).}
 
-\item{keep.species}{should species be prevented from being removed. This
-is useful if all species are important in the dataset. Default to TRUE
-(all species are kept).}
+\item{old}{Should the old detection method be used instead (default to FALSE).}
 
-\item{outlier.detection.method}{Method used to detect outliers from the 2WR matrix. Default to 1.}
+\item{arr}{Array of values, typically the weight of each gene matrix (alpha values).}
+
+\item{nbsp}{Number of species in the analysis}
 }
 \value{
 A list of outliers.
@@ -59,8 +32,14 @@ A list of outliers.
 Functions to detect outliers, either complete or cell (see details).
 }
 \details{
-These methods are similar to those described in phylo-MCOA for detecting
-outliers. These types of outliers are described in:
+These functions detect outliers in the 2WR matrix. The method 
+used is adapted to skewed data, as is the case here. Prior to outlier
+detection, the 2WR matrix is normalized by row and by column
+and the outliers are detected from the complete matrix using the 
+adjusted Tukey proposed by Hubert and Vandervieren (2008): 
+Hubert, M. and Vandervieren, E. (2008). An adjusted boxplot for skewed
+distributions. Computational Statistics and Data Analysis, 52, 5186-5201. 
+The different types of outliers (cell and complete) are described in:
 de Vienne D.M., Ollier S. et Aguileta G. (2012) Phylo-MCOA: 
 A Fast and Efficient Method to Detect Outlier Genes and Species
 in Phylogenomics Using Multiple Co-inertia Analysis. Molecular 
@@ -69,26 +48,12 @@ Biology and Evolution 29 : 1587-1598.
 \section{Functions}{
 \itemize{
 \item \code{detect.outliers}: a simple wrapper
-to call the two other functions described, and return complete ouliers
+to call the two other functions described, and return complete outliers
 if any, or cell outliers if no complete outliers exist.
 
-\item \code{detect.complete.outliers}: detects
-if complete outliers exist in the 2WR matrix. See details.
-
-\item \code{detect.complete.outliers2}: detects
-if complete outliers exist in the 2WR matrix. New version.
-
-\item \code{detect.cell.outliers}: detects
-if cell outliers exist in the 2WR matrix.
-
-\item \code{detect.cell.outliers2}: detects
-if cell outliers exist in the 2WR matrix. New version.
-
-\item \code{detect.cell.outliers3}: detects
-if cell outliers exist in the 2WR matrix. New New version.
-
-\item \code{detect.cell.outliers4}: detects
-if cell outliers exist in the 2WR matrix. New New version.
+\item \code{detect.outliers.array}: detects
+if array (here the correlations between gene matrices) contains outlier. This
+is the last step of the phylter process.
 }}
 
 \references{
@@ -96,4 +61,6 @@ de Vienne D.M., Ollier S. et Aguileta G. (2012) Phylo-MCOA:
 A Fast and Efficient Method to Detect Outlier Genes and Species
 in Phylogenomics Using Multiple Co-inertia Analysis. Molecular 
 Biology and Evolution 29 : 1587-1598.
+Hubert, M. and Vandervieren, E. (2008). An adjusted boxplot for skewed
+distributions. Computational Statistics and Data Analysis, 52, 5186-5201.
 }

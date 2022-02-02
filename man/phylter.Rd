@@ -9,11 +9,12 @@ phylter(
   bvalue = 0,
   distance = "patristic",
   k = 3,
+  k2 = k,
   thres = 0.3,
   Norm = TRUE,
   keep.species = TRUE,
   gene.names = NULL,
-  test.island = TRUE,
+  test.island = FALSE,
   verbose = TRUE,
   stop.criteria = 1e-05,
   InitialOnly = FALSE,
@@ -35,13 +36,17 @@ or nodal (number of nodes separating tips).}
 \item{k}{Strength of outlier detection. The higher this value the less outliers
 detected (see details).}
 
+\item{k2}{Strength of complete gene outlier detection. Increase k2 to be more conservative. 
+By default, k2=k.}
+
 \item{thres}{For the detection of complete outliert. Threshold above which genes or species
 are considered as complete outliers. 0.3 means that a gene (resp. species) is a
 complete outlier if it is detected as outlier for more than 30\% of 
 its species (resp. genes).}
 
 \item{Norm}{Should the matrices be normalized. If TRUE (the default), 
-each matrix is normalized such that its first eigenvalie is equal to one.}
+each matrix is divided by its median. This ensures that fast-evolving genes
+are not considered outliers.}
 
 \item{keep.species}{If TRUE, species are protected from being detected 
 as complete outliers and filtered out.}
@@ -53,7 +58,7 @@ elements are named 1,2,..,length(X).}
 an 'island' of outliers is considered an outlier. This prevents non-outliers hitchhiked by outliers
 to be considered outliers themselves.}
 
-\item{verbose}{If TRUE (the default), messages are written duringt the filtering process to get information
+\item{verbose}{If TRUE (the default), messages are written during the filtering process to get information
 of what is happening}
 
 \item{stop.criteria}{The optimisation stops when the gain between round n and round n+1 is smaller

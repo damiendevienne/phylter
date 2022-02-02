@@ -14,7 +14,7 @@ normalized and how. If what="none", the matrix is not normalized (the
 default), if what="species", the matrix is normalized so that the difference
 between species is increased, and if what="genes", the matrix is normalized
 so that the difference between genes is increased. Normalization consists
-in dividing each entry by either the mean of each row or the meab of each column.}
+in dividing each entry by either the mean of each row or the mean of each column.}
 }
 \value{
 A normalized matrix

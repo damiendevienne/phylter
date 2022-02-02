@@ -4,13 +4,12 @@
 \alias{DistatisFast}
 \title{DistatisFast}
 \usage{
-DistatisFast(matrices, Norm = TRUE, factorskept = 2)
+DistatisFast(matrices, Normalize = FALSE, factorskept = 2)
 }
 \arguments{
 \item{matrices}{A list of K distance matrices, all of the same dimension (IxI).}
 
-\item{Norm}{Should the matrices be normalized. If TRUE (the default), 
-each matrix is normalized such that its first eigenvalie is equal to one.}
+\item{Normalize}{Should the matrices be divided by its first eigenvalue (deprecated).}
 
 \item{factorskept}{Number of factors to keep for the computation of the factor 
 scores of the observations.}
@@ -20,7 +19,7 @@ Returns a list contanining
 \itemize{
 	\item 'alpha': array of length K of the weight associated to each matrix.
  \item 'lambda': array of length K of the normalization factors used for each matrix 
- if Norm=TRUE.
+ if Normalize=TRUE.
 	\item 'RVmat': a KxK matrix with RV correlation coefficient computed between all
  pairs of matrices.
 	\item 'compromise': an IxI matrix representing the best compromise between all 
