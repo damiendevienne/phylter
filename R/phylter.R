@@ -216,7 +216,7 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm=TRUE, gene.
 	##New 
 	Final$matrices<-matrices
 
-	call<-list(call=match.call(), bvalue=bvalue, distance=distance, k=k, Norm=Norm, keep.species=keep.species, gene.names=gene.names, test.island=test.island, verbose=verbose, stop.criteria=stop.criteria)
+	call<-list(call=match.call(), bvalue=bvalue, distance=distance, k=k, Norm=Norm, gene.names=gene.names, test.island=test.island, verbose=verbose, stop.criteria=stop.criteria)
 
 	Result<-list(Initial=Initial, Final=Final, call=call)
 	class(Result)<-c("phylter", "list")
