@@ -6,7 +6,7 @@
 **Phylter** relies on Distatis (Abdi et al, 2005), an extension of multidimensional scaling to 3 dimensions to compare multiple distance matrices at once.  
 **Phylter** takes as input either a collection of phylogenetic trees (that are converted to distance matrices by **Phylter**), or a collection of pairwise distance matrices (obtained from multiple sequence alignements, for instance).  
 **Phylter** accepts data with missing values (missing taxa in some genes).  
-**Phyler** detects outliers with a method proposed by Hubert & Vandervieren (2008) for skewed data.
+**Phyler** detects outliers with a method proposed by Hubert & Vandervieren (2008) for skewed data.  
 **Phylter** does not accept that the same taxa is present multiple times in the same gene. 
 
 
