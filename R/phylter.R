@@ -15,12 +15,15 @@
 #' or nodal (number of nodes separating tips).
 #' @param k Strength of outlier detection. The higher this value the less outliers
 #' detected (see details).
+#' @param k2 Strength of complete gene outlier detection. Increase k2 to be more conservative. 
+#' By default, k2=k. 
 #' @param thres For the detection of complete outliert. Threshold above which genes or species
 #' are considered as complete outliers. 0.3 means that a gene (resp. species) is a
 #' complete outlier if it is detected as outlier for more than 30\% of 
 #' its species (resp. genes).
 #' @param Norm Should the matrices be normalized. If TRUE (the default), 
-#' each matrix is normalized such that its first eigenvalie is equal to one.
+#' each matrix is divided by its median. This ensures that fast-evolving genes
+#' are not considered outliers.
 #' @param keep.species If TRUE, species are protected from being detected 
 #' as complete outliers and filtered out. 
 #' @param gene.names List of gene names used to rename elements in X. If NULL (the default), 
@@ -28,7 +31,7 @@
 #' @param test.island This should not be modified. If TRUE (the default), only the highest value in
 #' an 'island' of outliers is considered an outlier. This prevents non-outliers hitchhiked by outliers
 #' to be considered outliers themselves. 
-#' @param verbose If TRUE (the default), messages are written duringt the filtering process to get information
+#' @param verbose If TRUE (the default), messages are written during the filtering process to get information
 #' of what is happening
 #' @param stop.criteria The optimisation stops when the gain between round n and round n+1 is smaller
 #' than this value. Default to 1e-5.
@@ -37,11 +40,11 @@
 #' @param outlier.detection.method Method used to detect outliers from the 2WR matrix. Default to 1.
 #' @return A list of class 'phylter' with the 'Initial' (before filtering) and 'Final' (after filtering) states, 
 #' or a list of class 'phylterinitial' only, if InitialOnly=TRUE. 
-#' @importFrom utils tail
-#' @importFrom stats hclust as.dist
+#' @importFrom utils tail combn
+#' @importFrom stats hclust as.dist median
 #' @importFrom graphics plot
 #' @export
-phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, keep.species=TRUE, gene.names=NULL, test.island=TRUE, verbose=TRUE, stop.criteria=1e-5, InitialOnly=FALSE, outlier.detection.method=1) {
+phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, thres=0.3, Norm=TRUE, keep.species=TRUE, gene.names=NULL, test.island=FALSE, verbose=TRUE, stop.criteria=1e-5, InitialOnly=FALSE, outlier.detection.method=1) {
 	ReplaceValueWithCompromise<-function(allmat, what, compro, lambda) {
 		for (i in 1:length(allmat)) {
 			whatsp<-what[what[,1]==i,2]
@@ -71,19 +74,22 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, 
 		return(NewCells)
 	}
 	CompareBeforeAfter<-function(InitialMatrices, AllOutliers, sp.order, which="all") {
-		if (which=="all") {
-			cell.exists<-apply(AllOutliers, 1, function(x, sp) is.element(sp.order[x[2]],colnames(InitialMatrices[[x[1]]])), sp=sp.order)
-			AllOutliers<-AllOutliers[cell.exists,]
-			Out<-cbind(names(InitialMatrices[AllOutliers[,1]]), sp.order[AllOutliers[,2]])
-		}
-		if (which=="complete") {
-			Out<-NULL
-			speciesintables<-table(unlist(lapply(InitialMatrices, rownames)))
-			speciesinoutliers<-table(AllOutliers[,2])
-			Out$ComplOutSP<-names(which(speciesinoutliers==speciesintables[match(names(speciesinoutliers), names(speciesintables))]))
-			genesintables<-unlist(lapply(InitialMatrices, ncol))
-			genesinoutliers<-table(AllOutliers[,1])		
-			Out$ComplOutGN<-names(which(genesinoutliers==genesintables[match(names(genesinoutliers), names(genesintables))]))
+		if (is.null(AllOutliers)) Out<-NULL
+		else {
+			if (which=="all") {
+				cell.exists<-apply(AllOutliers, 1, function(x, sp) is.element(sp.order[x[2]],colnames(InitialMatrices[[x[1]]])), sp=sp.order)
+				AllOutliers<-AllOutliers[cell.exists,]
+				Out<-cbind(names(InitialMatrices[AllOutliers[,1]]), sp.order[AllOutliers[,2]])
+			}
+			if (which=="complete") {
+				Out<-NULL
+				speciesintables<-table(unlist(lapply(InitialMatrices, rownames)))
+				speciesinoutliers<-table(AllOutliers[,2])
+				Out$ComplOutSP<-names(which(speciesinoutliers==speciesintables[match(names(speciesinoutliers), names(speciesintables))]))
+				genesintables<-unlist(lapply(InitialMatrices, ncol))
+				genesinoutliers<-table(AllOutliers[,1])		
+				Out$ComplOutGN<-names(which(genesinoutliers==genesintables[match(names(genesinoutliers), names(genesintables))]))
+			}
 		}
 		return(Out)
 	}
@@ -97,8 +103,12 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, 
 		cat(paste("Number of Species:  ", nrow(matrices[[1]]), "\n", sep=""))
 		cat("--------\n")
 	}
+	## NEW (25/01/2022). Doing this, genes that havehigh values globally are not treated as outliers, 
+	## but long branches remain outliers (median is not too affected by outliers).
+	if (Norm==TRUE) matrices<-lapply(matrices, function(x) x/median(x))
 
-	RES<-DistatisFast(matrices, Norm)
+#	RES<-DistatisFast(matrices, Norm)
+	RES<-DistatisFast(matrices)
 	WR<-Dist2WR(RES)
 	##qfdkjùjfq
 	Initial<-NULL
@@ -118,23 +128,31 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, 
 	}
 
 	maxWR<-max(WR) ##for plotting purpose
-	if (verbose) cat(paste("Initial score: ",round(RES$quality, digits=ceiling(abs(log10(stop.criteria)))), "\n", sep=""))
+	if (verbose) cat(paste("Initial score: ",round(RES$quality, digits=ceiling(abs(log10(stop.criteria)))), "", sep=""))
 	VAL<-RES$quality #First Quality value
 	CELLSREMOVED<-NULL
 	continue<-TRUE
+	lastLoop<-FALSE #when switching to TRUE, we do the last loop where we search for complete gene outliers.
+	##We integrate this in the loop of cell outliers to keep possible the fact of not removing complete outliers detectected if they do not improve the quality of the compromise (very unlikely??)
 	##OPTIMIZATION
 	while(continue) {
 		# cluster rows to be able to detect 'islands'
 		OrderWRrow<-hclust(as.dist(RES$compromise))$order
+
 		# reorder rows according to row clustering
-		WR.reordered<-WR[OrderWRrow,]
-		# detct outliers (complete and cell by cell)
-		CellsToRemove<-detect.outliers(WR.reordered, k=k,thres=thres,test.island=test.island,keep.species=keep.species, outlier.detection.method=outlier.detection.method)
-		# reorder to previous order
-		CellsToRemove<-ReoderBackTheCells(CellsToRemove, OrderWRrow)
+		WR.reordered<-WR[OrderWRrow,]		
+		if (!lastLoop) {
+			# detect cell outliers
+			CellsToRemove<-detect.outliers(WR.reordered, k=k,test.island=test.island, old=FALSE)
+			# reorder to previous order
+			CellsToRemove<-ReoderBackTheCells(CellsToRemove, OrderWRrow)
+		}
+		else {
+			CellsToRemove<-detect.outliers.array(RES$alpha, nrow(RES$compromise), k=k2)
+		}
 		NewCellsToRemove<-FindNewCells(CellsToRemove$cells, CELLSREMOVED)
 		if (verbose & !is.null(nrow(NewCellsToRemove))) {
-			cat(paste("   ",nrow(NewCellsToRemove)," new cells to remove "))
+			cat(paste("\n   ",nrow(NewCellsToRemove)," new cells to remove "))
 		}
 		if (!is.null(NewCellsToRemove)) {
 			CELLSREMOVED.new<-rbind(CELLSREMOVED, NewCellsToRemove) 
@@ -147,30 +165,46 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, thres=0.3, Norm=TRUE, 
 #			if (gain<0) {
 			if (gain<stop.criteria) {
 				if (verbose) cat(" -> NO")
-				if (verbose) cat("\n   Gain too small. Stopping optimization.")
-				continue<-FALSE
+				if (verbose) cat("\n => Gain too small")
+				if (lastLoop) {
+					continue<-FALSE #c'est vraiment la fin
+					if (verbose) cat("  ->  Stopping optimization.")
+
+				}
+				else {
+					if (verbose) cat ("  ->  Checking for complete gene outliers")
+					lastLoop<-TRUE ##
+				}
+				
 			}
-			else {
-				if (verbose) cat(" -> OK\n")
+			else { #on continue. 
+				if (verbose) cat(" -> OK")
 				RES<-RES.new
 				matrices<-matrices.new
 				CELLSREMOVED<-CELLSREMOVED.new
 				VAL<-VAL.new
 				WR<-Dist2WR(RES)
+				#si lastLoop était vrai, il redevient faux car on se demande si on peut réaméliorer maintenant améliorer.
+				if (lastLoop) lastLoop<-FALSE
 			}
-			# 	if(gain<stop.criteria) {
-			# 		cat("\n   Gain too small. Stopping optimization. ")
-			# 		continue<-FALSE
-			# 	}
-			# }
+
 		}
 		else {
-			cat ("\n   No more outlier detected. Stopping optimization.")
-			break
-			continue<-FALSE
+			if (verbose) cat ("\n => No more outliers detected")
+			if (lastLoop) {
+				cat ("  ->  STOPPING OPTIMIZATION")
+				break ##usefull?
+				continue<-FALSE #c'est vraiment la fin
+			}
+			else {
+				if (verbose) cat ("  ->  Checking for complete gene outliers")
+				lastLoop<-TRUE
+
+			}
 		}
 
 	}
+
 	# Prepare return object
 	Final<-NULL
 	Final$WR<-WR

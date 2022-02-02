@@ -6,137 +6,41 @@
 #' 
 #' Functions to detect outliers, either complete or cell (see details). 
 #' 
-#' These methods are similar to those described in phylo-MCOA for detecting
-#' outliers. These types of outliers are described in:
+#' These functions detect outliers in the 2WR matrix. The method 
+#' used is adapted to skewed data, as is the case here. Prior to outlier
+#' detection, the 2WR matrix is normalized by row and by column
+#' and the outliers are detected from the complete matrix using the 
+#' adjusted Tukey proposed by Hubert and Vandervieren (2008): 
+#' Hubert, M. and Vandervieren, E. (2008). An adjusted boxplot for skewed
+#' distributions. Computational Statistics and Data Analysis, 52, 5186-5201. 
+#' The different types of outliers (cell and complete) are described in:
 #' de Vienne D.M., Ollier S. et Aguileta G. (2012) Phylo-MCOA: 
 #' A Fast and Efficient Method to Detect Outlier Genes and Species
 #' in Phylogenomics Using Multiple Co-inertia Analysis. Molecular 
 #' Biology and Evolution 29 : 1587-1598.
 #' 
 #' @describeIn detect.outliers a simple wrapper
-#' to call the two other functions described, and return complete ouliers
+#' to call the two other functions described, and return complete outliers
 #' if any, or cell outliers if no complete outliers exist.
 #' 
 #' @param mat2WR the 2WR matrix obtained with the Dist2WR function.
 #' @param k the strength of outlier detection. High values (typically 3) 
 #' correspond to less outliers detected than with lower ones (e.g. 1.5).
-#' @param thres threshold above which genes or species are considered as
-#' complete outliers. 0.3 means that a gene (resp. species) is a
-#' complete outlier if it is detected as outlier for more than 30\% of 
-#' its species (resp. genes).
 #' @param test.island should islands of outliers be treated as such. 
-#' Default to TRUE, i.e. only the highest value in the island is 
-#' removed. See details. 
-#' @param keep.species should species be prevented from being removed. This
-#' is useful if all species are important in the dataset. Default to TRUE
-#' (all species are kept).
-#' @param outlier.detection.method Method used to detect outliers from the 2WR matrix. Default to 1.
+#' Default to FALSE. If TRUE, only the highest value in the island is 
+#' removed (This option may be deprecated soon). 
+#' @param old Should the old detection method be used instead (default to FALSE).
 #' @return A list of outliers.
 #' @references de Vienne D.M., Ollier S. et Aguileta G. (2012) Phylo-MCOA: 
 #' A Fast and Efficient Method to Detect Outlier Genes and Species
 #' in Phylogenomics Using Multiple Co-inertia Analysis. Molecular 
 #' Biology and Evolution 29 : 1587-1598.
-#' @export
-#' 
-detect.outliers<-function(mat2WR, k=3, thres=0.3, test.island=TRUE, keep.species=TRUE, outlier.detection.method=1) {
-  #Test for complete outliers
-  CELLS<-NULL
-  CompOutl <- detect.complete.outliers(mat2WR, k = k, thres = thres, keep.species=keep.species)
-  if (nrow(CompOutl$cells)>0) {
-    print("yesyindeed")
-    CELLS$outgn<-CompOutl$outgn
-    CELLS$outsp<-CompOutl$outsp
-    CELLS$cells<-CompOutl$cells
-  }
-  else {
-    if (outlier.detection.method==1) CellOutl <- detect.cell.outliers(mat2WR, k = k, test.island=test.island)
-    if (outlier.detection.method==2) CellOutl <- detect.cell.outliers2(mat2WR, k = k, test.island=test.island)
-    if (outlier.detection.method==3) CellOutl <- detect.cell.outliers3(mat2WR, k = k, test.island=test.island)
-    if (outlier.detection.method==4) CellOutl <- detect.cell.outliers4(mat2WR, k = k, test.island=test.island)
-    if (outlier.detection.method==5) CellOutl <- detect.cell.outliers5(mat2WR, k = k, test.island=test.island)
-
-    CELLS$outgn<-NULL
-    CELLS$outsp<-NULL
-    CELLS$cells<-CellOutl$cells
-  }
-  return(CELLS)
-}
-
-#' @describeIn detect.outliers detects
-#' if complete outliers exist in the 2WR matrix. See details.
-#' @export
-detect.complete.outliers <- function(mat2WR, k = 3, thres = 0.3, keep.species=TRUE) {
-  RES<-NULL
-  outl.sub <- function(x, k) {
-    return(x > quantile(x)[4] + k * IQR(x) + 1e-10)
-    ##note: the 1e-10 ,is because when all values are similar except one, the first one is considered as equal to the third quartile... May be a bug in quantile function?
-  }
-  tabgn <- normalize(mat2WR, "genes") ##this normalization is useless.
-  tabgn.TF <- t(apply(tabgn, 1, outl.sub, k = k))
-  tabgn.TF<-tabgn.TF+0
-  score.genes <- apply(tabgn.TF, 2, mean)
-  out.genes <- which(score.genes > thres)
-#  RES$outgn <- names(out.genes)
-  RES$outgn <- out.genes
-  cells.outgn<-cbind(rep(out.genes, each=nrow(mat2WR)),rep(1:nrow(mat2WR), length(out.genes))) 
-  if (!keep.species) {
-    tabsp <- normalize(mat2WR, "species")
-    tabsp.TF <- apply(tabsp,2, outl.sub, k = k)
-    tabsp.TF<-tabsp.TF+0
-    score.species <- apply(tabsp.TF, 1, mean)
-    out.species <- which(score.species > thres)
-    # RES$outsp <- names(out.species)
-    RES$outsp <- out.species
-    cells.outsp<-cbind(rep(1:ncol(mat2WR), length(out.species)), rep(out.species, each=ncol(mat2WR)))
-  }
-  else {
-    RES$outsp<-NULL 
-    cells.outsp<-NULL
-  }
-  RES$cells <- rbind(cells.outgn, cells.outsp)  #Col 1 = gn; col 2 = sp
-  dimnames(RES$cells)<-NULL
-  return(RES)
-}
-
-#' @describeIn detect.outliers detects
-#' if complete outliers exist in the 2WR matrix. New version.
-#' @export
-detect.complete.outliers2 <- function(mat2WR, k = 3, thres = 0.3, keep.species=TRUE) {
-  RES<-NULL
-  outl.sub <- function(x, k) {
-    return(x > quantile(x)[4] + k * IQR(x) + 1e-10)
-    ##note: the 1e-10 ,is because when all values are similar except one, the first one is considered as equal to the third quartile... May be a bug in quantile function?
-  }
-
-  mat2WR_normalized<-t(apply(mat2WR,1,function(x) x/mean(x))) #nroamlize by row
-  testspgn<-apply(mat2WR_normalized,2,function(x) outl.sub(x,k=k)) + 0
-  score.genes <- apply(testspgn, 2, mean)
-  out.genes <- which(score.genes > thres)
-  RES$outgn <- out.genes
-  cells.outgn<-cbind(rep(out.genes, each=nrow(mat2WR)),rep(1:nrow(mat2WR), length(out.genes))) 
-  if (!keep.species) {
-    score.species <- apply(testspgn, 1, mean)
-    out.species <- which(score.species > thres)
-    # RES$outsp <- names(out.species)
-    RES$outsp <- out.species
-    cells.outsp<-cbind(rep(1:ncol(mat2WR), length(out.species)), rep(out.species, each=ncol(mat2WR)))
-  }
-  else {
-    RES$outsp<-NULL 
-    cells.outsp<-NULL
-  }
-  RES$cells <- rbind(cells.outgn, cells.outsp)  #Col 1 = gn; col 2 = sp
-  dimnames(RES$cells)<-NULL
-  return(RES)
-}
-
-
-#' @describeIn detect.outliers detects
-#' if cell outliers exist in the 2WR matrix.
+#' Hubert, M. and Vandervieren, E. (2008). An adjusted boxplot for skewed
+#' distributions. Computational Statistics and Data Analysis, 52, 5186-5201. 
+#' @importFrom mrfDepth medcouple
 #' @importFrom stats dist quantile IQR
-#' @importFrom utils combn
 #' @export
-detect.cell.outliers <- function(mat2WR, k = 3, test.island=TRUE) {
+detect.outliers <- function(mat2WR, k = 3, test.island=TRUE, old=FALSE) {
   MAT <- mat2WR
   detect.island <- function(arr) {
     spi.names <- names(arr)
@@ -187,21 +91,35 @@ detect.cell.outliers <- function(mat2WR, k = 3, test.island=TRUE) {
       return(c(list.i, out.island))
     }
   }
+  #NEW
+  outl.adj.tuckey<-function(x,k) {
+    mc<-medcouple(array(x))
+    return(x > (quantile(x)[4] + k*exp(3*mc)*IQR(x) + 1e-10))
+  }
+  #END NEW
   outl.sub <- function(x, k) {
     return(x > quantile(x)[4] + k * IQR(x) + 1e-10)
   }
-  MATspgn <- normalize(mat2WR, "genes") * normalize(mat2WR, "species")
-  testspgn1 <- apply(MATspgn, 2, outl.sub, k = k)
-  testspgn2 <- t(apply(MATspgn, 1, outl.sub, k = k))
-  testspgn <- testspgn1 * testspgn2 
-  testFALSE <- testspgn
+  if (old) {
+    MATspgn <- normalize(mat2WR, "genes") * normalize(mat2WR, "species")
+    testspgn1 <- apply(MATspgn, 2, outl.sub, k = k)
+    testspgn2 <- t(apply(MATspgn, 1, outl.sub, k = k))
+    testspgn <- testspgn1 * testspgn2 
+    testFALSE <- testspgn
+  }
+  else {
+    #normalized matrix so that each column (gene) is divided by its median
+    MATspgn <- normalize(mat2WR,"species")
+    tabgn.TF<-outl.adj.tuckey(MATspgn,k)
+    testFALSE<-tabgn.TF+0 
+  }
   #
   RESULT<-NULL
   #
   if (sum(testFALSE) > 0) {
     if (test.island==TRUE) {
-      out.list <- apply(testspgn, 2, detect.island)
-      genes <- colnames(testspgn)
+      out.list <- apply(testFALSE, 2, detect.island)
+      genes <- colnames(testFALSE)
       res <- c(NA,NA)
       for (i in 1:length(out.list)) {
         if (!is.null(out.list[[i]])) {
@@ -226,348 +144,43 @@ detect.cell.outliers <- function(mat2WR, k = 3, test.island=TRUE) {
     }
     else { ##we return all cells viewed as outliers (more violent...)
       cells<-which(testFALSE!=0,arr.ind = TRUE, useNames=FALSE)
-      RESULT$cells<-cells[,c(2,1)]
-    }
-  }
-  return(RESULT)
-}
-
-
-#' @describeIn detect.outliers detects
-#' if cell outliers exist in the 2WR matrix. New version.
-#' @importFrom stats dist quantile IQR
-#' @importFrom utils combn
-#' @export
-detect.cell.outliers2 <- function(mat2WR, k = 3, test.island=TRUE) {
-  detect.island <- function(arr) {
-    spi.names <- names(arr)
-    spi <- 1:length(spi.names)
-    names(spi) <- spi.names
-    true.names <- names(arr)[arr == TRUE]
-    if (length(true.names) == 1) {
-      return(list(true.names))
-    }
-    else if (length(true.names) > 1) {
-      true.i <- spi[true.names]
-      res<-dist(true.i)
-      table.i <- cbind(t(combn(attributes(res)$Labels, 2)), array(res))
-      in.island<-NULL
-      if (length(table.i[table.i[, 3] == "1", 3]) == 0) {
-        in.island <- "nopair"
-        list.i <- NULL
-      }
-      if (length(table.i[table.i[,3] == "1", 3]) == 1) {
-        in.island <- table.i[table.i[,3] == "1", c(1, 2)]
-        list.i <- list(in.island)
-      }
-      if (is.null(in.island)) {
-        table.small <- table.i[table.i[,3] == "1",c(1,2)]
-        list.i <- list()
-        for (i in 1:nrow(table.small)) list.i[[i]] <- table.small[i, ]
-        for (i in 1:(length(list.i) - 1)) {
-          for (j in (i+1):length(list.i)) {
-            if (length(intersect(list.i[[i]], list.i[[j]])) > 0) {
-              list.i[[i]] <- c(list.i[[i]], list.i[[j]])
-              list.i[[j]] <- "out"
-              list.i[[i]] <- unique(list.i[[i]])
-            }
-          }
-        }
-        list.i2 <- list()
-        w <- 0
-        for (i in 1:length(list.i)) {
-          if ((length(list.i[[i]]) > 1)&&(list.i[[i]][1] != "out")) {
-            w <- w+1
-            list.i2[[w]] <- list.i[[i]]
-            in.island <- c(in.island, list.i[[i]])
-          }
-        }
-        list.i <- list.i2
-      }
-      out.island <- as.list(setdiff(true.names, in.island))
-      return(c(list.i, out.island))
-    }
-  }
-  outl.sub <- function(x, k) {
-    return(x > quantile(x)[4] + k * IQR(x) + 1e-10)
-  }
-  ### IN THIS NEW VERSION, WE DO NOT TAKE THE PRODUCT OF THE NORMALIZED MATRICES
-  ### WE ONLY DETECT OUTLIERS ON EACH NRMALIZED MATRIX AND THEN TAKE 
-  ### CELLS THAT ARE OUTLIERS BOTH TIMES. 
-
-  mat2WR_normalized1<-t(apply(mat2WR,1,function(x) x/mean(x))) #nroamlize by row
-  testspgn1<-apply(mat2WR_normalized1,2,function(x) outl.sub(x,k=k)) + 0
-
-  mat2WR_normalized2<-apply(mat2WR,2,function(x) x/mean(x)) #nroamlize by row
-  testspgn2<-t(apply(mat2WR_normalized2,1,function(x) outl.sub(x,k=k))) + 0
-
-  testspgn<-testspgn1*testspgn2
-
-  #
-  RESULT<-NULL
-  #
-  if (sum(testspgn) > 0) {
-    if (test.island==TRUE) {
-      out.list <- apply(testspgn, 2, detect.island)
-      genes <- colnames(testspgn)
-      res <- c(NA,NA)
-      for (i in 1:length(out.list)) {
-        if (!is.null(out.list[[i]])) {
-          for (j in 1:length(out.list[[i]])) { ##for each "island"
-            if (length(out.list[[i]][[j]]) == 1) res <- rbind(res, c(out.list[[i]][[j]], genes[i]))
-            if (length(out.list[[i]][[j]]) > 1) {
-              vals <- mat2WR[out.list[[i]][[j]], genes[i]]
-              multi = c(names(vals)[vals == max(vals)])
-              if(length(multi) > 1){
-                x = cbind(multi, rep(genes[i],length(multi)))
-                res <- rbind(res, x)
-              }
-              else{
-                res <- rbind(res, c(multi, genes[i]))
-              }
-            }
-          }
-        }
-      }
-      colnames(res) <- c("Species", "Genes")
-      RESULT$cells<-cbind(match(res[,2][-1], colnames(mat2WR)),match(res[,1][-1], rownames(mat2WR)))
-    }
-    else { ##we return all cells viewed as outliers (more violent...)
-      cells<-which(testspgn!=0,arr.ind = TRUE, useNames=FALSE)
-      RESULT$cells<-cells[,c(2,1)]
-    }
-  }
-  return(RESULT)
-}
-
-
-#' @describeIn detect.outliers detects
-#' if cell outliers exist in the 2WR matrix. New New version.
-#' @importFrom stats dist quantile IQR
-#' @importFrom utils combn
-#' @export
-detect.cell.outliers3 <- function(mat2WR, k = 3, test.island=TRUE) {
-  detect.island <- function(arr) {
-    spi.names <- names(arr)
-    spi <- 1:length(spi.names)
-    names(spi) <- spi.names
-    true.names <- names(arr)[arr == TRUE]
-    if (length(true.names) == 1) {
-      return(list(true.names))
-    }
-    else if (length(true.names) > 1) {
-      true.i <- spi[true.names]
-      res<-dist(true.i)
-      table.i <- cbind(t(combn(attributes(res)$Labels, 2)), array(res))
-      in.island<-NULL
-      if (length(table.i[table.i[, 3] == "1", 3]) == 0) {
-        in.island <- "nopair"
-        list.i <- NULL
-      }
-      if (length(table.i[table.i[,3] == "1", 3]) == 1) {
-        in.island <- table.i[table.i[,3] == "1", c(1, 2)]
-        list.i <- list(in.island)
-      }
-      if (is.null(in.island)) {
-        table.small <- table.i[table.i[,3] == "1",c(1,2)]
-        list.i <- list()
-        for (i in 1:nrow(table.small)) list.i[[i]] <- table.small[i, ]
-        for (i in 1:(length(list.i) - 1)) {
-          for (j in (i+1):length(list.i)) {
-            if (length(intersect(list.i[[i]], list.i[[j]])) > 0) {
-              list.i[[i]] <- c(list.i[[i]], list.i[[j]])
-              list.i[[j]] <- "out"
-              list.i[[i]] <- unique(list.i[[i]])
-            }
-          }
-        }
-        list.i2 <- list()
-        w <- 0
-        for (i in 1:length(list.i)) {
-          if ((length(list.i[[i]]) > 1)&&(list.i[[i]][1] != "out")) {
-            w <- w+1
-            list.i2[[w]] <- list.i[[i]]
-            in.island <- c(in.island, list.i[[i]])
-          }
-        }
-        list.i <- list.i2
-      }
-      out.island <- as.list(setdiff(true.names, in.island))
-      return(c(list.i, out.island))
-    }
-  }
-  outl.sub <- function(x, k) {
-    return(x > quantile(x)[4] + k * IQR(x) + 1e-10)
-  }
-  ### SIMPLEST CASE
-
-  testspgn1<-apply(mat2WR,2,function(x) outl.sub(x,k=k)) + 0
-  testspgn2<-t(apply(mat2WR,1,function(x) outl.sub(x,k=k))) + 0
-
-  testspgn<-testspgn1+testspgn2
-  testspgn<-(testspgn>0)+0
-
-  #
-  RESULT<-NULL
-  #
-  if (sum(testspgn) > 0) {
-    if (test.island==TRUE) {
-      out.list <- apply(testspgn, 2, detect.island)
-      genes <- colnames(testspgn)
-      res <- c(NA,NA)
-      for (i in 1:length(out.list)) {
-        if (!is.null(out.list[[i]])) {
-          for (j in 1:length(out.list[[i]])) { ##for each "island"
-            if (length(out.list[[i]][[j]]) == 1) res <- rbind(res, c(out.list[[i]][[j]], genes[i]))
-            if (length(out.list[[i]][[j]]) > 1) {
-              vals <- mat2WR[out.list[[i]][[j]], genes[i]]
-              multi = c(names(vals)[vals == max(vals)])
-              if(length(multi) > 1){
-                x = cbind(multi, rep(genes[i],length(multi)))
-                res <- rbind(res, x)
-              }
-              else{
-                res <- rbind(res, c(multi, genes[i]))
-              }
-            }
-          }
-        }
-      }
-      colnames(res) <- c("Species", "Genes")
-      RESULT$cells<-cbind(match(res[,2][-1], colnames(mat2WR)),match(res[,1][-1], rownames(mat2WR)))
-    }
-    else { ##we return all cells viewed as outliers (more violent...)
-      cells<-which(testspgn!=0,arr.ind = TRUE, useNames=FALSE)
-      RESULT$cells<-cells[,c(2,1)]
-    }
-  }
-  return(RESULT)
-}
-
-
-#' @describeIn detect.outliers detects
-#' if cell outliers exist in the 2WR matrix. New New version.
-#' @importFrom stats dist quantile IQR
-#' @importFrom utils combn
-#' @export
-detect.cell.outliers4 <- function(mat2WR, k = 3, test.island=TRUE) {
-  detect.island <- function(arr) {
-    spi.names <- names(arr)
-    spi <- 1:length(spi.names)
-    names(spi) <- spi.names
-    true.names <- names(arr)[arr == TRUE]
-    if (length(true.names) == 1) {
-      return(list(true.names))
-    }
-    else if (length(true.names) > 1) {
-      true.i <- spi[true.names]
-      res<-dist(true.i)
-      table.i <- cbind(t(combn(attributes(res)$Labels, 2)), array(res))
-      in.island<-NULL
-      if (length(table.i[table.i[, 3] == "1", 3]) == 0) {
-        in.island <- "nopair"
-        list.i <- NULL
-      }
-      if (length(table.i[table.i[,3] == "1", 3]) == 1) {
-        in.island <- table.i[table.i[,3] == "1", c(1, 2)]
-        list.i <- list(in.island)
-      }
-      if (is.null(in.island)) {
-        table.small <- table.i[table.i[,3] == "1",c(1,2)]
-        list.i <- list()
-        for (i in 1:nrow(table.small)) list.i[[i]] <- table.small[i, ]
-        for (i in 1:(length(list.i) - 1)) {
-          for (j in (i+1):length(list.i)) {
-            if (length(intersect(list.i[[i]], list.i[[j]])) > 0) {
-              list.i[[i]] <- c(list.i[[i]], list.i[[j]])
-              list.i[[j]] <- "out"
-              list.i[[i]] <- unique(list.i[[i]])
-            }
-          }
-        }
-        list.i2 <- list()
-        w <- 0
-        for (i in 1:length(list.i)) {
-          if ((length(list.i[[i]]) > 1)&&(list.i[[i]][1] != "out")) {
-            w <- w+1
-            list.i2[[w]] <- list.i[[i]]
-            in.island <- c(in.island, list.i[[i]])
-          }
-        }
-        list.i <- list.i2
-      }
-      out.island <- as.list(setdiff(true.names, in.island))
-      return(c(list.i, out.island))
-    }
-  }
-  outl.sub <- function(x, k) {
-    return(x > quantile(x)[4] + k * IQR(x) + 1e-10)
-  }
-  ### Normalize by row: 
-  mat2WR.normalized<-normalize(mat2WR, "species")
-  testspgn1<-apply(mat2WR.normalized,2,function(x) x==max(x))+0
-  testspgn2<-t(apply(mat2WR.normalized,1,function(x) x==max(x)))+0
-  testspgn<-testspgn1*testspgn2
-
-  #
-  RESULT<-NULL
-  #
-  if (sum(testspgn) > 0) {
-    if (test.island==TRUE) {
-      out.list <- apply(testspgn, 2, detect.island)
-      genes <- colnames(testspgn)
-      res <- c(NA,NA)
-      for (i in 1:length(out.list)) {
-        if (!is.null(out.list[[i]])) {
-          for (j in 1:length(out.list[[i]])) { ##for each "island"
-            if (length(out.list[[i]][[j]]) == 1) res <- rbind(res, c(out.list[[i]][[j]], genes[i]))
-            if (length(out.list[[i]][[j]]) > 1) {
-              vals <- mat2WR[out.list[[i]][[j]], genes[i]]
-              multi = c(names(vals)[vals == max(vals)])
-              if(length(multi) > 1){
-                x = cbind(multi, rep(genes[i],length(multi)))
-                res <- rbind(res, x)
-              }
-              else{
-                res <- rbind(res, c(multi, genes[i]))
-              }
-            }
-          }
-        }
-      }
-      colnames(res) <- c("Species", "Genes")
-      RESULT$cells<-cbind(match(res[,2][-1], colnames(mat2WR)),match(res[,1][-1], rownames(mat2WR)))
-    }
-    else { ##we return all cells viewed as outliers (more violent...)
-      cells<-which(testspgn!=0,arr.ind = TRUE, useNames=FALSE)
-      RESULT$cells<-cells[,c(2,1)]
-    }
-  }
-  return(RESULT)
-}
-
-#' @describeIn detect.outliers detects
-#' if cell outliers exist in the 2WR matrix. New New version.
-#' @importFrom stats dist quantile IQR
-#' @importFrom utils combn
-#' @export
-detect.cell.outliers5 <- function(mat2WR, k = 3, test.island=TRUE) {
-  outl.sub <- function(x, k) {
-    return(x > quantile(x)[4] + k * IQR(x) + 1e-10)
-  }
-  MATspgn <- normalize(mat2WR, "genes") * normalize(mat2WR, "species")
-  testspgn1 <- apply(MATspgn, 2, outl.sub, k = k)
-  testspgn2 <- t(apply(MATspgn, 1, outl.sub, k = k))
-  testspgn <- testspgn1 * testspgn2 
-  #
-  RESULT<-NULL
-  #
-  if (sum(testspgn) > 0) {
-      cells<-which(testspgn!=0,arr.ind = TRUE, useNames=FALSE)
-      cells<-cells[which.max(mat2WR[cells]),,drop=FALSE]
       RESULT$cells<-cells[,c(2,1), drop=FALSE]
+    }
   }
+  else RESULT$cells<-NULL
+#   plot(cbind(rep(1:ncol(mat2WR), each=nrow(mat2WR)), rep(1:nrow(mat2WR))), cex=array(mat2WR))
+#   points(RESULT$cells, col="red")
+# #  title(nrow(RESULT$cells))
+#   scan() 
+  RESULT$outgn<-NULL
+  RESULT$outsp<-NULL
   return(RESULT)
 }
 
-
+#' @describeIn detect.outliers detects
+#' if array (here the correlations between gene matrices) contains outlier. This
+#' is the last step of the phylter process.
+#' @param arr Array of values, typically the weight of each gene matrix (alpha values).
+#' @param nbsp Number of species in the analysis
+#' @export
+detect.outliers.array <- function(arr, nbsp, k = 3) {
+  RES<-NULL 
+  #new outlier detection method:
+  outl.adj.tuckey<-function(x,k) {
+    mc<-medcouple(array(x))
+    return(x > (quantile(x)[4] + k*exp(3*mc)*IQR(x) + 1e-10))
+  }
+  out.genes<-which(outl.adj.tuckey(-arr, k=k)) #we put negative(arr) because we want the **smallest** outliers
+  if (length(out.genes)>0) {
+    RES$outgn<-out.genes
+    cells.outgn<-cbind(rep(out.genes, each=nbsp),rep(1:nbsp, length(out.genes))) 
+    RES$cells<-cells.outgn
+    RES$outsp<-NULL
+  }
+  else {
+    RES$outgn<-NULL
+    RES$outsp<-NULL
+    RES$cells<-NULL
+  }
+  return(RES)
+}
