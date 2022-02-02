@@ -54,7 +54,7 @@ plot.phylter<-function(x, what="all", layout=1, sorted=TRUE, ...) {
 	sum<-summary(x)
 	nbg<-length(sum$initial.nb.sp.per.mat)
 
-	DF_genes<-data.frame(namegene=rep(names(sum$initial.nb.sp.per.mat),2), number=c(sum$nb.sp.removed.per.gene, sum$initial.nb.sp.per.mat-sum$nb.sp.removed.per.gene), Species=c(rep("Removed",nbg), rep("Kept", nbg)))
+	DF_genes<-data.frame(namegene=rep(names(sum$initial.nb.sp.per.mat),2), number=c(sum$nb.sp.removed.per.gene, sum$initial.nb.sp.per.mat-sum$nb.sp.removed.per.gene), Species=factor(c(rep("Removed",nbg), rep("Kept", nbg))))
 	DF_genes$Species<-relevel(DF_genes$Species, "Removed")
 
 	if (sorted) {
@@ -69,7 +69,7 @@ plot.phylter<-function(x, what="all", layout=1, sorted=TRUE, ...) {
 	speciesinoutliers_reordered<-speciesinoutliers[match(names(speciesintables), names(speciesinoutliers))]
 	speciesinoutliers_reordered[is.na(speciesinoutliers_reordered)]<-0
 	names(speciesinoutliers_reordered)<-names(speciesintables)
-	DF_species<-data.frame(namespecies=rep(names(speciesintables),2), number=c(speciesinoutliers_reordered, speciesintables-speciesinoutliers_reordered), Genes=c(rep("Removed",nbs), rep("Kept", nbs)))
+	DF_species<-data.frame(namespecies=rep(names(speciesintables),2), number=c(speciesinoutliers_reordered, speciesintables-speciesinoutliers_reordered), Genes=factor(c(rep("Removed",nbs), rep("Kept", nbs))))
 	DF_species$Genes<-relevel(DF_species$Genes, "Removed")
 
 	if (sorted) {
