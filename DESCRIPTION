@@ -1,12 +1,13 @@
 Package: phylter
 Title: Detect Visualize and Remove Outliers in Phylogenomics Datasets
 Version: 0.9.0
-Imports: ape, RSpectra, stats, utils, ggplot2, reshape2
+Imports: ape, RSpectra, stats, utils, ggplot2, reshape2, mrfDepth
 Author: Damien de Vienne, Stéphane Dray
 Maintainer: Aurélie Siberchicot <aurelie.siberchicot@univ-lyon1.fr>
 License: GPL (>= 2)
-Description: Une description qui va bien.
+Description: Phylter is a tool for analyzing, visualizing and filtering phylogenomics datasets.
+LazyData: true
 Depends: R (>= 2.10)
 BugReports: https://github.com/damiendevienne/phylter/issues
 Encoding: UTF-8
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
