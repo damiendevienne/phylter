@@ -8,15 +8,14 @@
 #' is particularly visible when the number of matrices is large.  
 #' 
 #' @param matrices A list of K distance matrices, all of the same dimension (IxI).
-#' @param Norm Should the matrices be normalized. If TRUE (the default), 
-#' each matrix is normalized such that its first eigenvalie is equal to one.
+#' @param Normalize Should the matrices be divided by its first eigenvalue (deprecated). 
 #' @param factorskept Number of factors to keep for the computation of the factor 
 #' scores of the observations.
 #' @return Returns a list contanining 
 #' \itemize{
 #' 	\item 'alpha': array of length K of the weight associated to each matrix.
 #'  \item 'lambda': array of length K of the normalization factors used for each matrix 
-#'  if Norm=TRUE.
+#'  if Normalize=TRUE.
 #' 	\item 'RVmat': a KxK matrix with RV correlation coefficient computed between all
 #'  pairs of matrices.
 #' 	\item 'compromise': an IxI matrix representing the best compromise between all 
@@ -32,7 +31,7 @@
 #' Diego, CA, USA). pp. 42-47.
 #' @importFrom RSpectra eigs_sym
 #' @export
-DistatisFast<-function(matrices, Norm=TRUE, factorskept=2) {
+DistatisFast<-function(matrices, Normalize=FALSE, factorskept=2) {
 	# GetCmat <- function(OrderedMatrices, RV = TRUE) {
 	# 	CP2<-do.call(cbind, lapply(OrderedMatrices, array))
 	# 	C <- crossprod(CP2) #faster than using t(CP2) %*% CP2
@@ -88,8 +87,7 @@ DistatisFast<-function(matrices, Norm=TRUE, factorskept=2) {
 	### Compute weights
 	matrices.dblcent<-lapply(matrices, DblCenterDist)
 	# if (Norm) matrices.dblcent<-lapply(matrices.dblcent, MFAnormCP) ##normalize is asked
-	if (Norm) {
-		print("NORMMMMM")
+	if (Normalize) {
 		lambda<-lapply(matrices.dblcent, GetLambdaForNorm)
 		matrices.dblcent<-Map("/", matrices.dblcent, lambda)
 		lambda<-unname(unlist(lambda))
@@ -103,12 +101,13 @@ DistatisFast<-function(matrices, Norm=TRUE, factorskept=2) {
 	quality<-FirstEigenVector$values/nbGn
 	### Compute compromise matrix (C) and its projection (Splus)
 	WeightedMatrices<-sapply(1:nbGn, function(x,MAT,weight) MAT[[x]]*weight[x],MAT=matrices.dblcent, weight=alpha, simplify=FALSE)
-	WeightedMatrices.initial<-sapply(1:nbGn, function(x,MAT,weight) MAT[[x]]*weight[x],MAT=matrices, weight=alpha, simplify=FALSE)
+#	WeightedMatrices.initial<-sapply(1:nbGn, function(x,MAT,weight) MAT[[x]]*weight[x],MAT=matrices, weight=alpha, simplify=FALSE)
 
 	Splus<-Reduce('+',WeightedMatrices)
 	# compromise<-Reduce('+',WeightedMatrices.initial)
 	dimnames(Splus)<-list(Sp,Sp)
 	s<-diag(Splus)
+	#### dé-centrage ####
 	compromise<-sweep(sweep(-2*(Splus),1,s,"+"),2,s,"+")
 	## ca fois me mambda c'est OK.
 	### Keep few (=factorskept) axes and project individual matrices
@@ -124,5 +123,21 @@ DistatisFast<-function(matrices, Norm=TRUE, factorskept=2) {
 
 	PartialF = lapply(matrices.dblcent, function(x,y) x %*% y, y=Proj)
 
-	return(list(F=F, PartialF=PartialF, alpha=alpha, lambda=lambda, RVmat=RVmat, compromise=compromise, quality=quality))
+
+	# do<-function(F, PartialF,sp) {
+	# #	sp<-2
+	# 	center<-F[sp,]
+	# 	others<-lapply(PartialF, function(x) x[sp,])
+	# 	others<-do.call(rbind, others)
+	# 	all<-cbind(others, rep(center[1], nrow(others)), rep(center[2], nrow(others)))
+	# 	plot(all[,c(1,2)], type="n")
+	# 	segments(all[,1], all[,2],all[,3],all[,4])
+	# 	title(rownames(F)[sp])
+	# 	identify(all[,c(1,2)])
+	# }
+	# do(F, PartialF, 2)
+	# plot(alpha, pch=19)
+	# scan()
+	return(list(F=F, PartialF=PartialF, alpha=alpha, lambda=lambda, RVmat=RVmat, compromise=compromise, quality=quality, matrices.dblcent=matrices.dblcent))
 }
+
