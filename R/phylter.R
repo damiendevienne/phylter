@@ -15,17 +15,12 @@
 #' or nodal (number of nodes separating tips).
 #' @param k Strength of outlier detection. The higher this value the less outliers
 #' detected (see details).
-#' @param k2 Strength of complete gene outlier detection. Increase k2 to be more conservative. 
+#' @param k2 Same as k for complete gene outlier detection. To preserve complete genes from 
+#' being discarded, k2 can be increased . By default, k2 = k. (see above) 
 #' By default, k2=k. 
-#' @param thres For the detection of complete outliert. Threshold above which genes or species
-#' are considered as complete outliers. 0.3 means that a gene (resp. species) is a
-#' complete outlier if it is detected as outlier for more than 30\% of 
-#' its species (resp. genes).
 #' @param Norm Should the matrices be normalized. If TRUE (the default), 
 #' each matrix is divided by its median. This ensures that fast-evolving genes
-#' are not considered outliers.
-#' @param keep.species If TRUE, species are protected from being detected 
-#' as complete outliers and filtered out. 
+#' are not considered outliers. 
 #' @param gene.names List of gene names used to rename elements in X. If NULL (the default), 
 #' elements are named 1,2,..,length(X). 
 #' @param test.island This should not be modified. If TRUE (the default), only the highest value in
@@ -37,14 +32,13 @@
 #' than this value. Default to 1e-5.
 #' @param InitialOnly Logical. If TRUE, only the Initial state of teh data is computed. The optimization and 
 #' outlier detection is NOT performed. Useful to get an idea about the initial state of th data.
-#' @param outlier.detection.method Method used to detect outliers from the 2WR matrix. Default to 1.
 #' @return A list of class 'phylter' with the 'Initial' (before filtering) and 'Final' (after filtering) states, 
 #' or a list of class 'phylterinitial' only, if InitialOnly=TRUE. 
 #' @importFrom utils tail combn
 #' @importFrom stats hclust as.dist median
 #' @importFrom graphics plot
 #' @export
-phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, thres=0.3, Norm=TRUE, keep.species=TRUE, gene.names=NULL, test.island=FALSE, verbose=TRUE, stop.criteria=1e-5, InitialOnly=FALSE, outlier.detection.method=1) {
+phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm=TRUE, gene.names=NULL, test.island=FALSE, verbose=TRUE, stop.criteria=1e-5, InitialOnly=FALSE) {
 	ReplaceValueWithCompromise<-function(allmat, what, compro, lambda) {
 		for (i in 1:length(allmat)) {
 			whatsp<-what[what[,1]==i,2]
@@ -222,7 +216,7 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, thres=0.3, Norm=
 	##New 
 	Final$matrices<-matrices
 
-	call<-list(call=match.call(), bvalue=bvalue, distance=distance, k=k, thres=thres, Norm=Norm, keep.species=keep.species, gene.names=gene.names, test.island=test.island, verbose=verbose, stop.criteria=stop.criteria)
+	call<-list(call=match.call(), bvalue=bvalue, distance=distance, k=k, Norm=Norm, keep.species=keep.species, gene.names=gene.names, test.island=test.island, verbose=verbose, stop.criteria=stop.criteria)
 
 	Result<-list(Initial=Initial, Final=Final, call=call)
 	class(Result)<-c("phylter", "list")
