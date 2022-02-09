@@ -41,6 +41,8 @@
 #' @importFrom stats dist quantile IQR
 #' @export
 detect.outliers <- function(mat2WR, k = 3, test.island=TRUE, old=FALSE) {
+  # heatmap(mat2WR, scale="none",Rowv=NA, Colv=NA)
+  # scan()
   MAT <- mat2WR
   detect.island <- function(arr) {
     spi.names <- names(arr)
@@ -101,10 +103,14 @@ detect.outliers <- function(mat2WR, k = 3, test.island=TRUE, old=FALSE) {
     return(x > quantile(x)[4] + k * IQR(x) + 1e-10)
   }
   if (old) {
-    MATspgn <- normalize(mat2WR, "genes") * normalize(mat2WR, "species")
-    testspgn1 <- apply(MATspgn, 2, outl.sub, k = k)
-    testspgn2 <- t(apply(MATspgn, 1, outl.sub, k = k))
+    print("i")
+    MATspgn <- mat2WR
+    testspgn1 <- apply(MATspgn, 2, outl.adj.tuckey, k = k)
+    testspgn2 <- t(apply(MATspgn, 1, outl.adj.tuckey, k = k))
     testspgn <- testspgn1 * testspgn2 
+    # heatmap(testspgn, scale="none",Rowv=NA, Colv=NA)
+    # scan()
+
     testFALSE <- testspgn
   }
   else {
@@ -112,6 +118,9 @@ detect.outliers <- function(mat2WR, k = 3, test.island=TRUE, old=FALSE) {
     MATspgn <- normalize(mat2WR,"species")
     tabgn.TF<-outl.adj.tuckey(MATspgn,k)
     testFALSE<-tabgn.TF+0 
+    #  heatmap(testFALSE, scale="none",Rowv=NA, Colv=NA)
+    # scan()
+
   }
   #
   RESULT<-NULL

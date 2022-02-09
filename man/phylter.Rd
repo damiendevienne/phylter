@@ -15,7 +15,8 @@ phylter(
   test.island = FALSE,
   verbose = TRUE,
   stop.criteria = 1e-05,
-  InitialOnly = FALSE
+  InitialOnly = FALSE,
+  old = FALSE
 )
 }
 \arguments{
@@ -54,7 +55,9 @@ of what is happening}
 \item{stop.criteria}{The optimisation stops when the gain between round n and round n+1 is smaller
 than this value. Default to 1e-5.}
 
-\item{InitialOnly}{Logical. If TRUE, only the Initial state of teh data is computed. The optimization and 
+\item{InitialOnly}{Logical. If TRUE, only the Initial state of teh data is computed. The optimization and}
+
+\item{old}{Logical. Should the old way of detecting outliers be used. Default to FALSE.
 outlier detection is NOT performed. Useful to get an idea about the initial state of th data.}
 }
 \value{

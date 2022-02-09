@@ -31,6 +31,7 @@
 #' @param stop.criteria The optimisation stops when the gain between round n and round n+1 is smaller
 #' than this value. Default to 1e-5.
 #' @param InitialOnly Logical. If TRUE, only the Initial state of teh data is computed. The optimization and 
+#' @param old Logical. Should the old way of detecting outliers be used. Default to FALSE.
 #' outlier detection is NOT performed. Useful to get an idea about the initial state of th data.
 #' @return A list of class 'phylter' with the 'Initial' (before filtering) and 'Final' (after filtering) states, 
 #' or a list of class 'phylterinitial' only, if InitialOnly=TRUE. 
@@ -38,7 +39,7 @@
 #' @importFrom stats hclust as.dist median
 #' @importFrom graphics plot
 #' @export
-phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm=TRUE, gene.names=NULL, test.island=FALSE, verbose=TRUE, stop.criteria=1e-5, InitialOnly=FALSE) {
+phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm=TRUE, gene.names=NULL, test.island=FALSE, verbose=TRUE, stop.criteria=1e-5, InitialOnly=FALSE, old=FALSE) {
 	ReplaceValueWithCompromise<-function(allmat, what, compro, lambda) {
 		for (i in 1:length(allmat)) {
 			whatsp<-what[what[,1]==i,2]
@@ -137,7 +138,7 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm=TRUE, gene.
 		WR.reordered<-WR[OrderWRrow,]		
 		if (!lastLoop) {
 			# detect cell outliers
-			CellsToRemove<-detect.outliers(WR.reordered, k=k,test.island=test.island, old=FALSE)
+			CellsToRemove<-detect.outliers(WR.reordered, k=k,test.island=test.island, old=old)
 			# reorder to previous order
 			CellsToRemove<-ReoderBackTheCells(CellsToRemove, OrderWRrow)
 		}
@@ -196,7 +197,6 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm=TRUE, gene.
 
 			}
 		}
-
 	}
 
 	# Prepare return object
