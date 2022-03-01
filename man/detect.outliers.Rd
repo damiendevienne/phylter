@@ -5,7 +5,13 @@
 \alias{detect.outliers.array}
 \title{Detect outliers}
 \usage{
-detect.outliers(mat2WR, k = 3, test.island = TRUE, old = FALSE)
+detect.outliers(
+  mat2WR,
+  k = 3,
+  test.island = TRUE,
+  old = FALSE,
+  normalizeby = "row"
+)
 
 detect.outliers.array(arr, nbsp, k = 3)
 }
@@ -20,6 +26,9 @@ Default to FALSE. If TRUE, only the highest value in the island is
 removed (This option may be deprecated soon).}
 
 \item{old}{Should the old detection method be used instead (default to FALSE).}
+
+\item{normalizeby}{Should the 2WR matrix be normalized prior to outlier detection, and how.
+Can be "row" (the default),"col" or "none"}
 
 \item{arr}{Array of values, typically the weight of each gene matrix (alpha values).}
 

@@ -30,6 +30,8 @@
 #' Default to FALSE. If TRUE, only the highest value in the island is 
 #' removed (This option may be deprecated soon). 
 #' @param old Should the old detection method be used instead (default to FALSE).
+#' @param normalizeby Should the 2WR matrix be normalized prior to outlier detection, and how.
+#' Can be "row" (the default),"col" or "none"
 #' @return A list of outliers.
 #' @references de Vienne D.M., Ollier S. et Aguileta G. (2012) Phylo-MCOA: 
 #' A Fast and Efficient Method to Detect Outlier Genes and Species
@@ -40,7 +42,7 @@
 #' @importFrom mrfDepth medcouple
 #' @importFrom stats dist quantile IQR
 #' @export
-detect.outliers <- function(mat2WR, k = 3, test.island=TRUE, old=FALSE) {
+detect.outliers <- function(mat2WR, k = 3, test.island=TRUE, old=FALSE, normalizeby="row") {
   # heatmap(mat2WR, scale="none",Rowv=NA, Colv=NA)
   # scan()
   MAT <- mat2WR
@@ -115,7 +117,12 @@ detect.outliers <- function(mat2WR, k = 3, test.island=TRUE, old=FALSE) {
   }
   else {
     #normalized matrix so that each column (gene) is divided by its median
-    MATspgn <- normalize(mat2WR,"species")
+    if (normalizeby=="row") MATspgn <- normalize(mat2WR,"genes")
+    else {
+      if (normalizeby=="col") MATspgn <- normalize(mat2WR,"species")
+      else MATspgn <- mat2WR
+    }
+
     tabgn.TF<-outl.adj.tuckey(MATspgn,k)
     testFALSE<-tabgn.TF+0 
     #  heatmap(testFALSE, scale="none",Rowv=NA, Colv=NA)

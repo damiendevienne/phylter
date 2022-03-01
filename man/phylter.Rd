@@ -16,7 +16,8 @@ phylter(
   verbose = TRUE,
   stop.criteria = 1e-05,
   InitialOnly = FALSE,
-  old = FALSE
+  old = FALSE,
+  normalizeby = "row"
 )
 }
 \arguments{
@@ -59,6 +60,8 @@ than this value. Default to 1e-5.}
 
 \item{old}{Logical. Should the old way of detecting outliers be used. Default to FALSE.
 outlier detection is NOT performed. Useful to get an idea about the initial state of th data.}
+
+\item{normalizeby}{Should the 2WR matrix be normalized prior to outlier detection, and how.}
 }
 \value{
 A list of class 'phylter' with the 'Initial' (before filtering) and 'Final' (after filtering) states, 

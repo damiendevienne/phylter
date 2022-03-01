@@ -33,13 +33,14 @@
 #' @param InitialOnly Logical. If TRUE, only the Initial state of teh data is computed. The optimization and 
 #' @param old Logical. Should the old way of detecting outliers be used. Default to FALSE.
 #' outlier detection is NOT performed. Useful to get an idea about the initial state of th data.
+#' @param normalizeby Should the 2WR matrix be normalized prior to outlier detection, and how.
 #' @return A list of class 'phylter' with the 'Initial' (before filtering) and 'Final' (after filtering) states, 
 #' or a list of class 'phylterinitial' only, if InitialOnly=TRUE. 
 #' @importFrom utils tail combn
 #' @importFrom stats hclust as.dist median
 #' @importFrom graphics plot
 #' @export
-phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm=TRUE, gene.names=NULL, test.island=FALSE, verbose=TRUE, stop.criteria=1e-5, InitialOnly=FALSE, old=FALSE) {
+phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm=TRUE, gene.names=NULL, test.island=FALSE, verbose=TRUE, stop.criteria=1e-5, InitialOnly=FALSE, old=FALSE, normalizeby="row") {
 	ReplaceValueWithCompromise<-function(allmat, what, compro, lambda) {
 		for (i in 1:length(allmat)) {
 			whatsp<-what[what[,1]==i,2]
@@ -138,7 +139,7 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm=TRUE, gene.
 		WR.reordered<-WR[OrderWRrow,]		
 		if (!lastLoop) {
 			# detect cell outliers
-			CellsToRemove<-detect.outliers(WR.reordered, k=k,test.island=test.island, old=old)
+			CellsToRemove<-detect.outliers(WR.reordered, k=k,test.island=test.island, old=old, normalizeby=normalizeby)
 			# reorder to previous order
 			CellsToRemove<-ReoderBackTheCells(CellsToRemove, OrderWRrow)
 		}
