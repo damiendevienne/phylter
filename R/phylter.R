@@ -40,7 +40,7 @@
 #' @importFrom stats hclust as.dist median
 #' @importFrom graphics plot
 #' @export
-phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm=TRUE, gene.names=NULL, test.island=FALSE, verbose=TRUE, stop.criteria=1e-5, InitialOnly=FALSE, old=FALSE, normalizeby="row") {
+phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm=TRUE, gene.names=NULL, test.island=TRUE, verbose=TRUE, stop.criteria=1e-5, InitialOnly=FALSE, old=FALSE, normalizeby="row") {
 	ReplaceValueWithCompromise<-function(allmat, what, compro, lambda) {
 		for (i in 1:length(allmat)) {
 			whatsp<-what[what[,1]==i,2]
