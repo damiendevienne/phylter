@@ -12,7 +12,7 @@ phylter(
   k2 = k,
   Norm = TRUE,
   gene.names = NULL,
-  test.island = FALSE,
+  test.island = TRUE,
   verbose = TRUE,
   stop.criteria = 1e-05,
   InitialOnly = FALSE,
