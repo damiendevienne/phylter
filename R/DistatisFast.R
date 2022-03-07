@@ -87,6 +87,7 @@ DistatisFast<-function(matrices, Normalize=FALSE, factorskept=2) {
 	### Compute weights
 	matrices.dblcent<-lapply(matrices, DblCenterDist)
 	# if (Norm) matrices.dblcent<-lapply(matrices.dblcent, MFAnormCP) ##normalize is asked
+
 	if (Normalize) {
 		lambda<-lapply(matrices.dblcent, GetLambdaForNorm)
 		matrices.dblcent<-Map("/", matrices.dblcent, lambda)
@@ -95,6 +96,7 @@ DistatisFast<-function(matrices, Normalize=FALSE, factorskept=2) {
 	else {
 		lambda<-rep(1,nbGn)
 	}
+
 	RVmat<-GetCmat(matrices.dblcent)
 	FirstEigenVector<-eigs_sym(RVmat, 1, which = "LM")
 	alpha <- FirstEigenVector$vectors[, 1]/sum(FirstEigenVector$vectors[, 1])

@@ -10,7 +10,7 @@ phylter(
   distance = "patristic",
   k = 3,
   k2 = k,
-  Norm = TRUE,
+  Norm = "median",
   gene.names = NULL,
   test.island = TRUE,
   verbose = TRUE,
@@ -39,8 +39,10 @@ detected (see details).}
 being discarded, k2 can be increased . By default, k2 = k. (see above) 
 By default, k2=k.}
 
-\item{Norm}{Should the matrices be normalized. If TRUE (the default), 
-each matrix is divided by its median. This ensures that fast-evolving genes
+\item{Norm}{Should the matrices be normalized and how. If "median", matrices are divided by their median, if 
+"mean" they are divided by their mean, if "none", no normalization if performed. Normalizing ensures that fast-evolving 
+(and slow-evolving) genes are not treated as outliers. Normalization by median is less sensitive to outlier values
+but can lead to errors if some matrices have a median value of 0. 
 are not considered outliers.}
 
 \item{gene.names}{List of gene names used to rename elements in X. If NULL (the default), 

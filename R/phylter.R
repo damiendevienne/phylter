@@ -18,8 +18,10 @@
 #' @param k2 Same as k for complete gene outlier detection. To preserve complete genes from 
 #' being discarded, k2 can be increased . By default, k2 = k. (see above) 
 #' By default, k2=k. 
-#' @param Norm Should the matrices be normalized. If TRUE (the default), 
-#' each matrix is divided by its median. This ensures that fast-evolving genes
+#' @param Norm Should the matrices be normalized and how. If "median", matrices are divided by their median, if 
+#' "mean" they are divided by their mean, if "none", no normalization if performed. Normalizing ensures that fast-evolving 
+#' (and slow-evolving) genes are not treated as outliers. Normalization by median is less sensitive to outlier values
+#' but can lead to errors if some matrices have a median value of 0. 
 #' are not considered outliers. 
 #' @param gene.names List of gene names used to rename elements in X. If NULL (the default), 
 #' elements are named 1,2,..,length(X). 
@@ -40,7 +42,7 @@
 #' @importFrom stats hclust as.dist median
 #' @importFrom graphics plot
 #' @export
-phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm=TRUE, gene.names=NULL, test.island=TRUE, verbose=TRUE, stop.criteria=1e-5, InitialOnly=FALSE, old=FALSE, normalizeby="row") {
+phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm="median", gene.names=NULL, test.island=TRUE, verbose=TRUE, stop.criteria=1e-5, InitialOnly=FALSE, old=FALSE, normalizeby="row") {
 	ReplaceValueWithCompromise<-function(allmat, what, compro, lambda) {
 		for (i in 1:length(allmat)) {
 			whatsp<-what[what[,1]==i,2]
@@ -101,8 +103,11 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm=TRUE, gene.
 	}
 	## NEW (25/01/2022). Doing this, genes that havehigh values globally are not treated as outliers, 
 	## but long branches remain outliers (median is not too affected by outliers).
-	if (Norm==TRUE) matrices<-lapply(matrices, function(x) x/median(x))
-
+#	if (Norm==TRUE) matrices<-lapply(matrices, function(x) x/median(x))
+	if (Norm=="median") matrices<-lapply(matrices, function(x) x/median(x))
+	else {
+		if (Norm=="mean") matrices<-lapply(matrices, function(x) x/mean(x))
+	}
 #	RES<-DistatisFast(matrices, Norm)
 	RES<-DistatisFast(matrices)
 	WR<-Dist2WR(RES)
