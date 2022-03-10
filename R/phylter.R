@@ -23,6 +23,10 @@
 #' (and slow-evolving) genes are not treated as outliers. Normalization by median is less sensitive to outlier values
 #' but can lead to errors if some matrices have a median value of 0. 
 #' are not considered outliers. 
+#' @param Norm.cutoff Value of the median (if Norm="median") or the mean (if
+#' Norm="mean") below which matrices are simply discarded from the analysis. This
+#' prevents dividing by 0, and getting rid of genes that contain mostly branches
+#' of length 0 and are therefore uninformative anyway. 
 #' @param gene.names List of gene names used to rename elements in X. If NULL (the default), 
 #' elements are named 1,2,..,length(X). 
 #' @param test.island This should not be modified. If TRUE (the default), only the highest value in
@@ -42,7 +46,7 @@
 #' @importFrom stats hclust as.dist median
 #' @importFrom graphics plot
 #' @export
-phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm="median", gene.names=NULL, test.island=TRUE, verbose=TRUE, stop.criteria=1e-5, InitialOnly=FALSE, old=FALSE, normalizeby="row") {
+phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm="median", Norm.cutoff=1e-6, gene.names=NULL, test.island=TRUE, verbose=TRUE, stop.criteria=1e-5, InitialOnly=FALSE, old=FALSE, normalizeby="row") {
 	ReplaceValueWithCompromise<-function(allmat, what, compro, lambda) {
 		for (i in 1:length(allmat)) {
 			whatsp<-what[what[,1]==i,2]
@@ -103,15 +107,31 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm="median", g
 	}
 	## NEW (25/01/2022). Doing this, genes that havehigh values globally are not treated as outliers, 
 	## but long branches remain outliers (median is not too affected by outliers).
-#	if (Norm==TRUE) matrices<-lapply(matrices, function(x) x/median(x))
-	if (Norm=="median") matrices<-lapply(matrices, function(x) x/median(x))
-	else {
-		if (Norm=="mean") matrices<-lapply(matrices, function(x) x/mean(x))
+	## NEW March 10 2022 
+	##remove matrices that have mean or median close to 0
+	ZeroLengthMatrices<-NULL
+	if (Norm=="median") {
+		AllMe<-unlist(lapply(matrices, median))
+		matrices<-lapply(matrices, function(x) x/median(x))
+		} else if (Norm=="mean") {
+			AllMe<-unlist(lapply(matrices, mean))
+			matrices<-lapply(matrices, function(x) x/mean(x))
+		}	
+	#remove matrices with median or mean < Norm.cutoff
+	ZeroLengthMatrices<-which(AllMe<=Norm.cutoff)
+	if (length(ZeroLengthMatrices)>0) {
+		matrices<-matrices[-ZeroLengthMatrices]
+		if (verbose) {
+				if (length(ZeroLengthMatrices)>1) cat(paste("\nWarning! ",length(ZeroLengthMatrices)," genes were removed prior to the analysis because they had a ",Norm," value below the Norm.cutoff threshold.\n\n", sep=""))
+				else cat(paste("\nWarning! ",length(ZeroLengthMatrices)," gene was removed prior to the analysis because it had a ",Norm," value below the Norm.cutoff threshold.\n\n", sep=""))
+			}
 	}
+	
+
+
 #	RES<-DistatisFast(matrices, Norm)
 	RES<-DistatisFast(matrices)
 	WR<-Dist2WR(RES)
-	##qfdkjùjfq
 	Initial<-NULL
 	Initial$mat.data<-Xsave
 	Initial$WR<-WR
@@ -158,7 +178,7 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm="median", g
 		if (!is.null(NewCellsToRemove)) {
 			CELLSREMOVED.new<-rbind(CELLSREMOVED, NewCellsToRemove) 
 			matrices.new<-ReplaceValueWithCompromise(matrices, CELLSREMOVED.new, RES$compromise, RES$lambda)
-			RES.new<-DistatisFast(matrices.new, Norm)
+			RES.new<-DistatisFast(matrices.new)
 			VAL.new<-c(VAL, RES.new$quality)
 			if (verbose) cat(paste("-> New score: ",round(RES.new$quality, digits=ceiling(abs(log10(stop.criteria)))), sep=""))
 #			if (verbose) plot(VAL, type="o")				
@@ -215,7 +235,27 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm="median", g
 	Final$PartialF<-RES$PartialF
 	Final$species.order<-colnames(RES$compromise)
 	Final$AllOptiScores<-VAL
-	Final$CELLSREMOVED<-CELLSREMOVED
+
+	### NEW - 10/03/2022
+	### WE MUST MODIFY CELLSREMOVED TO REINTEGRATE THE GENES
+	### THAT WERE REMOVED BECAUSE OF MEDIAN or MEAN=0 ISSUE. INDEED,
+	### if gene n is removed, gene n+1 becomes n, n+2 becomles n+1, etc.
+	### We need to reorganise these cells to put the correct identifiers.
+	### we do that as follows:
+	print(CELLSREMOVED)
+	if (length(ZeroLengthMatrices)>0) {
+		for (i in 1:length(ZeroLengthMatrices)) {
+			CELLSREMOVED[CELLSREMOVED[,1]>=ZeroLengthMatrices[i],1]<-CELLSREMOVED[CELLSREMOVED[,1]>=ZeroLengthMatrices[i],1]+1
+		}
+		#and then we add as outliers these genes that had been removed
+		#and all there species
+		CELLSREMOVED<-rbind(CELLSREMOVED, cbind(rep(ZeroLengthMatrices, each=nrow(WR)),rep(1:nrow(WR),length(ZeroLengthMatrices))))
+
+	}
+	### END OF THIS NEW PART 
+
+	Final$CELLSREMOVED<-CELLSREMOVED 
+	#MAYBE DO NOT RETURN THIS!?	
 	Final$Outliers<-CompareBeforeAfter(Xsave, CELLSREMOVED, Final$species.order, which="all")
 	Final$CompleteOutliers<-CompareBeforeAfter(Xsave, Final$Outliers, Final$species.order, which="complete")
 	#store the way the function was called

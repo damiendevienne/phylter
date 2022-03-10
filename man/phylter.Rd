@@ -11,6 +11,7 @@ phylter(
   k = 3,
   k2 = k,
   Norm = "median",
+  Norm.cutoff = 1e-06,
   gene.names = NULL,
   test.island = TRUE,
   verbose = TRUE,
@@ -44,6 +45,11 @@ By default, k2=k.}
 (and slow-evolving) genes are not treated as outliers. Normalization by median is less sensitive to outlier values
 but can lead to errors if some matrices have a median value of 0. 
 are not considered outliers.}
+
+\item{Norm.cutoff}{Value of the median (if Norm="median") or the mean (if
+Norm="mean") below which matrices are simply discarded from the analysis. This
+prevents dividing by 0, and getting rid of genes that contain mostly branches
+of length 0 and are therefore uninformative anyway.}
 
 \item{gene.names}{List of gene names used to rename elements in X. If NULL (the default), 
 elements are named 1,2,..,length(X).}
