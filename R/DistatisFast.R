@@ -3,19 +3,17 @@
 #' DistatisFast
 #' 
 #' New implementation of the DISTATIS method for K matrices of dimension IxI.
-#' This version of distatis is faster than the original one because only the minimum required number
+#' This version of Distatis is faster than the original one because only the minimum required number
 #' of eigenvalues and eigenvectors is calculated. The difference in speed 
 #' is particularly visible when the number of matrices is large.  
 #' 
 #' @param matrices A list of K distance matrices, all of the same dimension (IxI).
-#' @param Normalize Should the matrices be divided by its first eigenvalue (deprecated). 
 #' @param factorskept Number of factors to keep for the computation of the factor 
 #' scores of the observations.
-#' @return Returns a list contanining 
+#' @return Returns a list contanining:
 #' \itemize{
 #' 	\item 'alpha': array of length K of the weight associated to each matrix.
-#'  \item 'lambda': array of length K of the normalization factors used for each matrix 
-#'  if Normalize=TRUE.
+#'  \item 'lambda': array of length K of the normalization factors used for each matrix. lambda=1 always.
 #' 	\item 'RVmat': a KxK matrix with RV correlation coefficient computed between all
 #'  pairs of matrices.
 #' 	\item 'compromise': an IxI matrix representing the best compromise between all 
@@ -31,19 +29,7 @@
 #' Diego, CA, USA). pp. 42-47.
 #' @importFrom RSpectra eigs_sym
 #' @export
-DistatisFast<-function(matrices, Normalize=FALSE, factorskept=2) {
-	# GetCmat <- function(OrderedMatrices, RV = TRUE) {
-	# 	CP2<-do.call(cbind, lapply(OrderedMatrices, array))
-	# 	C <- crossprod(CP2) #faster than using t(CP2) %*% CP2
-	#     if (RV) {
-	#         laNorm = sqrt(apply(CP2^2, 2, sum))
-	#         C = C/(t(t(laNorm)) %*% laNorm)
-	#     }
-	#     rownames(C) <- colnames(C) <- names(OrderedMatrices)
-	#     return(C)
-	# }
-	## Faster function that is useful for symmetric matrices
-	## (compute only on the upper part of the matrix)
+DistatisFast<-function(matrices, factorskept=2) {
 	GetCmat <- function(OrderedMatrices, RV = TRUE) {
 	    CP2.diag <-do.call(cbind, lapply(OrderedMatrices, diag))
 	    CP2.upper <- do.call(cbind, lapply(OrderedMatrices, function(x) x[upper.tri(x)]))
@@ -87,15 +73,7 @@ DistatisFast<-function(matrices, Normalize=FALSE, factorskept=2) {
 	### Compute weights
 	matrices.dblcent<-lapply(matrices, DblCenterDist)
 	# if (Norm) matrices.dblcent<-lapply(matrices.dblcent, MFAnormCP) ##normalize is asked
-
-	if (Normalize) {
-		lambda<-lapply(matrices.dblcent, GetLambdaForNorm)
-		matrices.dblcent<-Map("/", matrices.dblcent, lambda)
-		lambda<-unname(unlist(lambda))
-	}
-	else {
-		lambda<-rep(1,nbGn)
-	}
+	lambda<-rep(1,nbGn)
 
 	RVmat<-GetCmat(matrices.dblcent)
 	FirstEigenVector<-eigs_sym(RVmat, 1, which = "LM")
@@ -103,7 +81,6 @@ DistatisFast<-function(matrices, Normalize=FALSE, factorskept=2) {
 	quality<-FirstEigenVector$values/nbGn
 	### Compute compromise matrix (C) and its projection (Splus)
 	WeightedMatrices<-sapply(1:nbGn, function(x,MAT,weight) MAT[[x]]*weight[x],MAT=matrices.dblcent, weight=alpha, simplify=FALSE)
-#	WeightedMatrices.initial<-sapply(1:nbGn, function(x,MAT,weight) MAT[[x]]*weight[x],MAT=matrices, weight=alpha, simplify=FALSE)
 
 	Splus<-Reduce('+',WeightedMatrices)
 	# compromise<-Reduce('+',WeightedMatrices.initial)
