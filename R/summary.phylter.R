@@ -13,6 +13,7 @@
 summary.phylter<-function(object, ...) {
 	res<-NULL
 	percent.score.increase<-round((rev(object$Final$AllOptiScores)[1]-object$Final$AllOptiScores[1])*100, 2)
+	nb.discarded<-object$DiscardedGenes
 	nb.outlier.cells<-nrow(object$Final$Outliers)
 	initial.nb.sp.per.mat<-unlist(lapply(object$Initial$mat.data, nrow))
 	percent.data.filtered<-round(nb.outlier.cells/sum(initial.nb.sp.per.mat)*100,2)
@@ -23,6 +24,7 @@ summary.phylter<-function(object, ...) {
 	ComplOutSP<-object$Final$CompleteOutliers$ComplOutSP
 	ComplOutGN<-object$Final$CompleteOutliers$ComplOutGN
 	#result
+	res$nb.discarded<-nb.discarded
 	res$nb.outlier.cells<-nb.outlier.cells
 	res$percent.score.increase<-percent.score.increase
 	res$percent.data.filtered<-percent.data.filtered
@@ -30,7 +32,6 @@ summary.phylter<-function(object, ...) {
 	res$nb.sp.removed.per.gene<-nb.sp.removed.per.gene
 	res$ComplOutGN<-ComplOutGN
 	res$ComplOutSP<-ComplOutSP
-	res$keep.species<-object$call$keep.species
 	class(res)<-"summary.phylter"
 	res
 }
@@ -48,9 +49,10 @@ print.summary.phylter<-function(x, ...) {
 	if (!inherits(x, "summary.phylter"))
 		stop("'x' must inherit from class summar.phylter")
 	cat("\n")
+	if (length(x$nb.discarded)>0) cat(paste("-- Info: ",length(x$nb.discarded)," gene(s) discarded prior to the analysis --\n\n", sep=""))
 	cat(paste("Total number of outliers detected: ",x$nb.outlier.cells,"\n", sep=""))
 	cat(paste("  Number of complete gene outliers : ",length(x$ComplOutGN),"\n", sep=""))
-	cat(paste("  Number of complete species outliers : ",ifelse(x$keep.species==TRUE, " NA*\n  *set keep.species=FALSE to allow this detection",length(x$ComplOutSP)),"\n", sep=""))
+	cat(paste("  Number of complete species outliers : ",length(x$ComplOutSP),"\n", sep=""))
 	cat("\n")
 	cat(paste("Gain (concordance between matrices): ",x$percent.score.increase,"% \n", sep=""))
 	cat(paste("Loss (data filtering): ",x$percent.data.filtered,"% \n", sep=""))
