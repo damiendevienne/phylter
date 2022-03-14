@@ -73,7 +73,8 @@ print.phylter<-function(x, ...) {
 	print(x$call$call)
 	cat("\n")
 	cat('$Initial\tInitial matrices and values, before optimization\n')
-	cat('$Final\t\tFinal matrices, scores, outliers, after optimization\n\n')
+	cat('$Final\t\tFinal matrices, scores, outliers, after optimization\n')
+	cat('$DiscardedGenes\tList of discarded genes (not analyzed by phylter)\n\n')	
 	cat("\n\nTips:\n")
 	cat('   Use summary(x) to get an overview of the results.\n')
 	cat('   Use plot(x) to see the distribution of outliers\n')
@@ -97,7 +98,7 @@ print.phylterinitial<-function(x, ...) {
 	cat("Phylter Analysis - initial state\nList of class phylterinitial\n\n", sep="")
 
 	Object<-paste("$",names(x), sep="")
-	Dimension<-unlist(lapply(x, function(x) ifelse(class(x)=="matrix",paste(dim(x),collapse=" x "), paste(length(x)))))
+	Dimension<-unlist(lapply(x, function(x) ifelse(class(x)[1]=="matrix",paste(dim(x),collapse=" x "), paste(length(x)))))
 	Content<-c(
 		"List of original distance matrices, one per gene",
 		"Species x Genes reference matrix",
@@ -128,7 +129,7 @@ print.phylterfinal<-function(x, ...) {
 	cat("Phylter Analysis - final state\nList of class phylterfinal\n\n", sep="")
 
 	Object<-paste("$",names(x), sep="")
-	Dimension<-unlist(lapply(x, function(x) ifelse(class(x)=="matrix",paste(dim(x),collapse=" x "), paste(length(x)))))
+	Dimension<-unlist(lapply(x, function(x) ifelse(class(x)[1]=="matrix",paste(dim(x),collapse=" x "), paste(length(x)))))
 	Content<-c(
 		"Species x Genes reference matrix",
 		"Genes x Genes RV correlation coefficients matrix",

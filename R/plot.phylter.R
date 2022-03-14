@@ -9,7 +9,7 @@
 #' \itemize{
 #'  \item plot(x) and plot.phylter(x) plot the genes found in each species or species 
 #' found in each gene as barplors, highlighting the outliers detected.
-#'  \item plot2WR(x) plots side by side the initial and the final gene x species 
+#'  \item plot2WR(x) plots side by side the initial and the final gene x species (unreable for large datasets) 
 #' matrices (the 2WR matrices), highlighting missing data and detected outliers.
 #'  \item plotDispersion(x) plots dispersion of data before and after phylter, on a 2D
 #' space. Each dot represents a gene-species association. 
@@ -58,7 +58,7 @@ plot.phylter<-function(x, what="all", layout=1, sorted=TRUE, ...) {
 	DF_genes$Species<-relevel(DF_genes$Species, "Removed")
 
 	if (sorted) {
-		GoodOrderGenes<-names(sort(sum$nb.sp.removed.per.gene, decreasing=T))	
+		GoodOrderGenes<-names(sort(sum$nb.sp.removed.per.gene, decreasing=TRUE))	
 		DF_genes$namegene<-factor(DF_genes$namegene, levels=GoodOrderGenes)
 	}
 	
@@ -73,7 +73,7 @@ plot.phylter<-function(x, what="all", layout=1, sorted=TRUE, ...) {
 	DF_species$Genes<-relevel(DF_species$Genes, "Removed")
 
 	if (sorted) {
-		GoodOrderSpecies<-names(sort(speciesinoutliers_reordered, decreasing=T))
+		GoodOrderSpecies<-names(sort(speciesinoutliers_reordered, decreasing=TRUE))
 		DF_species$namespecies<-factor(DF_species$namespecies, levels=GoodOrderSpecies)
 	}
 
@@ -191,7 +191,7 @@ plotDispersion<-function(x) {
 	COO$y1<-0
 	#ggplot(COO, aes(x=x0,y=y0,xend=x1,yend=y1, colour=state)) + geom_segment()
 	p <- ggplot(COO, aes(x=x0,y=y0, colour=state)) + geom_point()
-	p <- p + labs(caption="One gene x species association")
+	p <- p + labs(caption="One dot = One gene x species association")
 	print(p)
 }
 

@@ -57,7 +57,7 @@ and display various plots summarizing the results obtained (see details)
 \itemize{
  \item plot(x) and plot.phylter(x) plot the genes found in each species or species 
 found in each gene as barplors, highlighting the outliers detected.
- \item plot2WR(x) plots side by side the initial and the final gene x species 
+ \item plot2WR(x) plots side by side the initial and the final gene x species (unreable for large datasets) 
 matrices (the 2WR matrices), highlighting missing data and detected outliers.
  \item plotDispersion(x) plots dispersion of data before and after phylter, on a 2D
 space. Each dot represents a gene-species association. 

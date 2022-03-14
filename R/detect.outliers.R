@@ -4,13 +4,11 @@
 
 #' Detect outliers
 #' 
-#' Functions to detect outliers, either complete or cell (see details). 
+#' Functions to detect outliers, in matrices or in arrays. 
 #' 
-#' These functions detect outliers in the 2WR matrix. The method 
-#' used is adapted to skewed data, as is the case here. Prior to outlier
-#' detection, the 2WR matrix is normalized by row and by column
-#' and the outliers are detected from the complete matrix using the 
-#' adjusted Tukey proposed by Hubert and Vandervieren (2008): 
+#' These functions detect outliers either in matrices or in arrays. The method 
+#' used is adapted to skewed data, as is the case here. The outlier detection 
+#' method used is the adjusted Tukey proposed by Hubert and Vandervieren (2008).  
 #' Hubert, M. and Vandervieren, E. (2008). An adjusted boxplot for skewed
 #' distributions. Computational Statistics and Data Analysis, 52, 5186-5201. 
 #' The different types of outliers (cell and complete) are described in:
@@ -23,26 +21,27 @@
 #' to call the two other functions described, and return complete outliers
 #' if any, or cell outliers if no complete outliers exist.
 #' 
-#' @param mat2WR the 2WR matrix obtained with the Dist2WR function.
-#' @param k the strength of outlier detection. High values (typically 3) 
+#' @param mat2WR 2D matrix (gene x species) obtained with the \code{Dist2WR()} function.
+#' @param k strength of outlier detection. High values (typically 3) 
 #' correspond to less outliers detected than with lower ones (e.g. 1.5).
 #' @param test.island should islands of outliers be treated as such. 
-#' Default to FALSE. If TRUE, only the highest value in the island is 
-#' removed (This option may be deprecated soon). 
-#' @param old Should the old detection method be used instead (default to FALSE).
-#' @param normalizeby Should the 2WR matrix be normalized prior to outlier detection, and how.
-#' Can be "row" (the default),"col" or "none"
-#' @return A list of outliers.
+#' If TRUE (the default), only the highest value in an island of outliers is
+#' removed. This prevents erroneous outliers due to hicthiking effect to be removed.
+#' @param normalizeby Should the 2D matrix be normalized prior to outlier detection, and how.
+#' Can be "row" (the default),"col" or "none". Normalization is done by dividing columns or rows 
+#' by their median.
+#' @return \code{detect.outliers}: A matrix with outliers detected in the 2D matric. Each row \code{x} contains the 
+#' the gene (\code{x[1]}) where the species (\code{x[2]}) is outlier.  
 #' @references de Vienne D.M., Ollier S. et Aguileta G. (2012) Phylo-MCOA: 
 #' A Fast and Efficient Method to Detect Outlier Genes and Species
 #' in Phylogenomics Using Multiple Co-inertia Analysis. Molecular 
 #' Biology and Evolution 29 : 1587-1598.
-#' Hubert, M. and Vandervieren, E. (2008). An adjusted boxplot for skewed
+#' @references Hubert, M. and Vandervieren, E. (2008). An adjusted boxplot for skewed
 #' distributions. Computational Statistics and Data Analysis, 52, 5186-5201. 
 #' @importFrom mrfDepth medcouple
 #' @importFrom stats dist quantile IQR
 #' @export
-detect.outliers <- function(mat2WR, k = 3, test.island=TRUE, old=FALSE, normalizeby="row") {
+detect.outliers <- function(mat2WR, k = 3, test.island=TRUE, normalizeby="row") {
   # heatmap(mat2WR, scale="none",Rowv=NA, Colv=NA)
   # scan()
   MAT <- mat2WR
@@ -104,32 +103,15 @@ detect.outliers <- function(mat2WR, k = 3, test.island=TRUE, old=FALSE, normaliz
   outl.sub <- function(x, k) {
     return(x > quantile(x)[4] + k * IQR(x) + 1e-10)
   }
-  if (old) {
-    print("i")
-    MATspgn <- mat2WR
-    testspgn1 <- apply(MATspgn, 2, outl.adj.tuckey, k = k)
-    testspgn2 <- t(apply(MATspgn, 1, outl.adj.tuckey, k = k))
-    testspgn <- testspgn1 * testspgn2 
-    # heatmap(testspgn, scale="none",Rowv=NA, Colv=NA)
-    # scan()
-
-    testFALSE <- testspgn
-  }
+  #normalized matrix so that each column (gene) is divided by its median
+  if (normalizeby=="row") MATspgn <- normalize(mat2WR,"genes")
   else {
-    #normalized matrix so that each column (gene) is divided by its median
-    if (normalizeby=="row") MATspgn <- normalize(mat2WR,"genes")
-    else {
-      if (normalizeby=="col") MATspgn <- normalize(mat2WR,"species")
-      else MATspgn <- mat2WR
-    }
-
-    tabgn.TF<-outl.adj.tuckey(MATspgn,k)
-    testFALSE<-tabgn.TF+0 
-    #  heatmap(testFALSE, scale="none",Rowv=NA, Colv=NA)
-    # scan()
-
+    if (normalizeby=="col") MATspgn <- normalize(mat2WR,"species")
+    else MATspgn <- mat2WR
   }
-  #
+  tabgn.TF<-outl.adj.tuckey(MATspgn,k)
+  testFALSE<-tabgn.TF+0 
+#
   RESULT<-NULL
   #
   if (sum(testFALSE) > 0) {
@@ -173,11 +155,12 @@ detect.outliers <- function(mat2WR, k = 3, test.island=TRUE, old=FALSE, normaliz
   return(RESULT)
 }
 
-#' @describeIn detect.outliers detects
-#' if array (here the correlations between gene matrices) contains outlier. This
+#' @describeIn detect.outliers 
+#' detects if array (here the correlations between gene matrices) contains outlier. This
 #' is the last step of the phylter process.
 #' @param arr Array of values, typically the weight of each gene matrix (alpha values).
 #' @param nbsp Number of species in the analysis
+#' @return \code{detect.outliers.array}: An array listing the outliers detected (if any)  
 #' @export
 detect.outliers.array <- function(arr, nbsp, k = 3) {
   RES<-NULL 

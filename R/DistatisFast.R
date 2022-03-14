@@ -10,16 +10,18 @@
 #' @param matrices A list of K distance matrices, all of the same dimension (IxI).
 #' @param factorskept Number of factors to keep for the computation of the factor 
 #' scores of the observations.
-#' @return Returns a list contanining:
+#' @return Returns a list containing:
 #' \itemize{
+#'  \item 'F': projected coordinates of species in the compromise
+#'  \item 'PartialF': list of projected coordinates of species for each gene.
 #' 	\item 'alpha': array of length K of the weight associated to each matrix.
 #'  \item 'lambda': array of length K of the normalization factors used for each matrix. lambda=1 always.
 #' 	\item 'RVmat': a KxK matrix with RV correlation coefficient computed between all
 #'  pairs of matrices.
-#' 	\item 'compromise': an IxI matrix representing the best compromise between all 
-#' matrices. This matrix is the weighted average of all K matrices, using 'alpha' as
+#' 	\item 'compromise': an IxI matrix representing the best compromise between all matrices. This matrix is the weighted average of all K matrices, using 'alpha' as
 #' a weighting array.
-#' 	\item 'quality': the quality of the compromise. This value between 0 and 1 
+#' 	\item 'quality': the quality of the compromise. This value is between 0 and 1 
+#' 	\item 'matrices.dblcent': matrices after double centering
 #' describes how much of the variance of the K matrices is captured by the compromise.   
 #' }
 #' @references Abdi, H., Valentin, D., O'Toole, A.J., & Edelman, B. (2005).
@@ -102,21 +104,6 @@ DistatisFast<-function(matrices, factorskept=2) {
 
 	PartialF = lapply(matrices.dblcent, function(x,y) x %*% y, y=Proj)
 
-
-	# do<-function(F, PartialF,sp) {
-	# #	sp<-2
-	# 	center<-F[sp,]
-	# 	others<-lapply(PartialF, function(x) x[sp,])
-	# 	others<-do.call(rbind, others)
-	# 	all<-cbind(others, rep(center[1], nrow(others)), rep(center[2], nrow(others)))
-	# 	plot(all[,c(1,2)], type="n")
-	# 	segments(all[,1], all[,2],all[,3],all[,4])
-	# 	title(rownames(F)[sp])
-	# 	identify(all[,c(1,2)])
-	# }
-	# do(F, PartialF, 2)
-	# plot(alpha, pch=19)
-	# scan()
 	return(list(F=F, PartialF=PartialF, alpha=alpha, lambda=lambda, RVmat=RVmat, compromise=compromise, quality=quality, matrices.dblcent=matrices.dblcent))
 }
 

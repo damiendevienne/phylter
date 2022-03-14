@@ -22,5 +22,5 @@ Value 0 (the default) means that no nodes are collapsed.}
 return a list of distance matrices
 }
 \description{
-trees2matrices changes a list of trees into a list of matrices.
+Transform a list of trees into a list of matrices.
 }

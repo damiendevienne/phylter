@@ -4,34 +4,33 @@
 \alias{DistatisFast}
 \title{DistatisFast}
 \usage{
-DistatisFast(matrices, Normalize = FALSE, factorskept = 2)
+DistatisFast(matrices, factorskept = 2)
 }
 \arguments{
 \item{matrices}{A list of K distance matrices, all of the same dimension (IxI).}
-
-\item{Normalize}{Should the matrices be divided by its first eigenvalue (deprecated).}
 
 \item{factorskept}{Number of factors to keep for the computation of the factor 
 scores of the observations.}
 }
 \value{
-Returns a list contanining 
+Returns a list containing:
 \itemize{
+ \item 'F': projected coordinates of species in the compromise
+ \item 'PartialF': list of projected coordinates of species for each gene.
 	\item 'alpha': array of length K of the weight associated to each matrix.
- \item 'lambda': array of length K of the normalization factors used for each matrix 
- if Normalize=TRUE.
+ \item 'lambda': array of length K of the normalization factors used for each matrix. lambda=1 always.
 	\item 'RVmat': a KxK matrix with RV correlation coefficient computed between all
  pairs of matrices.
-	\item 'compromise': an IxI matrix representing the best compromise between all 
-matrices. This matrix is the weighted average of all K matrices, using 'alpha' as
+	\item 'compromise': an IxI matrix representing the best compromise between all matrices. This matrix is the weighted average of all K matrices, using 'alpha' as
 a weighting array.
-	\item 'quality': the quality of the compromise. This value between 0 and 1 
+	\item 'quality': the quality of the compromise. This value is between 0 and 1 
+	\item 'matrices.dblcent': matrices after double centering
 describes how much of the variance of the K matrices is captured by the compromise.   
 }
 }
 \description{
 New implementation of the DISTATIS method for K matrices of dimension IxI.
-This version of distatis is faster than the original one because only the minimum required number
+This version of Distatis is faster than the original one because only the minimum required number
 of eigenvalues and eigenvectors is calculated. The difference in speed 
 is particularly visible when the number of matrices is large.
 }

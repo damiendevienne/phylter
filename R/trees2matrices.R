@@ -4,7 +4,7 @@
 
 #' trees2matrices
 #' 
-#' trees2matrices changes a list of trees into a list of matrices.
+#' Transform a list of trees into a list of matrices.
 #' 
 #' 
 #' @param trees A list of gene trees in multiphylo format.

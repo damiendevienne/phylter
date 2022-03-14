@@ -6,13 +6,13 @@
 #' 
 #' @param x The object returned by the 'phylter()' function.
 #' @param file Name of the file where to write the summary of the phylter output.
-#' @importFrom utils write.table
+#' @importFrom utils write.table packageVersion
 #' @export
 
 write.phylter<-function(x, file="phylter.out") {
 	##head
 	cat(paste("# \n",sep=""),file=file)
-	cat(paste("# -- Phylter v. 0.9 -- \n",sep=""),file=file, append=TRUE)
+	cat(paste("# -- Phylter v. ",packageVersion("phylter")," -- \n",sep=""),file=file, append=TRUE)
 	cat(paste("# ",date(),"\n", sep=""),file=file, append=TRUE)
 	cat(paste("# \n# \n# \n",sep=""),file=file, append=TRUE)
 	parameters<-x$call[(names(x$call)!="gene.names")&(names(x$call)!="call")]

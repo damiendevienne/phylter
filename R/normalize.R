@@ -1,11 +1,7 @@
 #' normalize
 #' 
-#' This function normalizes the 2WR matrix (or any matrix) according to the
-#' species (rows) or to the genes (columns). This normalization is described
-#' in de Vienne M.D., Ollier S. et Aguileta G. (2012) Phylo-MCOA: 
-#' A Fast and Efficient Method to Detect Outlier Genes and Species
-#' in Phylogenomics Using Multiple Co-inertia Analysis. Molecular Biology 
-#' and Evolution 29 : 1587 – 1598)
+#' This function normalizes the 2WR matrix (or any 2D matrix) according to the
+#' species (rows) or to the genes (columns).
 #' 
 #' @param mat A matrix
 #' @param what Character string indicating whether the matrix should be
@@ -13,7 +9,7 @@
 #' default), if what="species", the matrix is normalized so that the difference
 #' between species is increased, and if what="genes", the matrix is normalized
 #' so that the difference between genes is increased. Normalization consists
-#' in dividing each entry by either the mean of each row or the mean of each column.
+#' in dividing either each row or each columns by its median.
 #' @return A normalized matrix
 #' @export
 normalize <- function(mat, what = "none") {

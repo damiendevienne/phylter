@@ -5,7 +5,8 @@
 
 #' rename.genes
 #' 
-#' This function names or renames trees in a list of trees.
+#' This function names or renames genes (trees or matrices).
+#' This function is meant to be called from \code{phylter()} only.
 #' 
 #' 
 #' @param X A list of trees or matrices

@@ -2,12 +2,12 @@
 % Please edit documentation in R/Dist2WR.R
 \name{Dist2WR}
 \alias{Dist2WR}
-\title{Dist2WR}
+\title{Compute the gene x species matrix from the result of Distatis}
 \usage{
 Dist2WR(Distatis)
 }
 \arguments{
-\item{Distatis}{is the output of the fonction \code{DistatisFast}.}
+\item{Distatis}{output of the fonction \code{DistatisFast}.}
 }
 \value{
 The 2WR matrix: a gene x species matrix. Each cell represents a 

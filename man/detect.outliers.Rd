@@ -5,47 +5,41 @@
 \alias{detect.outliers.array}
 \title{Detect outliers}
 \usage{
-detect.outliers(
-  mat2WR,
-  k = 3,
-  test.island = TRUE,
-  old = FALSE,
-  normalizeby = "row"
-)
+detect.outliers(mat2WR, k = 3, test.island = TRUE, normalizeby = "row")
 
 detect.outliers.array(arr, nbsp, k = 3)
 }
 \arguments{
-\item{mat2WR}{the 2WR matrix obtained with the Dist2WR function.}
+\item{mat2WR}{2D matrix (gene x species) obtained with the \code{Dist2WR()} function.}
 
-\item{k}{the strength of outlier detection. High values (typically 3) 
+\item{k}{strength of outlier detection. High values (typically 3) 
 correspond to less outliers detected than with lower ones (e.g. 1.5).}
 
 \item{test.island}{should islands of outliers be treated as such. 
-Default to FALSE. If TRUE, only the highest value in the island is 
-removed (This option may be deprecated soon).}
+If TRUE (the default), only the highest value in an island of outliers is
+removed. This prevents erroneous outliers due to hicthiking effect to be removed.}
 
-\item{old}{Should the old detection method be used instead (default to FALSE).}
-
-\item{normalizeby}{Should the 2WR matrix be normalized prior to outlier detection, and how.
-Can be "row" (the default),"col" or "none"}
+\item{normalizeby}{Should the 2D matrix be normalized prior to outlier detection, and how.
+Can be "row" (the default),"col" or "none". Normalization is done by dividing columns or rows 
+by their median.}
 
 \item{arr}{Array of values, typically the weight of each gene matrix (alpha values).}
 
 \item{nbsp}{Number of species in the analysis}
 }
 \value{
-A list of outliers.
+\code{detect.outliers}: A matrix with outliers detected in the 2D matric. Each row \code{x} contains the 
+the gene (\code{x[1]}) where the species (\code{x[2]}) is outlier.
+
+\code{detect.outliers.array}: An array listing the outliers detected (if any)
 }
 \description{
-Functions to detect outliers, either complete or cell (see details).
+Functions to detect outliers, in matrices or in arrays.
 }
 \details{
-These functions detect outliers in the 2WR matrix. The method 
-used is adapted to skewed data, as is the case here. Prior to outlier
-detection, the 2WR matrix is normalized by row and by column
-and the outliers are detected from the complete matrix using the 
-adjusted Tukey proposed by Hubert and Vandervieren (2008): 
+These functions detect outliers either in matrices or in arrays. The method 
+used is adapted to skewed data, as is the case here. The outlier detection 
+method used is the adjusted Tukey proposed by Hubert and Vandervieren (2008).  
 Hubert, M. and Vandervieren, E. (2008). An adjusted boxplot for skewed
 distributions. Computational Statistics and Data Analysis, 52, 5186-5201. 
 The different types of outliers (cell and complete) are described in:
@@ -60,8 +54,7 @@ Biology and Evolution 29 : 1587-1598.
 to call the two other functions described, and return complete outliers
 if any, or cell outliers if no complete outliers exist.
 
-\item \code{detect.outliers.array}: detects
-if array (here the correlations between gene matrices) contains outlier. This
+\item \code{detect.outliers.array}: detects if array (here the correlations between gene matrices) contains outlier. This
 is the last step of the phylter process.
 }}
 
@@ -70,6 +63,7 @@ de Vienne D.M., Ollier S. et Aguileta G. (2012) Phylo-MCOA:
 A Fast and Efficient Method to Detect Outlier Genes and Species
 in Phylogenomics Using Multiple Co-inertia Analysis. Molecular 
 Biology and Evolution 29 : 1587-1598.
+
 Hubert, M. and Vandervieren, E. (2008). An adjusted boxplot for skewed
 distributions. Computational Statistics and Data Analysis, 52, 5186-5201.
 }

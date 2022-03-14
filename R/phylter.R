@@ -1,5 +1,3 @@
-# Detect and filter outliers in a list of trees or distance matrices. 
-
 #' filter phylogenomics datasets
 #' 
 #' Detection and filtering out of outliers in a list of trees 
@@ -12,41 +10,39 @@
 #' prior to the outlier detection.
 #' @param distance If X is a list of trees, type of distance used to compute the 
 #' pairwise matrices for each tree. Can be "patristic" (sum of branch lengths separating tips, the default)
-#' or nodal (number of nodes separating tips).
+#' or nodal (number of nodes separating tips). The "nodal" option should only be used if all species 
+#' are present in all genes.
 #' @param k Strength of outlier detection. The higher this value the less outliers
 #' detected (see details).
 #' @param k2 Same as k for complete gene outlier detection. To preserve complete genes from 
-#' being discarded, k2 can be increased . By default, k2 = k. (see above) 
-#' By default, k2=k. 
-#' @param Norm Should the matrices be normalized and how. If "median", matrices are divided by their median, if 
+#' being discarded, k2 can be increased. By default, k2 = k. (see above) 
+#' @param Norm Should the matrices be normalized prior to the complete analysis and how. If "median", matrices are divided by their median, if 
 #' "mean" they are divided by their mean, if "none", no normalization if performed. Normalizing ensures that fast-evolving 
-#' (and slow-evolving) genes are not treated as outliers. Normalization by median is less sensitive to outlier values
-#' but can lead to errors if some matrices have a median value of 0. 
+#' (and slow-evolving) genes are not treated as outliers. Normalization by median is a better choice as it is less sensitive to outlier values. 
 #' are not considered outliers. 
-#' @param Norm.cutoff Value of the median (if Norm="median") or the mean (if
-#' Norm="mean") below which matrices are simply discarded from the analysis. This
-#' prevents dividing by 0, and getting rid of genes that contain mostly branches
-#' of length 0 and are therefore uninformative anyway. 
-#' @param gene.names List of gene names used to rename elements in X. If NULL (the default), 
+#' @param Norm.cutoff Value of the median (if \code{Norm="median"}) or the mean (if
+#' \code{Norm="mean"}) below which matrices are simply discarded from the analysis. This
+#' prevents dividing by 0, and allows getting rid of genes that contain mostly branches
+#' of length 0 and are therefore uninformative anyway. Discarded genes, if any, are listed in 
+#' the output ({out$DiscardedGenes}).
+#' @param gene.names List of gene names used to rename elements in X. If NULL (the default), 0
 #' elements are named 1,2,..,length(X). 
-#' @param test.island This should not be modified. If TRUE (the default), only the highest value in
+#' @param test.island If TRUE (the default), only the highest value in
 #' an 'island' of outliers is considered an outlier. This prevents non-outliers hitchhiked by outliers
 #' to be considered outliers themselves. 
 #' @param verbose If TRUE (the default), messages are written during the filtering process to get information
 #' of what is happening
-#' @param stop.criteria The optimisation stops when the gain between round n and round n+1 is smaller
+#' @param stop.criteria The optimisation stops when the gain in concordance between matrices between round \code{n} and round \code{n+1} is smaller
 #' than this value. Default to 1e-5.
-#' @param InitialOnly Logical. If TRUE, only the Initial state of teh data is computed. The optimization and 
-#' @param old Logical. Should the old way of detecting outliers be used. Default to FALSE.
-#' outlier detection is NOT performed. Useful to get an idea about the initial state of th data.
-#' @param normalizeby Should the 2WR matrix be normalized prior to outlier detection, and how.
+#' @param InitialOnly Logical. If TRUE, only the Initial state of the data is computed. 
+#' @param normalizeby Should the gene x species matrix be normalized prior to outlier detection, and how.
 #' @return A list of class 'phylter' with the 'Initial' (before filtering) and 'Final' (after filtering) states, 
-#' or a list of class 'phylterinitial' only, if InitialOnly=TRUE. 
+#' or a list of class 'phylterinitial' only, if InitialOnly=TRUE. The function also returns the list of DiscardedGenes, if any. 
 #' @importFrom utils tail combn
 #' @importFrom stats hclust as.dist median
 #' @importFrom graphics plot
 #' @export
-phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm="median", Norm.cutoff=1e-6, gene.names=NULL, test.island=TRUE, verbose=TRUE, stop.criteria=1e-5, InitialOnly=FALSE, old=FALSE, normalizeby="row") {
+phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm="median", Norm.cutoff=1e-6, gene.names=NULL, test.island=TRUE, verbose=TRUE, stop.criteria=1e-5, InitialOnly=FALSE, normalizeby="row") {
 	ReplaceValueWithCompromise<-function(allmat, what, compro, lambda) {
 		for (i in 1:length(allmat)) {
 			whatsp<-what[what[,1]==i,2]
@@ -95,41 +91,14 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm="median", N
 		}
 		return(Out)
 	}
-	if (is.null(names(X))) X<-rename.genes(X, gene.names=gene.names)
-	if (class(X[[1]])=="phylo") matrices <- trees2matrices(X, distance = distance, bvalue = bvalue)
-	else matrices<-X
-	Xsave<-matrices #Xsave contains the original matrices
-	matrices <- impMean(matrices) ##impute missing values with mean (if any). This also sorts rows and columns, thus this step cannot be removed.
-	if (verbose) {
-		cat(paste("\nNumber of Genes:    ", length(matrices), "\n", sep=""))
-		cat(paste("Number of Species:  ", nrow(matrices[[1]]), "\n", sep=""))
-		cat("--------\n")
-	}
-	## NEW (25/01/2022). Doing this, genes that havehigh values globally are not treated as outliers, 
-	## but long branches remain outliers (median is not too affected by outliers).
-	## NEW March 10 2022 
-	##remove matrices that have mean or median close to 0
-	ZeroLengthMatrices<-NULL
-	if (Norm=="median") {
-		AllMe<-unlist(lapply(matrices, median))
-		matrices<-lapply(matrices, function(x) x/median(x))
-		} else if (Norm=="mean") {
-			AllMe<-unlist(lapply(matrices, mean))
-			matrices<-lapply(matrices, function(x) x/mean(x))
-		}	
-	#remove matrices with median or mean < Norm.cutoff
-	ZeroLengthMatrices<-which(AllMe<=Norm.cutoff)
-	if (length(ZeroLengthMatrices)>0) {
-		matrices<-matrices[-ZeroLengthMatrices]
-		if (verbose) {
-				if (length(ZeroLengthMatrices)>1) cat(paste("\nWarning! ",length(ZeroLengthMatrices)," genes were removed prior to the analysis because they had a ",Norm," value below the Norm.cutoff threshold.\n\n", sep=""))
-				else cat(paste("\nWarning! ",length(ZeroLengthMatrices)," gene was removed prior to the analysis because it had a ",Norm," value below the Norm.cutoff threshold.\n\n", sep=""))
-			}
-	}
-	
 
+	#NEW
+	X.clean<-PreparePhylterData(X, bvalue, distance, Norm, Norm.cutoff, gene.names, verbose)
+	Xsave<-X.clean$Xsave
+	matrices<-X.clean$matrices
+	discardedgenes<-X.clean$discardedgenes
+	#END NEW
 
-#	RES<-DistatisFast(matrices, Norm)
 	RES<-DistatisFast(matrices)
 	WR<-Dist2WR(RES)
 	Initial<-NULL
@@ -164,7 +133,7 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm="median", N
 		WR.reordered<-WR[OrderWRrow,]		
 		if (!lastLoop) {
 			# detect cell outliers
-			CellsToRemove<-detect.outliers(WR.reordered, k=k,test.island=test.island, old=old, normalizeby=normalizeby)
+			CellsToRemove<-detect.outliers(WR.reordered, k=k,test.island=test.island, normalizeby=normalizeby)
 			# reorder to previous order
 			CellsToRemove<-ReoderBackTheCells(CellsToRemove, OrderWRrow)
 		}
@@ -236,23 +205,23 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm="median", N
 	Final$species.order<-colnames(RES$compromise)
 	Final$AllOptiScores<-VAL
 
-	### NEW - 10/03/2022
-	### WE MUST MODIFY CELLSREMOVED TO REINTEGRATE THE GENES
-	### THAT WERE REMOVED BECAUSE OF MEDIAN or MEAN=0 ISSUE. INDEED,
-	### if gene n is removed, gene n+1 becomes n, n+2 becomles n+1, etc.
-	### We need to reorganise these cells to put the correct identifiers.
-	### we do that as follows:
-	print(CELLSREMOVED)
-	if (length(ZeroLengthMatrices)>0) {
-		for (i in 1:length(ZeroLengthMatrices)) {
-			CELLSREMOVED[CELLSREMOVED[,1]>=ZeroLengthMatrices[i],1]<-CELLSREMOVED[CELLSREMOVED[,1]>=ZeroLengthMatrices[i],1]+1
-		}
-		#and then we add as outliers these genes that had been removed
-		#and all there species
-		CELLSREMOVED<-rbind(CELLSREMOVED, cbind(rep(ZeroLengthMatrices, each=nrow(WR)),rep(1:nrow(WR),length(ZeroLengthMatrices))))
+	# ### NEW - 10/03/2022
+	# ### WE MUST MODIFY CELLSREMOVED TO REINTEGRATE THE GENES
+	# ### THAT WERE REMOVED BECAUSE OF MEDIAN or MEAN=0 ISSUE. INDEED,
+	# ### if gene n is removed, gene n+1 becomes n, n+2 becomles n+1, etc.
+	# ### We need to reorganise these cells to put the correct identifiers.
+	# ### we do that as follows:
+	# print(CELLSREMOVED)
+	# if (length(ZeroLengthMatrices)>0) {
+	# 	for (i in 1:length(ZeroLengthMatrices)) {
+	# 		CELLSREMOVED[CELLSREMOVED[,1]>=ZeroLengthMatrices[i],1]<-CELLSREMOVED[CELLSREMOVED[,1]>=ZeroLengthMatrices[i],1]+1
+	# 	}
+	# 	#and then we add as outliers these genes that had been removed
+	# 	#and all there species
+	# 	CELLSREMOVED<-rbind(CELLSREMOVED, cbind(rep(ZeroLengthMatrices, each=nrow(WR)),rep(1:nrow(WR),length(ZeroLengthMatrices))))
 
-	}
-	### END OF THIS NEW PART 
+	# }
+	# ### END OF THIS NEW PART 
 
 	Final$CELLSREMOVED<-CELLSREMOVED 
 	#MAYBE DO NOT RETURN THIS!?	
@@ -262,9 +231,9 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm="median", N
 	##New 
 	Final$matrices<-matrices
 
-	call<-list(call=match.call(), bvalue=bvalue, distance=distance, k=k, Norm=Norm, gene.names=gene.names, test.island=test.island, verbose=verbose, stop.criteria=stop.criteria)
+	call<-list(call=match.call(), bvalue=bvalue, distance=distance, k=k, k2=k2, Norm=Norm, Norm.cutoff=Norm.cutoff, gene.names=gene.names, test.island=test.island, verbose=verbose, stop.criteria=stop.criteria, InitialOnly=InitialOnly, normalizeby=normalizeby)
 
-	Result<-list(Initial=Initial, Final=Final, call=call)
+	Result<-list(Initial=Initial, Final=Final, DiscardedGenes=discardedgenes, call=call)
 	class(Result)<-c("phylter", "list")
 	class(Result$Initial)<-c("phylterinitial", "list")
 	class(Result$Final)<-c("phylterfinal", "list")
