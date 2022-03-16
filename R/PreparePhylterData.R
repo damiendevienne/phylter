@@ -40,7 +40,6 @@
 
 PreparePhylterData<-function(X, bvalue=0, distance="patristic", Norm="median",Norm.cutoff=1e-6,gene.names=NULL, verbose=TRUE) {
 
-
 	WarningMessage.GenesDiscarded<-function(nb,nam) {
 		if (nb>1) {
 			cat("\n########################################\n")
