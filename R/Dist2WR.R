@@ -1,4 +1,4 @@
-#' Compute the gene x species matrix from the result of Distatis
+#' Compute gene x species matrix from the result of Distatis
 #' 
 #' \code{Dist2WR} computes the 2WR matrix from the results obtaind with \code{DistatisFast}
 # (the fast version of distatis).
