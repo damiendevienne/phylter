@@ -8,7 +8,7 @@
 #' 
 #' \itemize{
 #'  \item plot(x) and plot.phylter(x) plot the genes found in each species or species 
-#' found in each gene as barplors, highlighting the outliers detected.
+#' found in each gene as barplots, highlighting the outliers detected.
 #'  \item plot2WR(x) plots side by side the initial and the final gene x species (unreable for large datasets) 
 #' matrices (the 2WR matrices), highlighting missing data and detected outliers.
 #'  \item plotDispersion(x) plots dispersion of data before and after phylter, on a 2D
@@ -32,6 +32,10 @@
 #' @param transpose Logical. If TRUE, the two matrices are piled up instaed of being displayed side by side. Default to FALSE.
 #' @param labelnames Logical. If TRUE, the names of labels are indicated on the heatmap. If FALSE they are removed. 
 #' This is conveninent when the names of the genes are very long for instance. 
+#' @param clust Logical. Should the rows or/and columns of the matrices that are plotted be reorderd
+#' prior to plotting. Reordering is based on a hierarchical clustering. Default to FALSE. 
+#' This is conveninent when the names of the genes are very long for instance. 
+
 #' @param ... Additional arguments to be passed to plot and print functions.
 #' @return The desired plots are returned. Note that you might want to call the pdf(),
 #'  png(), jpeg(), or tiff() function first if you want to save the plot(s) to an
@@ -109,7 +113,7 @@ plot.phylter<-function(x, what="all", layout=1, sorted=TRUE, ...) {
 #' @rdname plot.phylter
 #' @export
 
-plot2WR<-function(x, show.missing=TRUE, show.outliers=TRUE, transpose=FALSE) {
+plot2WR<-function(x, show.missing=TRUE, show.outliers=TRUE, transpose=FALSE, clust=FALSE) {
 		## for passing check filters
 		value<-NULL
 		Species<-NULL
@@ -121,8 +125,14 @@ plot2WR<-function(x, show.missing=TRUE, show.outliers=TRUE, transpose=FALSE) {
 		sporder<-hclust(dist(WRi))$order
 		gnorder<-hclust(dist(t(WRi)))$order
 		#we reorder both matrices according to this. 
-		WRi2<-WRi[sporder, gnorder]
-		WRf2<-WRf[sporder, gnorder]
+		if (clust) {
+			WRi2<-WRi[sporder, gnorder]
+			WRf2<-WRf[sporder, gnorder]
+		}
+		else {
+			WRi2<-WRi
+			WRf2<-WRf
+		}
 		#get xy coordinates of missing data to add to the heatmap
 		ExistOrNot<-t(do.call(rbind, lapply(x$Initial$mat.data, function(x,y) match(y, colnames(x)),y=rownames(WRi2))))*0
 		ExistOrNot<-ExistOrNot[,gnorder]
@@ -172,6 +182,9 @@ plot2WR<-function(x, show.missing=TRUE, show.outliers=TRUE, transpose=FALSE) {
 		if (!show.missing & show.outliers) p <- p + geom_point(data=subset(points, state=="outliers"), aes(x=col, y=row, value=NULL, color=state))
 		p <- p+ scale_color_manual(values = c("missing" = "white", "outliers"="#ffcc00"))
 		if (transpose) p <- p + coord_flip()
+		p<-p+theme(axis.text=element_text(size=2), aspect.ratio=3/6)
+		if (transpose) p <- p + labs(title="gene x species matrix before (bottom) and after (top)\nremoval of phylter-identified outliers")
+		else p <- p + labs(title="gene x species matrix before (left) and after (right)\nremoval of phylter-identified outliers")
 		print(p)
 }
 
@@ -206,6 +219,7 @@ plotDispersion<-function(x) {
 	#ggplot(COO, aes(x=x0,y=y0,xend=x1,yend=y1, colour=state)) + geom_segment()
 	p <- ggplot(COO, aes(x=x0,y=y0, colour=state)) + geom_point()
 	p <- p + labs(caption="One dot = One gene x species association")
+	p <- p + labs(title="Dispersion of data before and after removal of phylter-identified outliers")
 	print(p)
 }
 
@@ -214,7 +228,7 @@ plotDispersion<-function(x) {
 #' @rdname plot.phylter
 #' @export
 
-plotRV<-function(x, what="Initial", labelnames=TRUE) {
+plotRV<-function(x, what="Initial", labelnames=TRUE, clust=FALSE) {
 	## for passing check filters
 	Var1<-NULL
 	Var2<-NULL
@@ -223,7 +237,8 @@ plotRV<-function(x, what="Initial", labelnames=TRUE) {
 	if (what=="Initial") RV<-x$Initial$RV
 	if (what=="Final") RV<-x$Final$RV
 
-	RV<-RV[hclust(dist(RV))$order,hclust(dist(RV))$order]
+
+	if (clust) RV<-RV[hclust(dist(RV))$order,hclust(dist(RV))$order]
 	p <- ggplot(melt(RV),aes(x=Var1, y=Var2,fill=value)) + geom_tile() + scale_fill_gradient2(name="RV coefficient", limits=c(-1, 1.01))
 	if (!labelnames) {
 		p <- p + theme(axis.text.x=element_blank(), axis.text.y=element_blank(), axis.ticks.x=element_blank(), axis.ticks.y=element_blank())
@@ -232,7 +247,7 @@ plotRV<-function(x, what="Initial", labelnames=TRUE) {
 		p <- p + theme(axis.text.x=element_text(angle = 90, hjust = 1))
 	}	
 
-	p <- p + labs(x="Genes",y="Genes", title=what)
+	p <- p + labs(x="Genes",y="Genes", title=paste(what, " vector correlation coefficients (RV) between genes")) + theme(axis.text=element_text(size=2), aspect.ratio=1/1)
 	print(p)
 
 #	heatmap(OK$Initial$RV, scale="none", col=magma(100), breaks=seq(-1,1,length.out=101), labCol="", labRow="")
