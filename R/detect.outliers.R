@@ -2,7 +2,7 @@
 # Three functions here.
 
 
-#' Detect outliers
+#' Detection of outliers in 1D and 2D data
 #' 
 #' Functions to detect outliers, in matrices or in arrays. 
 #' 
@@ -38,6 +38,16 @@
 #' Biology and Evolution 29 : 1587-1598.
 #' @references Hubert, M. and Vandervieren, E. (2008). An adjusted boxplot for skewed
 #' distributions. Computational Statistics and Data Analysis, 52, 5186-5201. 
+#' @examples
+#' # Get the initial gene x species matrix
+#' # from the carnivora dataset
+#' data(carnivora) 
+#' mat<-phylter(carnivora, InitialOnly=TRUE)$WR
+#' 
+#' # detect outliers in this matrix
+#' outliers<-detect.outliers(mat)
+#' outliers$cells # matrix where each row represents one cell in the input matrix
+#' 
 #' @importFrom mrfDepth medcouple
 #' @importFrom stats dist quantile IQR
 #' @export

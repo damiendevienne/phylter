@@ -2,20 +2,24 @@
 
 
 
-#' trees2matrices
+#' Convert phylogenetic trees to distance matrices
 #' 
-#' Transform a list of trees into a list of matrices.
+#' Transform a list of phylogenetic trees into a 
+#' list of phylogenetic distance matrices.
 #' 
-#' 
-#' @param trees A list of gene trees in multiphylo format.
+#' @param trees A list of gene trees in format "multiphylo".
 #' @param distance A method to generate distance matrices. It could be "nodal"
 #' to establish that the distance between two species is the number of nodes
 #' that separate them. Or "patristic" (default) if the distance between two
-#' species is be the sum of branch lengths between them.
+#' species is the sum of branch lengths separating them. The "nodal" option should
+#' only be used if all species are present in all trees (no missing data).
 #' @param bvalue This argument is only used if trees contain bootstrap values.
 #' It determines under what bootstrap values the nodes should be collapsed.
 #' Value 0 (the default) means that no nodes are collapsed.
 #' @return return a list of distance matrices
+#' @examples
+#' data(carnivora)
+#' matrices<-trees2matrices(carnivora)
 #' @importFrom ape Nnode Ntip di2multi compute.brlen cophenetic.phylo
 #' @export
 trees2matrices <- function(trees, distance = "patristic", bvalue = 0) {

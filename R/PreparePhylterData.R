@@ -24,17 +24,21 @@
 #' elements are named 1,2,..,length(X). 
 #' @param verbose If TRUE (the default), messages are written during the filtering process to get information
 #' of what is happening
-
 #' @return A list of class 'phylter' with the 'Initial' (before filtering) and 'Final' (after filtering) states, 
 #' or a list of class 'phylterinitial' only, if InitialOnly=TRUE. 
+#' @examples 
+#' data(carnivora)
+#' # transform trees to a named list of matrices with same dimensions
+#' # and identical row and column orders and names
+#' carnivora.clean<-PreparePhylterData(carnivora)
+#' 
+#'  
 #' @importFrom utils tail combn
 #' @importFrom stats hclust as.dist median
 #' @importFrom graphics plot
 #' @export
 
-
-
-PreparePhylterData<-function(X, bvalue, distance, Norm, Norm.cutoff, gene.names, verbose) {
+PreparePhylterData<-function(X, bvalue=0, distance="patristic", Norm="median",Norm.cutoff=1e-6,gene.names=NULL, verbose=TRUE) {
 
 
 	WarningMessage.GenesDiscarded<-function(nb,nam) {
@@ -78,6 +82,7 @@ PreparePhylterData<-function(X, bvalue, distance, Norm, Norm.cutoff, gene.names,
 	## NEW March 10 2022 
 	##remove matrices that have mean or median close to 0
 	ZeroLengthMatrices<-NULL
+	discardedmatrix<-NULL
 	if (Norm %in% c("median","mean")) {
 		if (Norm=="median") {
 			AllMe<-unlist(lapply(matrices, median))
@@ -89,15 +94,21 @@ PreparePhylterData<-function(X, bvalue, distance, Norm, Norm.cutoff, gene.names,
 		#remove matrices with median or mean < Norm.cutoff
 		ZeroLengthMatrices<-which(AllMe<=Norm.cutoff)
 		if (length(ZeroLengthMatrices)>0) {
+			#for later use, get list of all discarded species for all discarded genes
+			SpeciesPerDiscardedGenes<-lapply(matrices[ZeroLengthMatrices], rownames)
 			matrices<-matrices[-ZeroLengthMatrices]
 			#and remove those matrices from Xsave as well
 			Xsave<-Xsave[-ZeroLengthMatrices]
 			if (verbose) {
 					WarningMessage.GenesDiscarded(length(ZeroLengthMatrices), names(ZeroLengthMatrices))
 				}
+			###prepare the discarded matrix (col1=genes, col2=species)
+			discardedmatrix<-cbind(rep(names(ZeroLengthMatrices),unlist(lapply(SpeciesPerDiscardedGenes,length))), unname(unlist(SpeciesPerDiscardedGenes)))
 		}
 	}	
-	return(list(matrices=matrices, Xsave=Xsave, discardedgenes=names(ZeroLengthMatrices)))
+	discardedgenes<-names(ZeroLengthMatrices)
+
+	return(list(matrices=matrices, Xsave=Xsave, discardedgenes=discardedgenes, discardedmatrix=discardedmatrix))
 }
 
 

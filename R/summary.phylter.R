@@ -1,19 +1,21 @@
-# Summary and print functions for objects of class phylter, phylterfinal and phylterinitial 
-# No need to document those?
-
-#' summary.phylter
+#' Get summary for phylter objects
 #' 
-#' summary.phylter TODO.
+#' Get the summary of an object of class \code{phylter}
 #' 
 #' @param object Object returned by function 'phylter()'.
 #' @param ... Additional arguments affecting the summary produced.
-#' @return Print formatting
+#' @return On object of class \code{summmary.phylter}
+#' @examples 
+#' data(carnivora)
+#' res<-phylter(carnivora)
+#' summary<-summary(res)
+#' class(summary)
 #' @export
 
 summary.phylter<-function(object, ...) {
 	res<-NULL
 	percent.score.increase<-round((rev(object$Final$AllOptiScores)[1]-object$Final$AllOptiScores[1])*100, 2)
-	nb.discarded<-object$DiscardedGenes
+	nb.discarded<-length(object$DiscardedGenes)
 	nb.outlier.cells<-nrow(object$Final$Outliers)
 	initial.nb.sp.per.mat<-unlist(lapply(object$Initial$mat.data, nrow))
 	percent.data.filtered<-round(nb.outlier.cells/sum(initial.nb.sp.per.mat)*100,2)
@@ -36,20 +38,24 @@ summary.phylter<-function(object, ...) {
 	res
 }
 
-#' print.summary.phylter
+#' print summary of phylter objects
 #' 
-#' print.summary.phylter TODO.
+#' Prints on screen the summary of an object of class summmary.phylter as returned by the \code{summary.phylter()} function.
 #' 
 #' @param x Object returned by function 'summary.phylter()'.
 #' @param ... Additional arguments.
-#' @return Print formatting   
+#' @return NA   
+#' @examples
+#' data(carnivora)
+#' res<-phylter(carnivora)
+#' summary<-summary(res)
+#' print(summary)
 #' @export
 
 print.summary.phylter<-function(x, ...) {
 	if (!inherits(x, "summary.phylter"))
 		stop("'x' must inherit from class summar.phylter")
 	cat("\n")
-	if (length(x$nb.discarded)>0) cat(paste("-- Info: ",length(x$nb.discarded)," gene(s) discarded prior to the analysis --\n\n", sep=""))
 	cat(paste("Total number of outliers detected: ",x$nb.outlier.cells,"\n", sep=""))
 	cat(paste("  Number of complete gene outliers : ",length(x$ComplOutGN),"\n", sep=""))
 	cat(paste("  Number of complete species outliers : ",length(x$ComplOutSP),"\n", sep=""))
@@ -59,13 +65,17 @@ print.summary.phylter<-function(x, ...) {
 }
 
 
-#' print.phylter
+#' Print phylter objects
 #' 
-#' print.phylter TODO.
+#' Print on screen a simple description of the content of phylter objects
 #' 
 #' @param x Object returned by function 'phylter()'.
 #' @param ... Additional arguments.
 #' @return Print formatting   
+#' @examples
+#' data(carnivora)
+#' res<-phylter(carnivora)
+#' print(res)
 #' @export
 
 
@@ -86,13 +96,17 @@ print.phylter<-function(x, ...) {
 }
 
 
-#' print.phylterinitial
+#' print objects of class phylterinitial
 #' 
-#' print.phylterinitial TODO.
+#' Print on screen a simple description of the content of objects of class phylterinitial
 #' 
-#' @param x Object returned by function 'phylter()'.
+#' @param x Object present in the \code{$initial} element of the object returned by function \code{phylter()}.
 #' @param ... Additional arguments.
-#' @return Print formatting   
+#' @return NA 
+#' @examples
+#' data(carnivora)
+#' res<-phylter(carnivora)
+#' print(res$Initial)
 #' @export
 
 
@@ -117,13 +131,17 @@ print.phylterinitial<-function(x, ...) {
 
 
 
-#' print.phylterfinal
+#' print objects of class phylterfinal
 #' 
-#' print.phylterfinal TODO.
+#' Print on screen a simple description of the content of objects of class phylterfinal
 #' 
 #' @param x Object returned by function 'phylter()'.
 #' @param ... Additional arguments.
-#' @return Print formatting   
+#' @return NA   
+#' @examples
+#' data(carnivora)
+#' res<-phylter(carnivora)
+#' print(res$Final)
 #' @export
 
 
@@ -146,6 +164,7 @@ print.phylterfinal<-function(x, ...) {
 		"Complete outliers (Gene and Species, if any)",
 		"Species x Species gene matrices (list)"
 		)
+	if (!is.null(x$Discarded)) Content<-c(Content, "Discarded elements (one row = one species/gene discarded)")
 	DF<-data.frame(Object, Dimension, Content, row.names=NULL)
 	print(DF, right=FALSE)
 }

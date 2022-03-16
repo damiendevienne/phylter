@@ -1,4 +1,4 @@
-#' filter phylogenomics datasets
+#' Filter phylogenomics datasets
 #' 
 #' Detection and filtering out of outliers in a list of trees 
 #' or distance matrices.
@@ -38,10 +38,29 @@
 #' @param normalizeby Should the gene x species matrix be normalized prior to outlier detection, and how.
 #' @return A list of class 'phylter' with the 'Initial' (before filtering) and 'Final' (after filtering) states, 
 #' or a list of class 'phylterinitial' only, if InitialOnly=TRUE. The function also returns the list of DiscardedGenes, if any. 
+#' @examples
+#' data(carnivora)
+#'
+#' # using default paramaters
+#' res<-phylter(carnivora) #perform the phylter analysis
+#' res # brief summary of the analysis
+#' res$DiscardedGenes # list of genes discarded prior to the analysis
+#' res$Initial #See all elements prior to the analysis
+#' res$Final #See all elements at the end of the analysis
+#' res$Final$Outliers #Print all outliers detected
+#' 
+#' 
+#' # Change the call to phylter  to use nodal distances, instead of patristic: 
+#' res<-phylter(carnivora, distance="nodal")
+#'
+#'
+#'
+#' 
 #' @importFrom utils tail combn
 #' @importFrom stats hclust as.dist median
 #' @importFrom graphics plot
 #' @export
+
 phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm="median", Norm.cutoff=1e-6, gene.names=NULL, test.island=TRUE, verbose=TRUE, stop.criteria=1e-5, InitialOnly=FALSE, normalizeby="row") {
 	ReplaceValueWithCompromise<-function(allmat, what, compro, lambda) {
 		for (i in 1:length(allmat)) {
@@ -96,7 +115,8 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm="median", N
 	X.clean<-PreparePhylterData(X, bvalue, distance, Norm, Norm.cutoff, gene.names, verbose)
 	Xsave<-X.clean$Xsave
 	matrices<-X.clean$matrices
-	discardedgenes<-X.clean$discardedgenes
+	discardedgenes<-X.clean$discardedgenes #list pof discarded genes
+	discardedmatrix<-X.clean$discardedmatrix #matrix of discarded cells (same format as Outliers at the end)
 	#END NEW
 
 	RES<-DistatisFast(matrices)
@@ -108,9 +128,9 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm="median", N
 	Initial$weights<-RES$alpha
 	Initial$compromise<-RES$compromise
 	Initial$F<-RES$F
-	Initial$PartialF<-RES$PartialF
 	##New
 	Initial$matrices<-matrices
+	Initial$PartialF<-RES$PartialF
 
 	if (InitialOnly) {
 		class(Initial)<-c("phylterinitial", "list")
@@ -230,7 +250,8 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm="median", N
 	#store the way the function was called
 	##New 
 	Final$matrices<-matrices
-
+	Final$Discarded<-discardedmatrix #organized like Outliers, but for genes discarded at the very beginning
+	
 	call<-list(call=match.call(), bvalue=bvalue, distance=distance, k=k, k2=k2, Norm=Norm, Norm.cutoff=Norm.cutoff, gene.names=gene.names, test.island=test.island, verbose=verbose, stop.criteria=stop.criteria, InitialOnly=InitialOnly, normalizeby=normalizeby)
 
 	Result<-list(Initial=Initial, Final=Final, DiscardedGenes=discardedgenes, call=call)

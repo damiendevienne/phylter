@@ -36,6 +36,21 @@
 #' @return The desired plots are returned. Note that you might want to call the pdf(),
 #'  png(), jpeg(), or tiff() function first if you want to save the plot(s) to an
 #' external file.
+#' @examples
+#' data(carnivora)
+#' 
+#' # perform phylter analysis
+#' res<-phylter(carnivora)
+#' 
+#' # plot for each gene the number of outlier species
+#' plot(res, "genes")
+#' 
+#' # plot for each species the number genes where it is outlier
+#' plot(res, "species")
+#' 
+#' # plot the dispersion of data before and after the use of phylter
+#' plotDispersion(res)
+#' 
 #' @importFrom grDevices dev.cur devAskNewPage
 #' @importFrom stats relevel
 #' @importFrom ggplot2 ggplot aes geom_bar theme element_text labs coord_flip 
@@ -61,8 +76,7 @@ plot.phylter<-function(x, what="all", layout=1, sorted=TRUE, ...) {
 		GoodOrderGenes<-names(sort(sum$nb.sp.removed.per.gene, decreasing=TRUE))	
 		DF_genes$namegene<-factor(DF_genes$namegene, levels=GoodOrderGenes)
 	}
-	
-	p_genes <- ggplot(DF_genes, aes(x=namegene, y=number, fill=Species)) + geom_bar(stat="identity") + theme(axis.text.x=element_text(angle = 90, hjust = 1)) + labs(title="Species per gene", x ="Genes", y = "Number of Species")
+	p_genes <- ggplot(DF_genes, aes(x=namegene, y=number, fill=Species)) + geom_bar(stat="identity") + theme(axis.text.x=element_text(angle = 90, hjust = 1, size=2)) + labs(title="Species per gene", x ="Genes", y = "Number of Species") + theme(aspect.ratio=3/6)
 	speciesintables<-table(unlist(lapply(x$Initial$mat.data, rownames)))
 	nbs<-length(speciesintables)
 	speciesinoutliers<-table(x$Final$Outliers[,2])
@@ -77,7 +91,7 @@ plot.phylter<-function(x, what="all", layout=1, sorted=TRUE, ...) {
 		DF_species$namespecies<-factor(DF_species$namespecies, levels=GoodOrderSpecies)
 	}
 
-	p_species <- ggplot(DF_species, aes(x=namespecies, y=number, fill=Genes)) + geom_bar(stat="identity") + theme(axis.text.x=element_text(angle = 90, hjust = 1)) + labs(title="Genes per species",x ="Species", y = "Number of Genes")
+	p_species <- ggplot(DF_species, aes(x=namespecies, y=number, fill=Genes)) + geom_bar(stat="identity") + theme(axis.text.x=element_text(angle = 90, hjust = 1, size=2), aspect.ratio=3/6) + labs(title="Genes per species",x ="Species", y = "Number of Genes")
 	if (what=="genes") print(p_genes)
 	if (what=="species") print(p_species)
 	if (what=="all") {

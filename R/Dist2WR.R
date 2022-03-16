@@ -8,6 +8,12 @@
 #' @return The 2WR matrix: a gene x species matrix. Each cell represents a 
 #' gene/species pair, whose value represents the distance between (i) the position of this species
 #' in this gene tree and (ii) the average position of this species in all other gene trees.
+#' @examples
+#' data(carnivora)
+#' matrices<-phylter(carnivora, InitialOnly=TRUE)$matrices
+#' ds<-DistatisFast(matrices)
+#' WR<-Dist2WR(ds) #returns the gene x species matrix
+#' 
 #' @export
 Dist2WR <- function(Distatis) {
   F<-Distatis$F

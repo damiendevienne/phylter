@@ -1,9 +1,4 @@
-# This function renames objects in a list (typcally trees or matrices). 
-# If no name is given, names are given as number between 1 and the number of elements in X
-
-
-
-#' rename.genes
+#' Name or rename a list of gene trees or matrices
 #' 
 #' This function names or renames genes (trees or matrices).
 #' This function is meant to be called from \code{phylter()} only.
@@ -13,6 +8,17 @@
 #' @param gene.names List of names to assign to the elements of X. Must be of the same length as length(X). 
 #' If NULL (the default) the object are numbered 1,2,...,length(X).
 #' @return X with name assigned to each element.
+#' @examples
+#' 
+#' data(carnivora)
+#'
+#' # names before renaming
+#' names(carnivora)
+#' 
+#' carnivora.renamed<-rename.genes(carnivora, gene.names=as.character(1:length(carnivora)))
+#'
+#' # names after renaming
+#' names(carnivora.renamed)
 #' @export
 rename.genes <- function(X, gene.names = NULL) {
   if(!is.null(gene.names)) {
