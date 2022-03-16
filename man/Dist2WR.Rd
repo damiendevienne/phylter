@@ -17,3 +17,10 @@ in this gene tree and (ii) the average position of this species in all other gen
 \description{
 \code{Dist2WR} computes the 2WR matrix from the results obtaind with \code{DistatisFast}
 }
+\examples{
+data(carnivora)
+matrices<-phylter(carnivora, InitialOnly=TRUE)$matrices
+ds<-DistatisFast(matrices)
+WR<-Dist2WR(ds) #returns the gene x species matrix
+
+}

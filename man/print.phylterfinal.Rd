@@ -2,7 +2,7 @@
 % Please edit documentation in R/summary.phylter.R
 \name{print.phylterfinal}
 \alias{print.phylterfinal}
-\title{print.phylterfinal}
+\title{print objects of class phylterfinal}
 \usage{
 \method{print}{phylterfinal}(x, ...)
 }
@@ -12,8 +12,13 @@
 \item{...}{Additional arguments.}
 }
 \value{
-Print formatting
+NA
 }
 \description{
-print.phylterfinal TODO.
+Print on screen a simple description of the content of objects of class phylterfinal
+}
+\examples{
+data(carnivora)
+res<-phylter(carnivora)
+print(res$Final)
 }

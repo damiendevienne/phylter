@@ -2,7 +2,7 @@
 % Please edit documentation in R/simtrees.R
 \name{simtrees}
 \alias{simtrees}
-\title{simtrees}
+\title{Simplistic simulation of gene trees with outliers}
 \usage{
 simtrees(Ngn, Nsp, Nsp.out = 0, Ngn.out = 0, Nb.cell.outlier = 0, brlen.sd = 0)
 }
@@ -27,4 +27,14 @@ A list of trees in 'multiPhylo' format.
 Simple(simplistic) simulation of trees with outliers. No missing data. 
 A first tree is generated with rtree() and is then modified according
 to the parameters chosen by the user.
+}
+\examples{
+ 
+# Very basic simulator, for debuggin purpose mainly.
+# examples: 30 genes, 120 species, 2 outlier species, 3 outlier genes
+# 4 gene/species outliers, branch length variance = 0.6 
+trees<-simtrees(30,120,2,3,4,0.6)
+
+
+
 }

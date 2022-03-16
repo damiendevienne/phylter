@@ -2,7 +2,7 @@
 % Please edit documentation in R/rename.genes.R
 \name{rename.genes}
 \alias{rename.genes}
-\title{rename.genes}
+\title{Name or rename a list of gene trees or matrices}
 \usage{
 rename.genes(X, gene.names = NULL)
 }
@@ -18,4 +18,16 @@ X with name assigned to each element.
 \description{
 This function names or renames genes (trees or matrices).
 This function is meant to be called from \code{phylter()} only.
+}
+\examples{
+
+data(carnivora)
+
+# names before renaming
+names(carnivora)
+
+carnivora.renamed<-rename.genes(carnivora, gene.names=as.character(1:length(carnivora)))
+
+# names after renaming
+names(carnivora.renamed)
 }

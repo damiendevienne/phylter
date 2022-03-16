@@ -3,7 +3,7 @@
 \name{detect.outliers}
 \alias{detect.outliers}
 \alias{detect.outliers.array}
-\title{Detect outliers}
+\title{Detection of outliers in 1D and 2D data}
 \usage{
 detect.outliers(mat2WR, k = 3, test.island = TRUE, normalizeby = "row")
 
@@ -58,6 +58,17 @@ if any, or cell outliers if no complete outliers exist.
 is the last step of the phylter process.
 }}
 
+\examples{
+# Get the initial gene x species matrix
+# from the carnivora dataset
+data(carnivora) 
+mat<-phylter(carnivora, InitialOnly=TRUE)$WR
+
+# detect outliers in this matrix
+outliers<-detect.outliers(mat)
+outliers$cells # matrix where each row represents one cell in the input matrix
+
+}
 \references{
 de Vienne D.M., Ollier S. et Aguileta G. (2012) Phylo-MCOA: 
 A Fast and Efficient Method to Detect Outlier Genes and Species

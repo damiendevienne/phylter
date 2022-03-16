@@ -2,7 +2,7 @@
 % Please edit documentation in R/DistatisFast.R
 \name{DistatisFast}
 \alias{DistatisFast}
-\title{DistatisFast}
+\title{Fast implementation the multivariate analysis method Distatis}
 \usage{
 DistatisFast(matrices, factorskept = 2)
 }
@@ -33,6 +33,23 @@ New implementation of the DISTATIS method for K matrices of dimension IxI.
 This version of Distatis is faster than the original one because only the minimum required number
 of eigenvalues and eigenvectors is calculated. The difference in speed 
 is particularly visible when the number of matrices is large.
+}
+\examples{
+# Get a list of matrices 
+# from the carnivora dataset
+data(carnivora) 
+matrices<-phylter(carnivora, InitialOnly=TRUE)$matrices
+
+# Perform a Distatis analysis on these matrices: 
+distatis<-DistatisFast(matrices)
+
+#distatis is a list with multiple elements: 
+distatis$alpha #weigh of each matrix (how much it correlates with others)
+distatis$RVmat #RV matrix: correlation of each matrix with each other
+distatis$compromise # distance matrix with "average" pairwise distance between species in matrices
+# etc.
+
+
 }
 \references{
 Abdi, H., Valentin, D., O'Toole, A.J., & Edelman, B. (2005).

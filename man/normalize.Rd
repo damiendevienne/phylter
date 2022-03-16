@@ -2,7 +2,7 @@
 % Please edit documentation in R/normalize.R
 \name{normalize}
 \alias{normalize}
-\title{normalize}
+\title{Median normalization of 2D matrix by row or by colomn}
 \usage{
 normalize(mat, what = "none")
 }
@@ -22,4 +22,17 @@ A normalized matrix
 \description{
 This function normalizes the 2WR matrix (or any 2D matrix) according to the
 species (rows) or to the genes (columns).
+}
+\examples{
+# random matrix
+x<-matrix(rnorm(270), nrow=9, ncol=14)
+
+# normalize by row
+x1<-normalize(x, "genes")
+
+# normalize by column
+x2<-normalize(x, "species")
+
+
+
 }

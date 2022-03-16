@@ -2,15 +2,29 @@
 % Please edit documentation in R/write.phylter.R
 \name{write.phylter}
 \alias{write.phylter}
-\title{Write phylter summary to file}
+\title{Write summary of phyter analysis to file(s)}
 \usage{
-write.phylter(x, file = "phylter.out")
+write.phylter(x, file = "", pdfreport = FALSE, pdfreport.file = "report.pdf")
 }
 \arguments{
 \item{x}{The object returned by the 'phylter()' function.}
 
-\item{file}{Name of the file where to write the summary of the phylter output.}
+\item{file}{Name of the file where to write the text summary of the phylter output.
+If \code{""} (the default), \code{write.phylyer()} prints to the standard output.}
+
+\item{pdfreport}{Logical. Should a full report of the phylter analysis}
+
+\item{pdfreport.file}{If \code{report=TRUE}, name of the pdf file where the 
+report is written. Default to \code{report.pdf}}
 }
 \description{
-This function writes to a file a summary of the phylter analysis.
+This function a summary of the phylter analysis in a txt file, and can
+also output a pdf with a full report of the analysis (with graphs).
+}
+\examples{
+data(carnivora) 
+res<-phylter(carnivora)
+write.phylter(res) #writes to the standard output
+
+
 }

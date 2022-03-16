@@ -2,7 +2,7 @@
 % Please edit documentation in R/summary.phylter.R
 \name{summary.phylter}
 \alias{summary.phylter}
-\title{summary.phylter}
+\title{Get summary for phylter objects}
 \usage{
 \method{summary}{phylter}(object, ...)
 }
@@ -12,8 +12,14 @@
 \item{...}{Additional arguments affecting the summary produced.}
 }
 \value{
-Print formatting
+On object of class \code{summmary.phylter}
 }
 \description{
-summary.phylter TODO.
+Get the summary of an object of class \code{phylter}
+}
+\examples{
+data(carnivora)
+res<-phylter(carnivora)
+summary<-summary(res)
+class(summary)
 }

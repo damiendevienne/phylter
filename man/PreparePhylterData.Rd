@@ -4,7 +4,15 @@
 \alias{PreparePhylterData}
 \title{Prepare data for phylter analysis}
 \usage{
-PreparePhylterData(X, bvalue, distance, Norm, Norm.cutoff, gene.names, verbose)
+PreparePhylterData(
+  X,
+  bvalue = 0,
+  distance = "patristic",
+  Norm = "median",
+  Norm.cutoff = 1e-06,
+  gene.names = NULL,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{X}{A list of phylogenetic trees (phylo object) or a list 
@@ -42,4 +50,12 @@ or a list of class 'phylterinitial' only, if InitialOnly=TRUE.
 \description{
 Prepare dataset for phylter analysis. Detects possible issues in dataset input 
 and discads genes if necessary. This function is meant to be called from \code{phylter()} only.
+}
+\examples{
+data(carnivora)
+# transform trees to a named list of matrices with same dimensions
+# and identical row and column orders and names
+carnivora.clean<-PreparePhylterData(carnivora)
+
+ 
 }

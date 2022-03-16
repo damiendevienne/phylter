@@ -2,7 +2,7 @@
 % Please edit documentation in R/phylter.R
 \name{phylter}
 \alias{phylter}
-\title{filter phylogenomics datasets}
+\title{Filter phylogenomics datasets}
 \usage{
 phylter(
   X,
@@ -74,4 +74,23 @@ or a list of class 'phylterinitial' only, if InitialOnly=TRUE. The function also
 \description{
 Detection and filtering out of outliers in a list of trees 
 or distance matrices.
+}
+\examples{
+data(carnivora)
+
+# using default paramaters
+res<-phylter(carnivora) #perform the phylter analysis
+res # brief summary of the analysis
+res$DiscardedGenes # list of genes discarded prior to the analysis
+res$Initial #See all elements prior to the analysis
+res$Final #See all elements at the end of the analysis
+res$Final$Outliers #Print all outliers detected
+
+
+# Change the call to phylter  to use nodal distances, instead of patristic: 
+res<-phylter(carnivora, distance="nodal")
+
+
+
+
 }

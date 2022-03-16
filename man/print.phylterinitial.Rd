@@ -2,18 +2,23 @@
 % Please edit documentation in R/summary.phylter.R
 \name{print.phylterinitial}
 \alias{print.phylterinitial}
-\title{print.phylterinitial}
+\title{print objects of class phylterinitial}
 \usage{
 \method{print}{phylterinitial}(x, ...)
 }
 \arguments{
-\item{x}{Object returned by function 'phylter()'.}
+\item{x}{Object present in the \code{$initial} element of the object returned by function \code{phylter()}.}
 
 \item{...}{Additional arguments.}
 }
 \value{
-Print formatting
+NA
 }
 \description{
-print.phylterinitial TODO.
+Print on screen a simple description of the content of objects of class phylterinitial
+}
+\examples{
+data(carnivora)
+res<-phylter(carnivora)
+print(res$Initial)
 }

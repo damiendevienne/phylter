@@ -2,7 +2,7 @@
 % Please edit documentation in R/summary.phylter.R
 \name{print.phylter}
 \alias{print.phylter}
-\title{print.phylter}
+\title{Print phylter objects}
 \usage{
 \method{print}{phylter}(x, ...)
 }
@@ -15,5 +15,10 @@
 Print formatting
 }
 \description{
-print.phylter TODO.
+Print on screen a simple description of the content of phylter objects
+}
+\examples{
+data(carnivora)
+res<-phylter(carnivora)
+print(res)
 }
