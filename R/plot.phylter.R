@@ -158,7 +158,7 @@ plot2WR<-function(x, show.missing=TRUE, show.outliers=TRUE, transpose=FALSE, clu
 		outliers<-which(is.na(matoutlier), arr.ind=TRUE)
 		if (!transpose) outliers[,2]<-outliers[,2]+ncol(WRf2)+1
 		outliers<-as.data.frame(outliers)
-		outliers$state<-"outliers"
+		outliers$state<-"Discarded outliers"
 		#POINTS
 		points<-rbind(missing, outliers)
 		#rename columns
@@ -179,8 +179,8 @@ plot2WR<-function(x, show.missing=TRUE, show.outliers=TRUE, transpose=FALSE, clu
 		p <- p + scale_fill_gradient(na.value="white") 		
 		if (show.missing & show.outliers) p <- p + geom_point(data=points, aes(x=col, y=row, value=NULL, color=state))
 		if (show.missing & !show.outliers) p <- p + geom_point(data=subset(points, state=="missing"), aes(x=col, y=row, value=NULL, color=state))
-		if (!show.missing & show.outliers) p <- p + geom_point(data=subset(points, state=="outliers"), aes(x=col, y=row, value=NULL, color=state))
-		p <- p+ scale_color_manual(values = c("missing" = "white", "outliers"="#ffcc00"))
+		if (!show.missing & show.outliers) p <- p + geom_point(data=subset(points, state=="Discarded outliers"), aes(x=col, y=row, value=NULL, color=state))
+		p <- p+ scale_color_manual(values = c("missing" = "white", "Discarded outliers"="#ffcc00"))
 		if (transpose) p <- p + coord_flip()
 		p<-p+theme(axis.text=element_text(size=2), aspect.ratio=3/6)
 		if (transpose) p <- p + labs(title="gene x species matrix before (bottom) and after (top)\nremoval of phylter-identified outliers")
