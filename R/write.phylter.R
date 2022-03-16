@@ -19,11 +19,18 @@
 #' @examples
 #' data(carnivora) 
 #' res<-phylter(carnivora)
-#' write.phylter(res) #writes to the standard output
+#' # write a full report to the standard output
+#' write.phylter(res) 
 #' 
+#' # write a full report to the the file out.txt
+#' # write.phylter(res, file="out.txt")
+#'  
+#' # write a pdf report with all available graphical outputs
+#' # write.phylter(res, pdfreport=TRUE) 
 #' 
 #' @importFrom utils write.table packageVersion
 #' @importFrom grDevices dev.off pdf
+#' @importFrom graphics plot.new text
 #' @export
 
 write.phylter<-function(x, file="", include.discarded=TRUE, pdfreport=FALSE, pdfreport.file="report.pdf") {
@@ -45,8 +52,8 @@ write.phylter<-function(x, file="", include.discarded=TRUE, pdfreport=FALSE, pdf
 	if (length(phylter_summary$nb.discarded)>0) cat(paste("# Genes discarded: ",paste(x$DiscardedGenes, collapse=";"),"\n",sep=""),file=file, append=TRUE)
 
 	cat(paste("# \n# SUMMARY\n# \n",sep=""),file=file, append=TRUE)
-	cat(paste("# Number of genes analyzed: ", dim(ok$Initial$WR)[2],"\n",sep=""),file=file, append=TRUE)
-	cat(paste("# Number of species analyzed: ", dim(ok$Initial$WR)[1],"\n",sep=""),file=file, append=TRUE)
+	cat(paste("# Number of genes analyzed: ", dim(x$Initial$WR)[2],"\n",sep=""),file=file, append=TRUE)
+	cat(paste("# Number of species analyzed: ", dim(x$Initial$WR)[1],"\n",sep=""),file=file, append=TRUE)
 	cat(paste("# Total number of outliers detected: ",phylter_summary$nb.outlier.cells,"\n", sep=""),file=file, append=TRUE)
 	cat(paste("# Number of complete gene outliers : ",length(phylter_summary$ComplOutGN),"\n", sep=""),file=file, append=TRUE)
 	cat(paste("# Number of complete species outliers : ",length(phylter_summary$ComplOutSP),"\n", sep=""),file=file, append=TRUE)
@@ -67,10 +74,34 @@ write.phylter<-function(x, file="", include.discarded=TRUE, pdfreport=FALSE, pdf
 		f<-pdfreport.file
 		if (f=="") f<-"report.pdf"
 		#open pdf file
-		pdf(pdfreport.file)
+		pdf(pdfreport.file, paper="a4")
+		plot.new()
+		text1<-paste("- Phylter v. ",packageVersion("phylter")," - ", sep="")
+		text1<-paste(text1, date(),sep="\n")
+		callstr<-paste(strsplit(toString(x$call),")")[[1]][1],")",sep="")
+		text2<-paste("\nCall: ",callstr, "\n\n", sep="")
+		text2<-paste(text2, "Initial number of genes passed to Phylter: ",phylter_summary$nb.discarded+length(x$Initial$matrices),"\n",sep="")
+		text2<-paste(text2, "Number of genes discarded before the analysis: ",length(x$DiscardedGenes),"\n\n",sep="")
+		text2<-paste(text2, "Number of genes analyzed: ", dim(x$Initial$WR)[2],"\n",sep="")
+		text2<-paste(text2, "Number of species analyzed: ", dim(x$Initial$WR)[1],"\n",sep="")
+		text2<-paste(text2, "Total number of outliers detected: ",phylter_summary$nb.outlier.cells,"\n", sep="")
+		text2<-paste(text2, "Number of complete gene outliers : ",length(phylter_summary$ComplOutGN),"\n", sep="")
+		text2<-paste(text2, "Number of complete species outliers : ",length(phylter_summary$ComplOutSP),"\n", sep="")
+		text2<-paste(text2, "Initial score of the compromise: ",x$Final$AllOptiScores[1],"\n", sep="")	
+		text2<-paste(text2, "Final score of the compromise: ",rev(x$Final$AllOptiScores)[1],"\n", sep="")	
+		text2<-paste(text2, "Gain: ",phylter_summary$percent.score.increase,"% \n", sep="")
+		text2<-paste(text2, "Loss (data filtering): ",phylter_summary$percent.data.filtered,"% \n", sep="")
+		text3<-"See text report for full details"
+		text(0.5,0.9,text1)		
+		text(0,0.5,text2, cex=0.8, font=2, adj=0, col="#333333")		
+		text(0.5,0,text3, cex=0.8)		
 		plot(x, "genes")
 		plot(x, "species")
 		plotDispersion(x)
+		plot2WR(x)
+		plotRV(x, "Initial")
+		plotRV(x, "Final")
+		plotopti(x)
 		dev.off() #close connection
 	}
 }	
