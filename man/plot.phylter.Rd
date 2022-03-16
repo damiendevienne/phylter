@@ -10,11 +10,17 @@
 \usage{
 \method{plot}{phylter}(x, what = "all", layout = 1, sorted = TRUE, ...)
 
-plot2WR(x, show.missing = TRUE, show.outliers = TRUE, transpose = FALSE)
+plot2WR(
+  x,
+  show.missing = TRUE,
+  show.outliers = TRUE,
+  transpose = FALSE,
+  clust = FALSE
+)
 
 plotDispersion(x)
 
-plotRV(x, what = "Initial", labelnames = TRUE)
+plotRV(x, what = "Initial", labelnames = TRUE, clust = FALSE)
 
 plotopti(x)
 }
@@ -41,6 +47,10 @@ to TRUE}
 
 \item{transpose}{Logical. If TRUE, the two matrices are piled up instaed of being displayed side by side. Default to FALSE.}
 
+\item{clust}{Logical. Should the rows or/and columns of the matrices that are plotted be reorderd
+prior to plotting. Reordering is based on a hierarchical clustering. Default to FALSE. 
+This is conveninent when the names of the genes are very long for instance.}
+
 \item{labelnames}{Logical. If TRUE, the names of labels are indicated on the heatmap. If FALSE they are removed. 
 This is conveninent when the names of the genes are very long for instance.}
 }
@@ -56,7 +66,7 @@ and display various plots summarizing the results obtained (see details)
 \details{
 \itemize{
  \item plot(x) and plot.phylter(x) plot the genes found in each species or species 
-found in each gene as barplors, highlighting the outliers detected.
+found in each gene as barplots, highlighting the outliers detected.
  \item plot2WR(x) plots side by side the initial and the final gene x species (unreable for large datasets) 
 matrices (the 2WR matrices), highlighting missing data and detected outliers.
  \item plotDispersion(x) plots dispersion of data before and after phylter, on a 2D

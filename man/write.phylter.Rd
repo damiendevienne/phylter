@@ -4,12 +4,22 @@
 \alias{write.phylter}
 \title{Write summary of phyter analysis to file(s)}
 \usage{
-write.phylter(x, file = "", pdfreport = FALSE, pdfreport.file = "report.pdf")
+write.phylter(
+  x,
+  file = "",
+  include.discarded = TRUE,
+  pdfreport = FALSE,
+  pdfreport.file = "report.pdf"
+)
 }
 \arguments{
 \item{x}{The object returned by the 'phylter()' function.}
 
 \item{file}{Name of the file where to write the text summary of the phylter output.
+If \code{""} (the default), \code{write.phylyer()} prints to the standard output.}
+
+\item{include.discarded}{Logical. If TRUE (the default) the elements discarded before the analysis
+are still in the list of Outliers in the output. Useful for cleaning datasets after a phylter analysis.
 If \code{""} (the default), \code{write.phylyer()} prints to the standard output.}
 
 \item{pdfreport}{Logical. Should a full report of the phylter analysis}
@@ -24,7 +34,13 @@ also output a pdf with a full report of the analysis (with graphs).
 \examples{
 data(carnivora) 
 res<-phylter(carnivora)
-write.phylter(res) #writes to the standard output
+# write a full report to the standard output
+write.phylter(res) 
 
+# write a full report to the the file out.txt
+# write.phylter(res, file="out.txt")
+ 
+# write a pdf report with all available graphical outputs
+# write.phylter(res, pdfreport=TRUE) 
 
 }
