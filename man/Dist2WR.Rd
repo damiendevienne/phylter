@@ -2,7 +2,7 @@
 % Please edit documentation in R/Dist2WR.R
 \name{Dist2WR}
 \alias{Dist2WR}
-\title{Compute the gene x species matrix from the result of Distatis}
+\title{Compute gene x species matrix from the result of Distatis}
 \usage{
 Dist2WR(Distatis)
 }
