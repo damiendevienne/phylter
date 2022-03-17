@@ -64,7 +64,7 @@ plot2WR(results) # compare before and after genes x species matrices, highlighti
 plotDispersion(results) # plot the dispersion of data before and after outlier removal. One dot represents one gene x species association.
 plotRV(results) # plot the genes x genes matrix showing pairwise correlation between genes. 
 plotopti(results) #plot optimization scores during optimization.
-```
+``` 
 5. Save the results
 
 Save the results of the analysis to an external file, for example to perform cleaning on raw alignments based on the results from phylter. 
