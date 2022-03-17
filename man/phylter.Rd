@@ -41,8 +41,7 @@ being discarded, k2 can be increased. By default, k2 = k. (see above)}
 
 \item{Norm}{Should the matrices be normalized prior to the complete analysis and how. If "median", matrices are divided by their median, if 
 "mean" they are divided by their mean, if "none", no normalization if performed. Normalizing ensures that fast-evolving 
-(and slow-evolving) genes are not treated as outliers. Normalization by median is a better choice as it is less sensitive to outlier values. 
-are not considered outliers.}
+(and slow-evolving) genes are not treated as outliers. Normalization by median is a better choice as it is less sensitive to outlier values.}
 
 \item{Norm.cutoff}{Value of the median (if \code{Norm="median"}) or the mean (if
 \code{Norm="mean"}) below which matrices are simply discarded from the analysis. This
