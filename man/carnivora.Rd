@@ -8,7 +8,7 @@
 A list of named trees of class multiPhylo
 }
 \source{
-\url{https://doi.org/10.7554/eLife.63167}
+\doi{https://doi.org/10.7554/eLife.63167}
 }
 \usage{
 carnivora
