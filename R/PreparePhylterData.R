@@ -67,7 +67,7 @@ PreparePhylterData<-function(X, bvalue=0, distance="patristic", Norm="median",No
 	 
 
 	if (is.null(names(X))) X<-rename.genes(X, gene.names=gene.names)
-	if (class(X[[1]])=="phylo") matrices <- trees2matrices(X, distance = distance, bvalue = bvalue)
+	if (inherits(X[[1]], "phylo")) matrices <- trees2matrices(X, distance = distance, bvalue = bvalue)
 	else matrices<-X
 	Xsave<-matrices #Xsave contains the original matrices
 	matrices <- impMean(matrices) ##impute missing values with mean (if any). This also sorts rows and columns, thus this step cannot be removed.
