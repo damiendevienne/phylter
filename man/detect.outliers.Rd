@@ -5,12 +5,12 @@
 \alias{detect.outliers.array}
 \title{Detection of outliers in 1D and 2D data}
 \usage{
-detect.outliers(mat2WR, k = 3, test.island = TRUE, normalizeby = "row")
+detect.outliers(X, k = 3, test.island = TRUE, normalizeby = "row")
 
 detect.outliers.array(arr, nbsp, k = 3)
 }
 \arguments{
-\item{mat2WR}{2D matrix (gene x species) obtained with the \code{Dist2WR()} function.}
+\item{X}{2D matrix (gene x species) obtained with the \code{Dist2WR()} function.}
 
 \item{k}{strength of outlier detection. High values (typically 3) 
 correspond to less outliers detected than with lower ones (e.g. 1.5).}
@@ -29,7 +29,7 @@ by their median.}
 }
 \value{
 \code{detect.outliers}: A matrix with outliers detected in the 2D matric. Each row \code{x} contains the 
-the gene (\code{x[1]}) where the species (\code{x[2]}) is outlier.
+gene (\code{x[1]}) where the species (\code{x[2]}) is an outlier.
 
 \code{detect.outliers.array}: An array listing the outliers detected (if any)
 }
@@ -37,25 +37,15 @@ the gene (\code{x[1]}) where the species (\code{x[2]}) is outlier.
 Functions to detect outliers, in matrices or in arrays.
 }
 \details{
-These functions detect outliers either in matrices or in arrays. The method 
-used is adapted to skewed data, as is the case here. The outlier detection 
-method used is the adjusted Tukey proposed by Hubert and Vandervieren (2008).  
-Hubert, M. and Vandervieren, E. (2008). An adjusted boxplot for skewed
-distributions. Computational Statistics and Data Analysis, 52, 5186-5201. 
-The different types of outliers (cell and complete) are described in:
-de Vienne D.M., Ollier S. et Aguileta G. (2012) Phylo-MCOA: 
-A Fast and Efficient Method to Detect Outlier Genes and Species
-in Phylogenomics Using Multiple Co-inertia Analysis. Molecular 
-Biology and Evolution 29 : 1587-1598.
+These functions detect outliers either in matrices or in arrays. For the method 
+to be adapted to skewed data, as is the case here, the outlier detection 
+method used is the adjusted Tukey proposed by Hubert and Vandervieren (2008).
 }
 \section{Functions}{
 \itemize{
-\item \code{detect.outliers}: a simple wrapper
-to call the two other functions described, and return complete outliers
-if any, or cell outliers if no complete outliers exist.
+\item \code{detect.outliers}: detect outliers in 2D matrix
 
-\item \code{detect.outliers.array}: detects if array (here the correlations between gene matrices) contains outlier. This
-is the last step of the phylter process.
+\item \code{detect.outliers.array}: detects outliers in 1D array
 }}
 
 \examples{

@@ -1,11 +1,11 @@
 #' Compute gene x species matrix from the result of Distatis
 #' 
 #' \code{Dist2WR} computes the 2WR matrix from the results obtaind with \code{DistatisFast}
-# (the fast version of distatis).
+#' (the fast version of distatis). For internal use mostly.
 #' 
 #' 
 #' @param Distatis output of the fonction \code{DistatisFast}.
-#' @return The 2WR matrix: a gene x species matrix. Each cell represents a 
+#' @return A matrix (gene=rows x species=col). Each cell represents a 
 #' gene/species pair, whose value represents the distance between (i) the position of this species
 #' in this gene tree and (ii) the average position of this species in all other gene trees.
 #' @examples

@@ -1,8 +1,7 @@
 
 #' Write summary of phyter analysis to file(s)
 #' 
-#' This function a summary of the phylter analysis in a txt file, and can
-#' also output a pdf with a full report of the analysis (with graphs).
+#' Write the summary of the phylter analysis in a txt file or as a pdf report.
 #' 
 #' 
 #' @param x The object returned by the 'phylter()' function.

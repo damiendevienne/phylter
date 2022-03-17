@@ -28,8 +28,7 @@ If \code{""} (the default), \code{write.phylyer()} prints to the standard output
 report is written. Default to \code{report.pdf}}
 }
 \description{
-This function a summary of the phylter analysis in a txt file, and can
-also output a pdf with a full report of the analysis (with graphs).
+Write the summary of the phylter analysis in a txt file or as a pdf report.
 }
 \examples{
 data(carnivora) 

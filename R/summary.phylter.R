@@ -1,6 +1,6 @@
 #' Get summary for phylter objects
 #' 
-#' Get the summary of an object of class \code{phylter}
+#' Get the summary of an object of class \code{phylter}.
 #' 
 #' @param object Object returned by function 'phylter()'.
 #' @param ... Additional arguments affecting the summary produced.
@@ -40,7 +40,7 @@ summary.phylter<-function(object, ...) {
 
 #' print summary of phylter objects
 #' 
-#' Prints on screen the summary of an object of class summmary.phylter as returned by the \code{summary.phylter()} function.
+#' Prints on screen the summary of an object of class \code{summmary.phylter} as returned by the \code{summary.phylter()} function.
 #' 
 #' @param x Object returned by function 'summary.phylter()'.
 #' @param ... Additional arguments.
@@ -98,7 +98,7 @@ print.phylter<-function(x, ...) {
 
 #' print objects of class phylterinitial
 #' 
-#' Print on screen a simple description of the content of objects of class phylterinitial
+#' Print on screen a simple description of the content of objects of class \code{phylterinitial}.
 #' 
 #' @param x Object present in the \code{$initial} element of the object returned by function \code{phylter()}.
 #' @param ... Additional arguments.
@@ -133,7 +133,7 @@ print.phylterinitial<-function(x, ...) {
 
 #' print objects of class phylterfinal
 #' 
-#' Print on screen a simple description of the content of objects of class phylterfinal
+#' Print on screen a simple description of the content of objects of class \code{phylterfinal}.
 #' 
 #' @param x Object returned by function 'phylter()'.
 #' @param ... Additional arguments.

@@ -15,7 +15,7 @@
 On object of class \code{summmary.phylter}
 }
 \description{
-Get the summary of an object of class \code{phylter}
+Get the summary of an object of class \code{phylter}.
 }
 \examples{
 data(carnivora)

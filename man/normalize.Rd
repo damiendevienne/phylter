@@ -21,7 +21,7 @@ A normalized matrix
 }
 \description{
 This function normalizes the 2WR matrix (or any 2D matrix) according to the
-species (rows) or to the genes (columns).
+species (rows) or to the genes (columns), by dividing each row or each column by its median.
 }
 \examples{
 # random matrix

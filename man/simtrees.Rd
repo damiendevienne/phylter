@@ -21,12 +21,14 @@ simtrees(Ngn, Nsp, Nsp.out = 0, Ngn.out = 0, Nb.cell.outlier = 0, brlen.sd = 0)
 deviation equal to brlen.sd is added to each branch length.}
 }
 \value{
-A list of trees in 'multiPhylo' format.
+A list of trees in \code{multiPhylo} format.
 }
 \description{
-Simple(simplistic) simulation of trees with outliers. No missing data. 
-A first tree is generated with rtree() and is then modified according
-to the parameters chosen by the user.
+Simple (simplistic) simulation of trees with outliers.
+}
+\details{
+The simulation process is as follows: a first tree is generated with the \code{rtree()} function
+and is then duplicated and modified according to the parameters chosen by the user.
 }
 \examples{
  

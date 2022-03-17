@@ -1,7 +1,8 @@
 #' Prepare data for phylter analysis
 #' 
-#' Prepare dataset for phylter analysis. Detects possible issues in dataset input 
-#' and discads genes if necessary. This function is meant to be called from \code{phylter()} only.
+#' Prepare datasets for the \code{phylter} function. Detects possible issues, 
+#' discads genes if necessary, imputes missing data if any, and reorders row- and col-names.
+#' For internal usage mostly.
 #'
 #' @param X A list of phylogenetic trees (phylo object) or a list 
 #' of distance matrices. Trees can have different number of leaves and matrices

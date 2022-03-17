@@ -1,7 +1,7 @@
 #' Median normalization of 2D matrix by row or by colomn
 #' 
 #' This function normalizes the 2WR matrix (or any 2D matrix) according to the
-#' species (rows) or to the genes (columns).
+#' species (rows) or to the genes (columns), by dividing each row or each column by its median.
 #' 
 #' @param mat A matrix
 #' @param what Character string indicating whether the matrix should be

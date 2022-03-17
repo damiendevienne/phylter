@@ -2,9 +2,10 @@
 
 #' Simplistic simulation of gene trees with outliers
 #' 
-#' Simple(simplistic) simulation of trees with outliers. No missing data. 
-#' A first tree is generated with rtree() and is then modified according
-#' to the parameters chosen by the user.
+#' Simple (simplistic) simulation of trees with outliers. 
+#' 
+#' The simulation process is as follows: a first tree is generated with the \code{rtree()} function
+#' and is then duplicated and modified according to the parameters chosen by the user.
 #' 
 #' @usage simtrees(Ngn, Nsp, Nsp.out = 0, Ngn.out = 0, Nb.cell.outlier = 0, brlen.sd = 0)
 #' @param Ngn Number of gene trees to simulate. 
@@ -14,7 +15,7 @@
 #' @param Nb.cell.outlier Number of times one species in one tree is misplaced. 0 = none.
 #' @param brlen.sd Heterogeneity of branch lengths in trees. A value with mean 0 and standard
 #' deviation equal to brlen.sd is added to each branch length.
-#' @return A list of trees in 'multiPhylo' format.
+#' @return A list of trees in \code{multiPhylo} format.
 #' @examples  
 #' # Very basic simulator, for debuggin purpose mainly.
 #' # examples: 30 genes, 120 species, 2 outlier species, 3 outlier genes

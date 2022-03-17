@@ -6,22 +6,13 @@
 #' 
 #' Functions to detect outliers, in matrices or in arrays. 
 #' 
-#' These functions detect outliers either in matrices or in arrays. The method 
-#' used is adapted to skewed data, as is the case here. The outlier detection 
-#' method used is the adjusted Tukey proposed by Hubert and Vandervieren (2008).  
-#' Hubert, M. and Vandervieren, E. (2008). An adjusted boxplot for skewed
-#' distributions. Computational Statistics and Data Analysis, 52, 5186-5201. 
-#' The different types of outliers (cell and complete) are described in:
-#' de Vienne D.M., Ollier S. et Aguileta G. (2012) Phylo-MCOA: 
-#' A Fast and Efficient Method to Detect Outlier Genes and Species
-#' in Phylogenomics Using Multiple Co-inertia Analysis. Molecular 
-#' Biology and Evolution 29 : 1587-1598.
+#' These functions detect outliers either in matrices or in arrays. For the method 
+#' to be adapted to skewed data, as is the case here, the outlier detection 
+#' method used is the adjusted Tukey proposed by Hubert and Vandervieren (2008).
 #' 
-#' @describeIn detect.outliers a simple wrapper
-#' to call the two other functions described, and return complete outliers
-#' if any, or cell outliers if no complete outliers exist.
+#' @describeIn detect.outliers detect outliers in 2D matrix
 #' 
-#' @param mat2WR 2D matrix (gene x species) obtained with the \code{Dist2WR()} function.
+#' @param X 2D matrix (gene x species) obtained with the \code{Dist2WR()} function.
 #' @param k strength of outlier detection. High values (typically 3) 
 #' correspond to less outliers detected than with lower ones (e.g. 1.5).
 #' @param test.island should islands of outliers be treated as such. 
@@ -31,7 +22,7 @@
 #' Can be "row" (the default),"col" or "none". Normalization is done by dividing columns or rows 
 #' by their median.
 #' @return \code{detect.outliers}: A matrix with outliers detected in the 2D matric. Each row \code{x} contains the 
-#' the gene (\code{x[1]}) where the species (\code{x[2]}) is outlier.  
+#' gene (\code{x[1]}) where the species (\code{x[2]}) is an outlier.  
 #' @references de Vienne D.M., Ollier S. et Aguileta G. (2012) Phylo-MCOA: 
 #' A Fast and Efficient Method to Detect Outlier Genes and Species
 #' in Phylogenomics Using Multiple Co-inertia Analysis. Molecular 
@@ -51,10 +42,10 @@
 #' @importFrom mrfDepth medcouple
 #' @importFrom stats dist quantile IQR
 #' @export
-detect.outliers <- function(mat2WR, k = 3, test.island=TRUE, normalizeby="row") {
-  # heatmap(mat2WR, scale="none",Rowv=NA, Colv=NA)
+detect.outliers <- function(X, k = 3, test.island=TRUE, normalizeby="row") {
+  # heatmap(X, scale="none",Rowv=NA, Colv=NA)
   # scan()
-  MAT <- mat2WR
+  MAT <- X
   detect.island <- function(arr) {
     spi.names <- names(arr)
     spi <- 1:length(spi.names)
@@ -114,10 +105,10 @@ detect.outliers <- function(mat2WR, k = 3, test.island=TRUE, normalizeby="row") 
     return(x > quantile(x)[4] + k * IQR(x) + 1e-10)
   }
   #normalized matrix so that each column (gene) is divided by its median
-  if (normalizeby=="row") MATspgn <- normalize(mat2WR,"genes")
+  if (normalizeby=="row") MATspgn <- normalize(X,"genes")
   else {
-    if (normalizeby=="col") MATspgn <- normalize(mat2WR,"species")
-    else MATspgn <- mat2WR
+    if (normalizeby=="col") MATspgn <- normalize(X,"species")
+    else MATspgn <- X
   }
   tabgn.TF<-outl.adj.tuckey(MATspgn,k)
   testFALSE<-tabgn.TF+0 
@@ -148,7 +139,7 @@ detect.outliers <- function(mat2WR, k = 3, test.island=TRUE, normalizeby="row") 
         }
       }
       colnames(res) <- c("Species", "Genes")
-      RESULT$cells<-cbind(match(res[,2][-1], colnames(mat2WR)),match(res[,1][-1], rownames(mat2WR)))
+      RESULT$cells<-cbind(match(res[,2][-1], colnames(X)),match(res[,1][-1], rownames(X)))
     }
     else { ##we return all cells viewed as outliers (more violent...)
       cells<-which(testFALSE!=0,arr.ind = TRUE, useNames=FALSE)
@@ -156,7 +147,7 @@ detect.outliers <- function(mat2WR, k = 3, test.island=TRUE, normalizeby="row") 
     }
   }
   else RESULT$cells<-NULL
-#   plot(cbind(rep(1:ncol(mat2WR), each=nrow(mat2WR)), rep(1:nrow(mat2WR))), cex=array(mat2WR))
+#   plot(cbind(rep(1:ncol(X), each=nrow(X)), rep(1:nrow(X))), cex=array(X))
 #   points(RESULT$cells, col="red")
 # #  title(nrow(RESULT$cells))
 #   scan() 
@@ -166,8 +157,7 @@ detect.outliers <- function(mat2WR, k = 3, test.island=TRUE, normalizeby="row") 
 }
 
 #' @describeIn detect.outliers 
-#' detects if array (here the correlations between gene matrices) contains outlier. This
-#' is the last step of the phylter process.
+#' detects outliers in 1D array 
 #' @param arr Array of values, typically the weight of each gene matrix (alpha values).
 #' @param nbsp Number of species in the analysis
 #' @return \code{detect.outliers.array}: An array listing the outliers detected (if any)  

@@ -1,7 +1,7 @@
 #' Filter phylogenomics datasets
 #' 
 #' Detection and filtering out of outliers in a list of trees 
-#' or distance matrices.
+#' or a list of distance matrices.
 #' 
 #' @param X A list of phylogenetic trees (phylo object) or a list 
 #' of distance matrices. Trees can have different number of leaves and matrices

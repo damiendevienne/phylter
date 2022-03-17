@@ -73,7 +73,7 @@ or a list of class 'phylterinitial' only, if InitialOnly=TRUE. The function also
 }
 \description{
 Detection and filtering out of outliers in a list of trees 
-or distance matrices.
+or a list of distance matrices.
 }
 \examples{
 data(carnivora)

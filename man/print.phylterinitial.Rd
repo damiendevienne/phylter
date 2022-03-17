@@ -15,7 +15,7 @@
 NA
 }
 \description{
-Print on screen a simple description of the content of objects of class phylterinitial
+Print on screen a simple description of the content of objects of class \code{phylterinitial}.
 }
 \examples{
 data(carnivora)

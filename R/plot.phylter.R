@@ -3,18 +3,18 @@
 #' Plot phylter objects
 #' 
 #' These functions take objects of class phylter as input
-#' and display various plots summarizing the results obtained (see details)
+#' and display various plots summarizing the results obtained (see details).
 #' 
 #' 
 #' \itemize{
-#'  \item plot(x) and plot.phylter(x) plot the genes found in each species or species 
+#'  \item \code{plot(x)} and \code{plot.phylter(x)} plot the genes found in each species or species 
 #' found in each gene as barplots, highlighting the outliers detected.
-#'  \item plot2WR(x) plots side by side the initial and the final gene x species (unreable for large datasets) 
+#'  \item \code{plot2WR(x)} plots side by side the initial and the final gene x species (unreable for large datasets) 
 #' matrices (the 2WR matrices), highlighting missing data and detected outliers.
-#'  \item plotDispersion(x) plots dispersion of data before and after phylter, on a 2D
+#'  \item \code{plotDispersion(x)} plots dispersion of data before and after phylter, on a 2D
 #' space. Each dot represents a gene-species association. 
-#' \item plotRV(x) plots the RV coefficient matrix that descibes all agains all correlations between gene matrices
-#' \item plotopti() plots the compromise matrix score at each step of the 
+#' \item \code{plotRV(x)} plots the RV coefficient matrix that descibes all agains all correlations between gene matrices
+#' \item \code{plotopti(x)} plots the compromise matrix score at each step of the 
 #' optimization.  
 #'}
 #' @param x The object returned by the 'phylter()' function.
@@ -39,7 +39,8 @@
 #' @param ... Additional arguments to be passed to plot and print functions.
 #' @return The desired plots are returned. Note that you might want to call the pdf(),
 #'  png(), jpeg(), or tiff() function first if you want to save the plot(s) to an
-#' external file.
+#' external file. You can also use the function \code{write.phylter(pdfreport=TRUE)} to write 
+#' all possible plots in a single pdf file. 
 #' @examples
 #' data(carnivora)
 #' 

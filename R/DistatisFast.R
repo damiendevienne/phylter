@@ -12,16 +12,16 @@
 #' scores of the observations.
 #' @return Returns a list containing:
 #' \itemize{
-#'  \item 'F': projected coordinates of species in the compromise
-#'  \item 'PartialF': list of projected coordinates of species for each gene.
-#' 	\item 'alpha': array of length K of the weight associated to each matrix.
-#'  \item 'lambda': array of length K of the normalization factors used for each matrix. lambda=1 always.
-#' 	\item 'RVmat': a KxK matrix with RV correlation coefficient computed between all
+#'  \item \code{F}: projected coordinates of species in the compromise
+#'  \item \code{PartialF}: list of projected coordinates of species for each gene.
+#' 	\item \code{alpha}: array of length K of the weight associated to each matrix.
+#'  \item \code{lambda}: array of length K of the normalization factors used for each matrix. lambda=1 always.
+#' 	\item \code{RVmat}: a KxK matrix with RV correlation coefficient computed between all
 #'  pairs of matrices.
-#' 	\item 'compromise': an IxI matrix representing the best compromise between all matrices. This matrix is the weighted average of all K matrices, using 'alpha' as
+#' 	\item \code{compromise}: an IxI matrix representing the best compromise between all matrices. This matrix is the weighted average of all K matrices, using 'alpha' as
 #' a weighting array.
-#' 	\item 'quality': the quality of the compromise. This value is between 0 and 1 
-#' 	\item 'matrices.dblcent': matrices after double centering
+#' 	\item \code{quality}: the quality of the compromise. This value is between 0 and 1 
+#' 	\item \code{matrices.dblcent}: matrices after double centering
 #' describes how much of the variance of the K matrices is captured by the compromise.   
 #' }
 #' @references Abdi, H., Valentin, D., O'Toole, A.J., & Edelman, B. (2005).

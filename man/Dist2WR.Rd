@@ -10,12 +10,13 @@ Dist2WR(Distatis)
 \item{Distatis}{output of the fonction \code{DistatisFast}.}
 }
 \value{
-The 2WR matrix: a gene x species matrix. Each cell represents a 
+A matrix (gene=rows x species=col). Each cell represents a 
 gene/species pair, whose value represents the distance between (i) the position of this species
 in this gene tree and (ii) the average position of this species in all other gene trees.
 }
 \description{
 \code{Dist2WR} computes the 2WR matrix from the results obtaind with \code{DistatisFast}
+(the fast version of distatis). For internal use mostly.
 }
 \examples{
 data(carnivora)

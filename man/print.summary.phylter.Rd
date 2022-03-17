@@ -15,7 +15,7 @@
 NA
 }
 \description{
-Prints on screen the summary of an object of class summmary.phylter as returned by the \code{summary.phylter()} function.
+Prints on screen the summary of an object of class \code{summmary.phylter} as returned by the \code{summary.phylter()} function.
 }
 \examples{
 data(carnivora)

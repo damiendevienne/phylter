@@ -16,8 +16,7 @@ If NULL (the default) the object are numbered 1,2,...,length(X).}
 X with name assigned to each element.
 }
 \description{
-This function names or renames genes (trees or matrices).
-This function is meant to be called from \code{phylter()} only.
+Name or rename a list of gene trees or gene matrices genes. For internal use mostly.
 }
 \examples{
 

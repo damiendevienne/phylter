@@ -1,7 +1,6 @@
 #' Name or rename a list of gene trees or matrices
 #' 
-#' This function names or renames genes (trees or matrices).
-#' This function is meant to be called from \code{phylter()} only.
+#' Name or rename a list of gene trees or gene matrices genes. For internal use mostly. 
 #' 
 #' 
 #' @param X A list of trees or matrices

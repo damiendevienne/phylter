@@ -48,8 +48,9 @@ A list of class 'phylter' with the 'Initial' (before filtering) and 'Final' (aft
 or a list of class 'phylterinitial' only, if InitialOnly=TRUE.
 }
 \description{
-Prepare dataset for phylter analysis. Detects possible issues in dataset input 
-and discads genes if necessary. This function is meant to be called from \code{phylter()} only.
+Prepare datasets for the \code{phylter} function. Detects possible issues, 
+discads genes if necessary, imputes missing data if any, and reorders row- and col-names.
+For internal usage mostly.
 }
 \examples{
 data(carnivora)
