@@ -46,7 +46,7 @@ results<-phylter(trees, gene.names=names)
 >```bvalue```: If X is a list of trees, nodes with a support below 'bvalue' will be collapsed prior to the outlier detection.  
 >```distance``` If X is a list of trees, type of distance used to compute the pairwise matrices for each tree. Can be "patristic" (sum of branch lengths separating tips, the default) or nodal (number of nodes separating tips).  
 >```k``` Strength of outlier detection. The higher this value the less outliers detected.  
->```k2``` Same as k for complete gene outlier detection. To preserve complete genes from being discarded, k2 can be increased . By default, k2 = k.
+>```k2``` Same as k for complete gene outlier detection. To preserve complete genes from being discarded, k2 can be increased . By default, k2 = k.  
 >```Norm```  Should the matrices be normalized prior to the complete analysis and how. If "median", matrices are divided by their median, if "mean" they are divided by their mean, if "none", no normalization if performed. Normalizing ensures that fast-evolving (and slow-evolving) genes are not treated as outliers. Normalization by median is a better choice as it is less sensitive to outlier values.
 >```Norm.cutoff``` Value of the median (if Norm="median") or the mean (if Norm="mean") below which matrices are simply discarded from the analysis. This prevents dividing by 0, and allows getting rid of genes that contain mostly branches of length 0 and are therefore uninformative anyway. Discarded genes, if any, are listed in the output (out$DiscardedGenes).
 >```gene.names``` List of gene names used to rename elements in X. If NULL (the default), elements are named 1,2,..,length(X).   
