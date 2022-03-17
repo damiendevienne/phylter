@@ -40,19 +40,21 @@ results<-phylter(trees, gene.names=names)
 >#### Options
 >The phylter() function is called as follows by default: 
 >```R
->phylter(X, bvalue=0, distance="patristic", k=3, k2=k, Norm=TRUE, gene.names=NULL, test.island=FALSE, verbose=TRUE, stop.criteria=1e-5)
+>phylter(X, bvalue=0, distance="patristic", k=3, k2=k, Norm="median", Norm.cutoff=1e-6, gene.names=NULL, test.island=FALSE, verbose=TRUE, stop.criteria=1e-5)
 >```
 >Possible options are:    
 >```bvalue```: If X is a list of trees, nodes with a support below 'bvalue' will be collapsed prior to the outlier detection.  
 >```distance``` If X is a list of trees, type of distance used to compute the pairwise matrices for each tree. Can be "patristic" (sum of branch lengths separating tips, the default) or nodal (number of nodes separating tips).  
 >```k``` Strength of outlier detection. The higher this value the less outliers detected.  
->```k2``` Same as k for complete gene outlier detection. To preserve complete genes from being discarded, k2 can be increased . By default, k2 = k. (see above)
->```Norm``` Should the matrices be normalized. If TRUE (the default), each matrix is divided by its median. This ensures that fast-evolving genes are not considered outliers.
+>```k2``` Same as k for complete gene outlier detection. To preserve complete genes from being discarded, k2 can be increased . By default, k2 = k.
+>```Norm```  Should the matrices be normalized prior to the complete analysis and how. If "median", matrices are divided by their median, if "mean" they are divided by their mean, if "none", no normalization if performed. Normalizing ensures that fast-evolving (and slow-evolving) genes are not treated as outliers. Normalization by median is a better choice as it is less sensitive to outlier values.
+>```Norm.cutoff``` Value of the median (if Norm="median") or the mean (if Norm="mean") below which matrices are simply discarded from the analysis. This prevents dividing by 0, and allows getting rid of genes that contain mostly branches of length 0 and are therefore uninformative anyway. Discarded genes, if any, are listed in the output (out$DiscardedGenes).
 >```gene.names``` List of gene names used to rename elements in X. If NULL (the default), elements are named 1,2,..,length(X).   
->```test.island``` If TRUE, only the highest value in an 'island' of outliers is considered an outlier. This prevents non-outliers hitchhiked by outliers to be considered outliers themselves (default to FALSE).   
+>```test.island``` If TRUE (the default), only the highest value in an 'island' of outliers is considered an outlier. This prevents non-outliers hitchhiked by outliers to be considered outliers themselves.   
 >```verbose``` If TRUE (the default), messages are written during the filtering process to get information on what is happening  
 >```stop.criteria``` The optimization stops when the gain (quality of compromise) between round *n* and round *n*+1 is smaller than this value. Default to 1e-5.  
-4. Analyze the results 
+4. Analyze the results
+
 Many functions allow looking at the outliers detected and comparing before and after:  
 ```R
 summary(results) # Get a summary: nb of outliers, gain in concordance, etc.
@@ -64,23 +66,22 @@ plotRV(results) # plot the genes x genes matrix showing pairwise correlation bet
 plotopti(results) #plot optimization scores during optimization.
 ```
 5. Save the results
+
 Save the results of the analysis to an external file, for example to perform cleaning on raw alignments based the results from phylter. 
 ```R
 write.phylter(results, file="phylter.out")
 ```
 ## Example
-A fungal dataset comprised of  246 genes for 21 species (Aguileta *et al.* 2008) is included in the package. To load it and test **phylter** on it: 
+A carnivora dataset comprised of  255 genes for 53 species (Allio et al. 2021) is included in the package. To load it and test **phylter** on it: 
 ```R
-data(fungi)
-results<-phylter(fungi, distance="nodal", thres=0.2) #for example
+data(carnivora)
+results<-phylter(carnivora) #for example
 ```
    
    
 ---
 ### references
 Abdi, H., Valentin, D., O’Toole, A.J., & Edelman, B. (2005). DISTATIS: The analysis of multiple distance matrices. Proceedings of the IEEE Computer Society: International Conference on Computer Vision and Pattern Recognition. (San Diego, CA, USA). pp. 42–47. https://www.utdallas.edu/~herve/abdi-distatis2005.pdf
-
-G Aguileta, S Marthey, H Chiapello, M.-H Lebrun, F Rodolphe, E Fournier, A Gendrault-Jacquemard, T Giraud, Assessing the Performance of Single-Copy Genes for Recovering Robust Phylogenies, Systematic Biology, Volume 57, Issue 4, August 2008, Pages 613–627, https://doi.org/10.1080/10635150802306527
 
 Hubert, M. and Vandervieren, E. (2008). An adjusted boxplot for skewed distributions. Computational Statistics and Data Analysis, 52, 5186-5201. 
 
