@@ -67,7 +67,7 @@ plotopti(results) #plot optimization scores during optimization.
 ```
 5. Save the results
 
-Save the results of the analysis to an external file, for example to perform cleaning on raw alignments based the results from phylter. 
+Save the results of the analysis to an external file, for example to perform cleaning on raw alignments based on the results from phylter. 
 ```R
 write.phylter(results, file="phylter.out")
 ```
