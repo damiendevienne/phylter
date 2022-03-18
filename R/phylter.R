@@ -117,9 +117,9 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm="median", N
 	discardedgenes<-X.clean$discardedgenes #list pof discarded genes
 	discardedmatrix<-X.clean$discardedmatrix #matrix of discarded cells (same format as Outliers at the end)
 	#END NEW
-
 	RES<-DistatisFast(matrices)
 	WR<-Dist2WR(RES)
+
 	Initial<-NULL
 	Initial$mat.data<-Xsave
 	Initial$WR<-WR
