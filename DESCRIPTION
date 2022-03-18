@@ -1,7 +1,7 @@
 Package: phylter
 Title: Detect and Remove Outliers in Phylogenomics Datasets
 Version: 0.9.2
-Imports: ape, RSpectra, stats, utils, ggplot2, reshape2, mrfDepth
+Imports: ape, RSpectra, stats, utils, ggplot2, reshape2, mrfDepth, Rfast
 Author: Damien M. de Vienne, Stéphane Dray
 Maintainer: Aurélie Siberchicot <aurelie.siberchicot@univ-lyon1.fr>
 License: GPL (>= 2)

@@ -46,12 +46,13 @@
 #' 
 #' 
 #' @importFrom RSpectra eigs_sym
+#' @importFrom Rfast Crossprod
 #' @export
 DistatisFast<-function(matrices, factorskept=2) {
 	GetCmat <- function(OrderedMatrices, RV = TRUE) {
 	    CP2.diag <-do.call(cbind, lapply(OrderedMatrices, diag))
 	    CP2.upper <- do.call(cbind, lapply(OrderedMatrices, function(x) x[upper.tri(x)]))
-	    C <- crossprod(CP2.diag) + 2 * crossprod(CP2.upper)
+	    C <- Crossprod(CP2.diag,CP2.diag) + 2 * Crossprod(CP2.upper,CP2.upper)
 	    if (RV) {
 	        laNorm = sqrt(2 * colSums(CP2.upper^2) + colSums(CP2.diag^2))
 	        C = C/outer(laNorm, laNorm)
@@ -83,7 +84,6 @@ DistatisFast<-function(matrices, factorskept=2) {
 	    e1 = eigs_sym(Y, 1, opts=list(retvec=FALSE), which="LA")$values
 	    return(e1)
 	}
-
 	Sp<-rownames(matrices[[1]])
 	Gn<-names(matrices)
 	nbSp<-length(Sp)
@@ -92,14 +92,12 @@ DistatisFast<-function(matrices, factorskept=2) {
 	matrices.dblcent<-lapply(matrices, DblCenterDist)
 	# if (Norm) matrices.dblcent<-lapply(matrices.dblcent, MFAnormCP) ##normalize is asked
 	lambda<-rep(1,nbGn)
-
 	RVmat<-GetCmat(matrices.dblcent)
 	FirstEigenVector<-eigs_sym(RVmat, 1, which = "LM")
 	alpha <- FirstEigenVector$vectors[, 1]/sum(FirstEigenVector$vectors[, 1])
 	quality<-FirstEigenVector$values/nbGn
 	### Compute compromise matrix (C) and its projection (Splus)
 	WeightedMatrices<-sapply(1:nbGn, function(x,MAT,weight) MAT[[x]]*weight[x],MAT=matrices.dblcent, weight=alpha, simplify=FALSE)
-
 	Splus<-Reduce('+',WeightedMatrices)
 	# compromise<-Reduce('+',WeightedMatrices.initial)
 	dimnames(Splus)<-list(Sp,Sp)
@@ -117,9 +115,7 @@ DistatisFast<-function(matrices, factorskept=2) {
 	Proj <- t(apply(eigenSplus$vectors, 1, "*", 1/t(t(eigenSplus$SingularValues))))
 	colnames(Proj) <-  paste("Factor", 1:ncol(F))
 	rownames(Proj) <- Sp
-
 	PartialF = lapply(matrices.dblcent, function(x,y) x %*% y, y=Proj)
-
 	return(list(F=F, PartialF=PartialF, alpha=alpha, lambda=lambda, RVmat=RVmat, compromise=compromise, quality=quality, matrices.dblcent=matrices.dblcent))
 }
 
