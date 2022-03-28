@@ -62,10 +62,7 @@ PreparePhylterData<-function(X, bvalue=0, distance="patristic", Norm="median",No
 			cat(paste("Dicarded genes: ",paste(paste("\"",nam, "\"", sep=""),collapse=", "),"\n", sep=""))
 		}
 	}
-
-
-
-	 
+ 
 
 	if (is.null(names(X))) X<-rename.genes(X, gene.names=gene.names)
 	if (inherits(X[[1]], "phylo")) matrices <- trees2matrices(X, distance = distance, bvalue = bvalue)
@@ -95,7 +92,7 @@ PreparePhylterData<-function(X, bvalue=0, distance="patristic", Norm="median",No
 		ZeroLengthMatrices<-which(AllMe<=Norm.cutoff)
 		if (length(ZeroLengthMatrices)>0) {
 			#for later use, get list of all discarded species for all discarded genes
-			SpeciesPerDiscardedGenes<-lapply(matrices[ZeroLengthMatrices], rownames)
+			SpeciesPerDiscardedGenes<-lapply(Xsave[ZeroLengthMatrices], rownames)
 			matrices<-matrices[-ZeroLengthMatrices]
 			#and remove those matrices from Xsave as well
 			Xsave<-Xsave[-ZeroLengthMatrices]
@@ -110,5 +107,4 @@ PreparePhylterData<-function(X, bvalue=0, distance="patristic", Norm="median",No
 
 	return(list(matrices=matrices, Xsave=Xsave, discardedgenes=discardedgenes, discardedmatrix=discardedmatrix))
 }
-
 
