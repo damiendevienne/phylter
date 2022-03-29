@@ -9,7 +9,7 @@ PreparePhylterData(
   bvalue = 0,
   distance = "patristic",
   Norm = "median",
-  Norm.cutoff = 1e-06,
+  Norm.cutoff = 0.001,
   gene.names = NULL,
   verbose = TRUE
 )

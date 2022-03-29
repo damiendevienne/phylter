@@ -49,7 +49,6 @@ distatis$RVmat #RV matrix: correlation of each matrix with each other
 distatis$compromise # distance matrix with "average" pairwise distance between species in matrices
 # etc.
 
-
 }
 \references{
 Abdi, H., Valentin, D., O'Toole, A.J., & Edelman, B. (2005).

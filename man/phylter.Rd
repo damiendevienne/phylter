@@ -11,7 +11,7 @@ phylter(
   k = 3,
   k2 = k,
   Norm = "median",
-  Norm.cutoff = 1e-06,
+  Norm.cutoff = 0.001,
   gene.names = NULL,
   test.island = TRUE,
   verbose = TRUE,
@@ -39,12 +39,12 @@ detected (see details).}
 \item{k2}{Same as k for complete gene outlier detection. To preserve complete genes from 
 being discarded, k2 can be increased. By default, k2 = k. (see above)}
 
-\item{Norm}{Should the matrices be normalized prior to the complete analysis and how. If "median", matrices are divided by their median, if 
+\item{Norm}{Should the matrices be normalized prior to the complete analysis and how. If "median" (the default), matrices are divided by their median, if 
 "mean" they are divided by their mean, if "none", no normalization if performed. Normalizing ensures that fast-evolving 
 (and slow-evolving) genes are not treated as outliers. Normalization by median is a better choice as it is less sensitive to outlier values.}
 
 \item{Norm.cutoff}{Value of the median (if \code{Norm="median"}) or the mean (if
-\code{Norm="mean"}) below which matrices are simply discarded from the analysis. This
+\code{Norm="mean"}) of phylogenetic distance matrices below which genes are simply discarded from the analysis. This
 prevents dividing by 0, and allows getting rid of genes that contain mostly branches
 of length 0 and are therefore uninformative anyway. Discarded genes, if any, are listed in 
 the output ({out$DiscardedGenes}).}
@@ -88,8 +88,5 @@ res$Final$Outliers #Print all outliers detected
 
 # Change the call to phylter  to use nodal distances, instead of patristic: 
 res<-phylter(carnivora, distance="nodal")
-
-
-
 
 }
