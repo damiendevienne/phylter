@@ -44,7 +44,6 @@
 #' distatis$compromise # distance matrix with "average" pairwise distance between species in matrices
 #' # etc.
 #' 
-#' 
 #' @importFrom RSpectra eigs_sym
 #' @importFrom Rfast Crossprod
 #' @export
