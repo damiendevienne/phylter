@@ -39,7 +39,7 @@
 #' @importFrom graphics plot
 #' @export
 
-PreparePhylterData<-function(X, bvalue=0, distance="patristic", Norm="median",Norm.cutoff=1e-6,gene.names=NULL, verbose=TRUE) {
+PreparePhylterData<-function(X, bvalue=0, distance="patristic", Norm="median",Norm.cutoff=1e-3,gene.names=NULL, verbose=TRUE) {
 
 	WarningMessage.GenesDiscarded<-function(nb,nam) {
 		if (nb>1) {
@@ -74,7 +74,7 @@ PreparePhylterData<-function(X, bvalue=0, distance="patristic", Norm="median",No
 		cat(paste("Number of Species:  ", nrow(matrices[[1]]), "\n", sep=""))
 		cat("--------\n")
 	}
-	## NEW (25/01/2022). Doing this, genes that havehigh values globally are not treated as outliers, 
+	## NEW (25/01/2022). Doing this, genes that have high values globally are not treated as outliers, 
 	## but long branches remain outliers (median is not too affected by outliers).
 	## NEW March 10 2022 
 	##remove matrices that have mean or median close to 0
