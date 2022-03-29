@@ -1,6 +1,6 @@
 Package: phylter
 Title: Detect and Remove Outliers in Phylogenomics Datasets
-Version: 0.9.2
+Version: 0.9.3
 Imports: ape, RSpectra, stats, utils, ggplot2, reshape2, mrfDepth, Rfast
 Author: Damien M. de Vienne, Stéphane Dray
 Maintainer: Aurélie Siberchicot <aurelie.siberchicot@univ-lyon1.fr>
@@ -9,7 +9,7 @@ Description: Tool for analyzing and filtering phylogenomics datasets.
 	It takes an input either a collection of gene trees (then transformed to matrices) or directly a collection of gene matrices and performs an iterative process to identify
 	what species in what genes are outliers, and whose elimination significantly improves the concordance between the input matrices. The methods builds upon the Distatis approach (Abdi et al. 2005), a generalization of classical multidimensional scaling to multiple distance matrices.
 LazyData: true
-Depends: R (>= 2.10)
+Depends: R (>= 4.0)
 BugReports: https://github.com/damiendevienne/phylter/issues
 Encoding: UTF-8
 RoxygenNote: 7.1.2
