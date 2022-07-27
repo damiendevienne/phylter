@@ -49,8 +49,8 @@ results <- phylter(trees, gene.names = names)
 >The phylter() function is called as follows by default:
 >```R
 >phylter(X, bvalue = 0, distance = "patristic", k = 3, k2 = k, Norm = "median", 
-  Norm.cutoff = 1e-6, gene.names = NULL, test.island = FALSE, 
-  verbose = TRUE, stop.criteria = 1e-5)
+>  Norm.cutoff = 1e-6, gene.names = NULL, test.island = FALSE, 
+>  verbose = TRUE, stop.criteria = 1e-5)
 >```
 >
 >Possible options are:
