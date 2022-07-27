@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.com/damiendevienne/phylter.svg?branch=master)](https://travis-ci.com/damiendevienne/phylter)
 [![R-CMD-check](https://github.com/damiendevienne/phylter/workflows/R-CMD-check/badge.svg)](https://github.com/damiendevienne/phylter/actions)
-# phylter, a tool for analyzing, visualizing and filtering phylogenomics datasets.
+# phylter, a tool for analyzing, visualizing and filtering phylogenomics datasets
 
 **phylter** is a tool that allows detecting, removing and visualizing outliers in phylogenomics dataset by iteratively removing taxa in genes and optimizing a score of concordance between individual matrices.   
 **phylter** relies on Distatis (Abdi et al, 2005), an extension of multidimensional scaling to 3 dimensions to compare multiple distance matrices at once.
@@ -88,7 +88,7 @@ write.phylter(results, file = "phylter.out")
 
 
 ## Example
-A carnivora dataset comprised of 255 genes for 53 species (Allio et al. 2021) is included in the package. To load it and test `phylter` on it: 
+A `carnivora` dataset comprised of 255 genes for 53 species (Allio et al. 2021) is included in the package. To load it and test `phylter` on it: 
 ```R
 data(carnivora)
 results <- phylter(carnivora) # for example
@@ -96,7 +96,7 @@ results <- phylter(carnivora) # for example
    
    
 ---
-### References
+## References
 
 - Abdi, H., O’Toole, A.J., Valentin, D. & Edelman, B. (2005). *DISTATIS: The analysis of multiple distance matrices.* Proceedings of the IEEE Computer Society: International Conference on Computer Vision and Pattern Recognition (San Diego, CA, USA). doi: 10.1109/CVPR.2005.445. https://www.utdallas.edu/~herve/abdi-distatis2005.pdf
 
