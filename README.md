@@ -3,7 +3,7 @@
 # phylter, a tool for analyzing, visualizing and filtering phylogenomics datasets
 
 **phylter** is a tool that allows detecting, removing and visualizing outliers in phylogenomics dataset by iteratively removing taxa in genes and optimizing a score of concordance between individual matrices.   
-**phylter** relies on Distatis (Abdi et al, 2005), an extension of multidimensional scaling to 3 dimensions to compare multiple distance matrices at once. 
+**phylter** relies on Distatis (Abdi et al, 2005), an extension of multidimensional scaling to 3 dimensions to compare multiple distance matrices at once.   
 **phylter** takes as input either a collection of phylogenetic trees (that are converted to distance matrices by `phylter`), or a collection of pairwise distance matrices (obtained from multiple sequence alignements, for instance).  
 **phylter** accepts data with missing values (missing taxa in some genes).  
 **phylter** detects outliers with a method proposed by Hubert & Vandervieren (2008) for skewed data.  
