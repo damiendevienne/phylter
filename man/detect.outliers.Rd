@@ -43,11 +43,11 @@ method used is the adjusted Tukey proposed by Hubert and Vandervieren (2008).
 }
 \section{Functions}{
 \itemize{
-\item \code{detect.outliers}: detect outliers in 2D matrix
+\item \code{detect.outliers()}: detect outliers in 2D matrix
 
-\item \code{detect.outliers.array}: detects outliers in 1D array
+\item \code{detect.outliers.array()}: detects outliers in 1D array
+
 }}
-
 \examples{
 # Get the initial gene x species matrix
 # from the carnivora dataset
