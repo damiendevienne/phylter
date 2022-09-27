@@ -48,9 +48,10 @@
 #' res$Final #See all elements at the end of the analysis
 #' res$Final$Outliers #Print all outliers detected
 #' 
-#' 
+#' \donttest{
 #' # Change the call to phylter  to use nodal distances, instead of patristic: 
 #' res<-phylter(carnivora, distance="nodal")
+#' }
 #' 
 #' @importFrom utils tail combn
 #' @importFrom stats hclust as.dist median

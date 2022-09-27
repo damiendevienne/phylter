@@ -86,10 +86,12 @@ res<-phylter(carnivora)
 # plot for each gene the number of outlier species
 plot(res, "genes")
 
+\donttest{
 # plot for each species the number genes where it is outlier
 plot(res, "species")
 
 # plot the dispersion of data before and after the use of phylter
 plotDispersion(res)
+}
 
 }

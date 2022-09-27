@@ -85,8 +85,9 @@ res$Initial #See all elements prior to the analysis
 res$Final #See all elements at the end of the analysis
 res$Final$Outliers #Print all outliers detected
 
-
+\donttest{
 # Change the call to phylter  to use nodal distances, instead of patristic: 
 res<-phylter(carnivora, distance="nodal")
+}
 
 }
