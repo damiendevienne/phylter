@@ -27,6 +27,9 @@ If \code{""} (the default), \code{write.phylyer()} prints to the standard output
 \item{pdfreport.file}{If \code{report=TRUE}, name of the pdf file where the 
 report is written. Default to \code{report.pdf}}
 }
+\value{
+No return value
+}
 \description{
 Write the summary of the phylter analysis in a txt file or as a pdf report.
 }
@@ -36,10 +39,12 @@ res<-phylter(carnivora)
 # write a full report to the standard output
 write.phylter(res) 
 
+\donttest{
 # write a full report to the the file out.txt
-# write.phylter(res, file="out.txt")
+write.phylter(res, file="out.txt")
  
 # write a pdf report with all available graphical outputs
-# write.phylter(res, pdfreport=TRUE) 
+write.phylter(res, pdfreport=TRUE) 
+}
 
 }

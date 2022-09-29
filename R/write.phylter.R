@@ -15,17 +15,21 @@
 #' @param pdfreport.file If \code{report=TRUE}, name of the pdf file where the 
 #' report is written. Default to \code{report.pdf}
 #' 
+#' @return No return value
+#' 
 #' @examples
 #' data(carnivora) 
 #' res<-phylter(carnivora)
 #' # write a full report to the standard output
 #' write.phylter(res) 
 #' 
+#' \donttest{
 #' # write a full report to the the file out.txt
-#' # write.phylter(res, file="out.txt")
+#' write.phylter(res, file="out.txt")
 #'  
 #' # write a pdf report with all available graphical outputs
-#' # write.phylter(res, pdfreport=TRUE) 
+#' write.phylter(res, pdfreport=TRUE) 
+#' }
 #' 
 #' @importFrom utils write.table packageVersion
 #' @importFrom grDevices dev.off pdf
