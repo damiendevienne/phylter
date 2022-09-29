@@ -9,7 +9,7 @@ Authors@R: c(
     )
 Maintainer: Aurélie Siberchicot <aurelie.siberchicot@univ-lyon1.fr>
 License: GPL (>= 2)
-Description: Tool for analyzing and filtering phylogenomics datasets. 
+Description: Analyzis and filtering of phylogenomics datasets. 
 	It takes an input either a collection of gene trees (then transformed to matrices) or directly a collection of gene matrices and performs an iterative process to identify
 	what species in what genes are outliers, and whose elimination significantly improves the concordance between the input matrices. The methods builds upon the Distatis approach (Abdi et al. (2005) <doi:10.1101/2021.09.08.459421>), a generalization of classical multidimensional scaling to multiple distance matrices.
 LazyData: true
