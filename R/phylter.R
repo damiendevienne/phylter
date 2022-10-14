@@ -35,6 +35,7 @@
 #' than this value. Default to 1e-5.
 #' @param InitialOnly Logical. If TRUE, only the Initial state of the data is computed. 
 #' @param normalizeby Should the gene x species matrix be normalized prior to outlier detection, and how.
+#' @param parallel Should the computations be parallelized when possible? Default to TRUE. 
 #' @return A list of class 'phylter' with the 'Initial' (before filtering) and 'Final' (after filtering) states, 
 #' or a list of class 'phylterinitial' only, if InitialOnly=TRUE. The function also returns the list of DiscardedGenes, if any. 
 #' @examples
@@ -58,7 +59,7 @@
 #' @importFrom graphics plot
 #' @export
 
-phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm="median", Norm.cutoff=1e-3, gene.names=NULL, test.island=TRUE, verbose=TRUE, stop.criteria=1e-5, InitialOnly=FALSE, normalizeby="row") {
+phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm="median", Norm.cutoff=1e-3, gene.names=NULL, test.island=TRUE, verbose=TRUE, stop.criteria=1e-5, InitialOnly=FALSE, normalizeby="row", parallel=TRUE) {
 	ReplaceValueWithCompromise<-function(allmat, what, compro, lambda) {
 		for (i in 1:length(allmat)) {
 			whatsp<-what[what[,1]==i,2]
@@ -115,7 +116,7 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm="median", N
 	discardedgenes<-X.clean$discardedgenes #list pof discarded genes
 	discardedmatrix<-X.clean$discardedmatrix #matrix of discarded cells (same format as Outliers at the end)
 	#END NEW
-	RES<-DistatisFast(matrices)
+	RES<-DistatisFast(matrices, parallel=parallel)
 	WR<-Dist2WR(RES)
 
 	Initial<-NULL
@@ -164,7 +165,7 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm="median", N
 		if (!is.null(NewCellsToRemove)) {
 			CELLSREMOVED.new<-rbind(CELLSREMOVED, NewCellsToRemove) 
 			matrices.new<-ReplaceValueWithCompromise(matrices, CELLSREMOVED.new, RES$compromise, RES$lambda)
-			RES.new<-DistatisFast(matrices.new)
+			RES.new<-DistatisFast(matrices.new, parallel=parallel)
 			VAL.new<-c(VAL, RES.new$quality)
 			if (verbose) cat(paste("-> New score: ",round(RES.new$quality, digits=ceiling(abs(log10(stop.criteria)))), sep=""))
 #			if (verbose) plot(VAL, type="o")				
