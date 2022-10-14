@@ -92,7 +92,7 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm="median", N
 		else {
 			if (which=="all") {
 				cell.exists<-apply(AllOutliers, 1, function(x, sp) is.element(sp.order[x[2]],colnames(InitialMatrices[[x[1]]])), sp=sp.order)
-				AllOutliers<-AllOutliers[cell.exists,]
+				AllOutliers<-AllOutliers[cell.exists,,drop = FALSE]
 				Out<-cbind(names(InitialMatrices[AllOutliers[,1]]), sp.order[AllOutliers[,2]])
 			}
 			if (which=="complete") {
