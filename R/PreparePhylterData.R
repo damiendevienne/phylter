@@ -63,7 +63,6 @@ PreparePhylterData<-function(X, bvalue=0, distance="patristic", Norm="median",No
 		}
 	}
  
-
 	if (is.null(names(X))) X<-rename.genes(X, gene.names=gene.names)
 	if (inherits(X[[1]], "phylo")) matrices <- trees2matrices(X, distance = distance, bvalue = bvalue)
 	else matrices<-X

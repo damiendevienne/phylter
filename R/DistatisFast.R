@@ -89,13 +89,10 @@ DistatisFast<-function(matrices, factorskept=2, parallel=TRUE) {
 	nbSp<-length(Sp)
 	nbGn<-length(Gn)
 	### Compute weights
-	print("a")
 	matrices.dblcent<-lapply(matrices, DblCenterDist)
 	# if (Norm) matrices.dblcent<-lapply(matrices.dblcent, MFAnormCP) ##normalize is asked
-	print("b")
-
 	lambda<-rep(1,nbGn)
-	RVmat<-GetCmat(matrices.dblcent)
+	RVmat<-GetCmat(matrices.dblcent, parallel=parallel)
 	FirstEigenVector<-eigs_sym(RVmat, 1, which = "LM")
 	alpha <- FirstEigenVector$vectors[, 1]/sum(FirstEigenVector$vectors[, 1])
 	quality<-FirstEigenVector$values/nbGn
@@ -105,7 +102,6 @@ DistatisFast<-function(matrices, factorskept=2, parallel=TRUE) {
 	# compromise<-Reduce('+',WeightedMatrices.initial)
 	dimnames(Splus)<-list(Sp,Sp)
 	s<-diag(Splus)
-	print("c")
 	#### dé-centrage ####
 	compromise<-sweep(sweep(-2*(Splus),1,s,"+"),2,s,"+")
 	## ca fois me mambda c'est OK.
@@ -113,7 +109,6 @@ DistatisFast<-function(matrices, factorskept=2, parallel=TRUE) {
 	Nom2Factors<-paste("Factor", 1:factorskept)
 	eigenSplus = eigs_sym(Splus, factorskept) ##the 2 is the number of dim we really keep.
 	eigenSplus$SingularValues<-sqrt(abs(eigenSplus$values))
-	print("d")
 	F<-t(apply(eigenSplus$vectors, 1, "*", t(t(eigenSplus$SingularValues))))
 	rownames(F) <- Sp
 	colnames(F) <- Nom2Factors
