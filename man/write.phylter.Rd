@@ -39,12 +39,5 @@ res<-phylter(carnivora)
 # write a full report to the standard output
 write.phylter(res) 
 
-\donttest{
-# write a full report to the the file out.txt
-write.phylter(res, file="out.txt")
- 
-# write a pdf report with all available graphical outputs
-write.phylter(res, pdfreport=TRUE) 
-}
 
 }

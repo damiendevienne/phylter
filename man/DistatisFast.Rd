@@ -4,12 +4,14 @@
 \alias{DistatisFast}
 \title{Fast implementation the multivariate analysis method Distatis}
 \usage{
-DistatisFast(matrices, factorskept = 2)
+DistatisFast(matrices, factorskept = 2, parallel = TRUE)
 }
 \arguments{
 \item{matrices}{A list of K distance matrices, all of the same dimension (IxI).}
 
-\item{factorskept}{Number of factors to keep for the computation of the factor 
+\item{factorskept}{Number of factors to keep for the computation of the factor}
+
+\item{parallel}{Should the matrix products computations be parallelized? Default to TRUE. 
 scores of the observations.}
 }
 \value{

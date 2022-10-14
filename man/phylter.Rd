@@ -17,7 +17,8 @@ phylter(
   verbose = TRUE,
   stop.criteria = 1e-05,
   InitialOnly = FALSE,
-  normalizeby = "row"
+  normalizeby = "row",
+  parallel = TRUE
 )
 }
 \arguments{
@@ -65,6 +66,8 @@ than this value. Default to 1e-5.}
 \item{InitialOnly}{Logical. If TRUE, only the Initial state of the data is computed.}
 
 \item{normalizeby}{Should the gene x species matrix be normalized prior to outlier detection, and how.}
+
+\item{parallel}{Should the computations be parallelized when possible? Default to TRUE.}
 }
 \value{
 A list of class 'phylter' with the 'Initial' (before filtering) and 'Final' (after filtering) states, 
