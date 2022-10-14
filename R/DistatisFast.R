@@ -46,7 +46,7 @@
 #' # etc.
 #' 
 #' @importFrom RSpectra eigs_sym
-#' @importFrom Rfast Crossprod colsums Outer
+#' @importFrom Rfast Crossprod 
 #' @export
 DistatisFast<-function(matrices, factorskept=2, parallel=TRUE) {
 	GetCmat <- function(OrderedMatrices, RV = TRUE, parallel) {
@@ -54,8 +54,8 @@ DistatisFast<-function(matrices, factorskept=2, parallel=TRUE) {
 	    CP2.upper <- do.call(cbind, lapply(OrderedMatrices, function(x) x[upper.tri(x)]))
 	    C <- ifelse(parallel, Crossprod(CP2.diag,CP2.diag) + 2 * Crossprod(CP2.upper,CP2.upper), crossprod(CP2.diag,CP2.diag) + 2 * crossprod(CP2.upper,CP2.upper))
 	    if (RV) {
-	        laNorm = ifelse(parallel, sqrt(2 * colsums(CP2.upper^2, parallel=TRUE) + colsums(CP2.diag^2, parallel=TRUE)), sqrt(2 * colSums(CP2.upper^2) + colSums(CP2.diag^2)))
-	        C = ifelse(parallel, C/Outer(laNorm, laNorm), C/outer(laNorm, laNorm))
+	        laNorm = sqrt(2 * colSums(CP2.upper^2) + colSums(CP2.diag^2))
+	        C = C/outer(laNorm, laNorm)
 	    }
 	    rownames(C) <- colnames(C) <- names(OrderedMatrices)
 	    return(C)
