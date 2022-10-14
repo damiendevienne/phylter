@@ -9,6 +9,7 @@
 #' 
 #' @param matrices A list of K distance matrices, all of the same dimension (IxI).
 #' @param factorskept Number of factors to keep for the computation of the factor 
+#' @param parallel Should the matrix products computations be parallelized? Default to TRUE. 
 #' scores of the observations.
 #' @return Returns a list containing:
 #' \itemize{
@@ -45,16 +46,16 @@
 #' # etc.
 #' 
 #' @importFrom RSpectra eigs_sym
-#' @importFrom Rfast Crossprod
+#' @importFrom Rfast Crossprod colsums Outer
 #' @export
-DistatisFast<-function(matrices, factorskept=2) {
-	GetCmat <- function(OrderedMatrices, RV = TRUE) {
+DistatisFast<-function(matrices, factorskept=2, parallel=TRUE) {
+	GetCmat <- function(OrderedMatrices, RV = TRUE, parallel) {
 	    CP2.diag <-do.call(cbind, lapply(OrderedMatrices, diag))
 	    CP2.upper <- do.call(cbind, lapply(OrderedMatrices, function(x) x[upper.tri(x)]))
-	    C <- Crossprod(CP2.diag,CP2.diag) + 2 * Crossprod(CP2.upper,CP2.upper)
+	    C <- ifelse(parallel, Crossprod(CP2.diag,CP2.diag) + 2 * Crossprod(CP2.upper,CP2.upper), crossprod(CP2.diag,CP2.diag) + 2 * crossprod(CP2.upper,CP2.upper))
 	    if (RV) {
-	        laNorm = sqrt(2 * colSums(CP2.upper^2) + colSums(CP2.diag^2))
-	        C = C/outer(laNorm, laNorm)
+	        laNorm = ifelse(parallel, sqrt(2 * colsums(CP2.upper^2, parallel=TRUE) + colsums(CP2.diag^2, parallel=TRUE)), sqrt(2 * colSums(CP2.upper^2) + colSums(CP2.diag^2)))
+	        C = ifelse(parallel, C/Outer(laNorm, laNorm), C/outer(laNorm, laNorm))
 	    }
 	    rownames(C) <- colnames(C) <- names(OrderedMatrices)
 	    return(C)
@@ -88,8 +89,11 @@ DistatisFast<-function(matrices, factorskept=2) {
 	nbSp<-length(Sp)
 	nbGn<-length(Gn)
 	### Compute weights
+	print("a")
 	matrices.dblcent<-lapply(matrices, DblCenterDist)
 	# if (Norm) matrices.dblcent<-lapply(matrices.dblcent, MFAnormCP) ##normalize is asked
+	print("b")
+
 	lambda<-rep(1,nbGn)
 	RVmat<-GetCmat(matrices.dblcent)
 	FirstEigenVector<-eigs_sym(RVmat, 1, which = "LM")
@@ -101,6 +105,7 @@ DistatisFast<-function(matrices, factorskept=2) {
 	# compromise<-Reduce('+',WeightedMatrices.initial)
 	dimnames(Splus)<-list(Sp,Sp)
 	s<-diag(Splus)
+	print("c")
 	#### dé-centrage ####
 	compromise<-sweep(sweep(-2*(Splus),1,s,"+"),2,s,"+")
 	## ca fois me mambda c'est OK.
@@ -108,6 +113,7 @@ DistatisFast<-function(matrices, factorskept=2) {
 	Nom2Factors<-paste("Factor", 1:factorskept)
 	eigenSplus = eigs_sym(Splus, factorskept) ##the 2 is the number of dim we really keep.
 	eigenSplus$SingularValues<-sqrt(abs(eigenSplus$values))
+	print("d")
 	F<-t(apply(eigenSplus$vectors, 1, "*", t(t(eigenSplus$SingularValues))))
 	rownames(F) <- Sp
 	colnames(F) <- Nom2Factors
