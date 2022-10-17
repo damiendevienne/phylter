@@ -52,7 +52,8 @@ DistatisFast<-function(matrices, factorskept=2, parallel=TRUE) {
 	GetCmat <- function(OrderedMatrices, RV = TRUE, parallel) {
 	    CP2.diag <-do.call(cbind, lapply(OrderedMatrices, diag))
 	    CP2.upper <- do.call(cbind, lapply(OrderedMatrices, function(x) x[upper.tri(x)]))
-	    C <- ifelse(parallel, Crossprod(CP2.diag,CP2.diag) + 2 * Crossprod(CP2.upper,CP2.upper), crossprod(CP2.diag,CP2.diag) + 2 * crossprod(CP2.upper,CP2.upper))
+#	    C <- ifelse(parallel, Crossprod(CP2.diag,CP2.diag) + 2 * Crossprod(CP2.upper,CP2.upper), crossprod(CP2.diag,CP2.diag) + 2 * crossprod(CP2.upper,CP2.upper))
+	    C <- Crossprod(CP2.diag,CP2.diag) + 2 * Crossprod(CP2.upper,CP2.upper)	       
 	    if (RV) {
 	        laNorm = sqrt(2 * colSums(CP2.upper^2) + colSums(CP2.diag^2))
 	        C = C/outer(laNorm, laNorm)
