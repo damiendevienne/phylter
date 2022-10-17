@@ -30,6 +30,9 @@ remotes::install_github("damiendevienne/phylter")
 library("phylter")
 ```
 
+> Note: Phylter requires R version > 4.0, otherwise it cannot be installed. Also, R uses the GNU Scientific Library. On Ubuntu, this can be installed prior to the installation of the Phylter package by typing `sudo apt install libgsl-dev` in a terminal. 
+
+
 ## Usage
 **1.** With the `read.tree` function from the `ape` package, read trees from external file and save as a list called `trees`.
 ```R
