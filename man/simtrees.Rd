@@ -4,7 +4,8 @@
 \alias{simtrees}
 \title{Simplistic simulation of gene trees with outliers}
 \usage{
-simtrees(Ngn, Nsp, Nsp.out = 0, Ngn.out = 0, Nb.cell.outlier = 0, brlen.sd = 0)
+simtrees(Ngn, Nsp, Nsp.out = 0, Ngn.out = 0, Nb.cell.outlier = 0, 
+brlen.sd = 0, out.type="topology",bl.mult=2)
 }
 \arguments{
 \item{Ngn}{Number of gene trees to simulate.}
@@ -15,10 +16,17 @@ simtrees(Ngn, Nsp, Nsp.out = 0, Ngn.out = 0, Nb.cell.outlier = 0, brlen.sd = 0)
 
 \item{Ngn.out}{Number of outlier genes. 0 = none.}
 
-\item{Nb.cell.outlier}{Number of times one species in one tree is misplaced. 0 = none.}
+\item{Nb.cell.outlier}{Number of times one species in one tree is an outlier. 0 = none. The type of outlier is set by \code{out.type=}.}
 
 \item{brlen.sd}{Heterogeneity of branch lengths in trees. A value with mean 0 and standard
-deviation equal to brlen.sd is added to each branch length.}
+deviation equal to brlen.sd is added to each branch length. If the resulting branch length has a negative value, its absolute value is taken.}
+
+\item{out.type}{The type of cell outlier. Can be "topology" (the default), where outlier species 
+are simulated by branching them elsewhere (randomly) in the tree, "brlength", where terminal branches of outlier species are 
+multiplied by \code{bl.mult} (see after) or "both" where half of the outliers are "topology" and the other half are "brlength".  
+In the latter case, if the number of outliers (\code{Nb.cell.outlier}) id odd, there is one more topology outlier than brlength outlier simulated.}
+
+\item{bl.mult}{Multiplier of terminal branches of outlier species when \code{out.type="topology"} or \code{out.type="both"}. Ignored otherwise.}
 }
 \value{
 A list of trees in \code{multiPhylo} format.
@@ -32,10 +40,12 @@ and is then duplicated and modified according to the parameters chosen by the us
 }
 \examples{
  
-# Very basic simulator, for debuggin purpose mainly.
+# Very basic simulator, for debugging purpose mainly.
 # examples: 30 genes, 120 species, 2 outlier species, 3 outlier genes
-# 4 gene/species outliers, branch length variance = 0.6 
-trees<-simtrees(30,120,2,3,4,0.6)
+# 4 gene/species outliers of type "topology", branch length variance = 0.6.
+# The branch length multiplier is set to 2 but this is
+# ignored if out.type="topology"
+trees<-simtrees(30,120,2,3,4,0.6, "topology",2)
 
 
 

@@ -7,7 +7,8 @@
 #' The simulation process is as follows: a first tree is generated with the \code{rtree()} function
 #' and is then duplicated and modified according to the parameters chosen by the user.
 #' 
-#' @usage simtrees(Ngn, Nsp, Nsp.out = 0, Ngn.out = 0, Nb.cell.outlier = 0, brlen.sd = 0)
+#' @usage simtrees(Ngn, Nsp, Nsp.out = 0, Ngn.out = 0, Nb.cell.outlier = 0, 
+#' brlen.sd = 0, out.type="topology",bl.mult=2)
 #' @param Ngn Number of gene trees to simulate. 
 #' @param Nsp Number of species (tips) per tree.
 #' @param Nsp.out Number of outlier species (also called rogue taxa). 0 = none.
@@ -24,8 +25,10 @@
 #' @examples  
 #' # Very basic simulator, for debugging purpose mainly.
 #' # examples: 30 genes, 120 species, 2 outlier species, 3 outlier genes
-#' # 4 gene/species outliers, branch length variance = 0.6 
-#' trees<-simtrees(30,120,2,3,4,0.6)
+#' # 4 gene/species outliers of type "topology", branch length variance = 0.6.
+#' # The branch length multiplier is set to 2 but this is
+#' # ignored if out.type="topology"
+#' trees<-simtrees(30,120,2,3,4,0.6, "topology",2)
 #' 
 #' 
 #' 
