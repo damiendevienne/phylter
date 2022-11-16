@@ -1,7 +1,7 @@
 #' Prepare data for phylter analysis
 #' 
 #' Prepare datasets for the \code{phylter} function. Detects possible issues, 
-#' discads genes if necessary, imputes missing data if any, and reorders row- and col-names.
+#' discards genes if necessary, imputes missing data if any, and reorders row- and col-names.
 #' For internal usage mostly.
 #'
 #' @param X A list of phylogenetic trees (phylo object) or a list 
