@@ -8,7 +8,7 @@
 #' is particularly visible when the number of matrices is large.  
 #' 
 #' @param matrices A list of K distance matrices, all of the same dimension (IxI).
-#' @param factorskept Number of factors to keep for the computation of the factor 
+#' @param factorskept Number of factors to keep for the computation of the factor. When "auto" (the default), a brokenstick model is used for the choice of the number of components to keep.
 #' @param parallel Should the matrix products computations be parallelized? Default to TRUE. 
 #' scores of the observations.
 #' @return Returns a list containing:
@@ -48,7 +48,7 @@
 #' @importFrom RSpectra eigs_sym
 #' @importFrom Rfast Crossprod 
 #' @export
-DistatisFast<-function(matrices, factorskept=2, parallel=TRUE) {
+DistatisFast<-function(matrices, factorskept="auto", parallel=TRUE) {
 	GetCmat <- function(OrderedMatrices, RV = TRUE, parallel) {
 	    CP2.diag <-do.call(cbind, lapply(OrderedMatrices, diag))
 	    CP2.upper <- do.call(cbind, lapply(OrderedMatrices, function(x) x[upper.tri(x)]))
@@ -80,15 +80,24 @@ DistatisFast<-function(matrices, factorskept=2, parallel=TRUE) {
     	return(-Y/2)
 
 	}
-	MFAnormCP <- function(Y) {
-	    e1 = eigs_sym(Y, 1, opts=list(retvec=FALSE), which="LA")$values
-	    Ynormed = Y/e1
-	    return(Ynormed)
+	brokenstick<-function(k,n) {
+		res<-NULL
+		for (kk in k) { 
+			res<-c(res,(1/n)*sum(1/(kk:n)))
+		}
+		return(res)
 	}
-	GetLambdaForNorm <- function(Y) {
-	    e1 = eigs_sym(Y, 1, opts=list(retvec=FALSE), which="LA")$values
-	    return(e1)
+	getNbfactors<-function(eigval,bkval) {
+		diff1<-(!(eigval-bkval)>0)
+		if (sum(diff1)==0) nbv<-length(eigval)
+		else {
+			nbv<-which(!(eigval-bkval)>0)[1]-1
+			if (nbv<=2) nbv<-2
+		}
+		return(nbv)
 	}
+
+
 	Sp<-rownames(matrices[[1]])
 	Gn<-names(matrices)
 	nbSp<-length(Sp)
@@ -111,12 +120,28 @@ DistatisFast<-function(matrices, factorskept=2, parallel=TRUE) {
 	compromise<-sweep(sweep(-2*(Splus),1,s,"+"),2,s,"+")
 	## ca fois me mambda c'est OK.
 	### Keep few (=factorskept) axes and project individual matrices
-	Nom2Factors<-paste("Factor", 1:factorskept)
-	eigenSplus = eigs_sym(Splus, factorskept) ##the 2 is the number of dim we really keep.
+
+	##ADDON TO KEEP THE GOOD NUMBER OF AXES
+	if (factorskept=="auto") {
+		factorskept<-nbSp-1
+		eigenSplus = eigs_sym(Splus, factorskept) ##the 2 is the number of dim we really keep.
+		eigval<-eigenSplus$values/sum(eigenSplus$values)
+		bkval<-brokenstick(1:factorskept,factorskept)
+		barplot(eigval)
+		nbfactorsfinal<-getNbfactors(eigval,bkval)
+#		nbfactorsfinal<-sum(eigval>mean(eigval))
+#		nbfactorsfinal<-min(which(cumsum(eigval/sum(eigval))>0.7))
+#		nbfactorsfinal<-factorskept
+#		print(paste(nbfactorsfinal, " axes retained\n",sep=""))
+		eigenSplus$values<-eigenSplus$values[1:nbfactorsfinal]
+		eigenSplus$vectors<-eigenSplus$vectors[,1:nbfactorsfinal]
+	}
+	else	eigenSplus = eigs_sym(Splus, factorskept)
+
 	eigenSplus$SingularValues<-sqrt(abs(eigenSplus$values))
 	F<-t(apply(eigenSplus$vectors, 1, "*", t(t(eigenSplus$SingularValues))))
 	rownames(F) <- Sp
-	colnames(F) <- Nom2Factors
+	colnames(F) <- paste("Factor", 1:ncol(F))
 	Proj <- t(apply(eigenSplus$vectors, 1, "*", 1/t(t(eigenSplus$SingularValues))))
 	colnames(Proj) <-  paste("Factor", 1:ncol(F))
 	rownames(Proj) <- Sp
