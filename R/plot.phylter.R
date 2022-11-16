@@ -202,10 +202,10 @@ plotDispersion<-function(x) {
 	y0<-NULL
 	state<-NULL
 	##
-	step1i<-do.call(rbind, x$Initial$PartialF)
-	step2i<-cbind(step1i, x$Initial$F[match(rownames(step1i), rownames( x$Initial$F)),])
-	step1f<-do.call(rbind, x$Final$PartialF)
-	step2f<-cbind(step1f, x$Final$F[match(rownames(step1f), rownames( x$Final$F)),])
+	step1i<-do.call(rbind, x$Initial$PartialF)[,1:2]
+	step2i<-cbind(step1i, x$Initial$F[match(rownames(step1i), rownames( x$Initial$F)),1:2])
+	step1f<-do.call(rbind, x$Final$PartialF)[,1:2]
+	step2f<-cbind(step1f, x$Final$F[match(rownames(step1f), rownames( x$Final$F)),1:2])
 	COO<-rbind(step2i,step2f)
 	colnames(COO)<-c("x0","y0","x1","y1")
 	COO<-as.data.frame(COO)

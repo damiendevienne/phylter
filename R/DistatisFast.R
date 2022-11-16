@@ -127,7 +127,6 @@ DistatisFast<-function(matrices, factorskept="auto", parallel=TRUE) {
 		eigenSplus = eigs_sym(Splus, factorskept) ##the 2 is the number of dim we really keep.
 		eigval<-eigenSplus$values/sum(eigenSplus$values)
 		bkval<-brokenstick(1:factorskept,factorskept)
-		barplot(eigval)
 		nbfactorsfinal<-getNbfactors(eigval,bkval)
 #		nbfactorsfinal<-sum(eigval>mean(eigval))
 #		nbfactorsfinal<-min(which(cumsum(eigval/sum(eigval))>0.7))

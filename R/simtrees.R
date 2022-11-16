@@ -34,7 +34,7 @@
 #' 
 #' 
 #' 
-#' @importFrom ape rtree drop.tip Ntip bind.tree multi2di
+#' @importFrom ape rtree drop.tip Ntip bind.tree multi2di dist.topo unroot 
 #' @importFrom stats rnorm
 #' @export
 simtrees<-function(Ngn, Nsp, Nsp.out=0,Ngn.out=0,Nb.cell.outlier=0, brlen.sd=0, out.type="topology", bl.mult=2) {
