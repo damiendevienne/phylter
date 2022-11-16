@@ -21,14 +21,16 @@
 #' multiplied by \code{bl.mult} (see after) or "both" where half of the outliers are "topology" and the other half are "brlength".  
 #' In the latter case, if the number of outliers (\code{Nb.cell.outlier}) id odd, there is one more topology outlier than brlength outlier simulated.
 #' @param bl.mult Multiplier of terminal branches of outlier species when \code{out.type="topology"} or \code{out.type="both"}. Ignored otherwise.
-#' @return A list of trees in \code{multiPhylo} format.
+#' @return A list X containing a list of trees in \code{multiPhylo} format (X$trees) and a list of outliers (X$outl).
 #' @examples  
 #' # Very basic simulator, for debugging purpose mainly.
 #' # examples: 30 genes, 120 species, 2 outlier species, 3 outlier genes
 #' # 4 gene/species outliers of type "topology", branch length variance = 0.6.
 #' # The branch length multiplier is set to 2 but this is
 #' # ignored if out.type="topology"
-#' trees<-simtrees(30,120,2,3,4,0.6, "topology",2)
+#' simu<-simtrees(30,120,2,3,4,0.6, "topology",2)
+#' trees<-simu$trees #list of trees
+#' outl<-simu$outl #list of simulated outliers and their type
 #' 
 #' 
 #' 
@@ -80,14 +82,18 @@ simtrees<-function(Ngn, Nsp, Nsp.out=0,Ngn.out=0,Nb.cell.outlier=0, brlen.sd=0, 
 
   add.outliers<-function(trees, nbrep, type, mult) {
     move.tip<-function(tree, tip) {
-      treesmall<-drop.tip(tree, tip)
-      temptree<-rtree(2)
-      temptree$tip.label[1]<-"out"
-      temptree$tip.label[2]<-tip
-      node.attach<-sample(unique(treesmall$edge[,1]),1)
-      treenew<-bind.tree(treesmall, temptree,where=node.attach)
-      treenew<-drop.tip(treenew,"out")
-      treenew<-multi2di(treenew)
+      treenew<-tree
+      cpt<-0
+      while(dist.topo(unroot(tree),unroot(treenew))==0) {
+        treesmall<-drop.tip(tree, tip)
+        temptree<-rtree(2)
+        temptree$tip.label[1]<-"out"
+        temptree$tip.label[2]<-tip
+        node.attach<-sample(unique(treesmall$edge[,1]),1)
+        treenew<-bind.tree(treesmall, temptree,where=node.attach)
+        treenew<-drop.tip(treenew,"out")
+        treenew<-multi2di(treenew)
+      }
       return(treenew)
     }
     expand.branch<-function(tree,tip, m) {
@@ -145,7 +151,14 @@ simtrees<-function(Ngn, Nsp, Nsp.out=0,Ngn.out=0,Nb.cell.outlier=0, brlen.sd=0, 
     tr
   }
   tr<-gen.trees(Ngn,Nsp,Nsp.out,Ngn.out, brlen.sd)
-  if (Nb.cell.outlier>0) trees<-add.outliers(tr$trees, Nb.cell.outlier, out.type, bl.mult)$trees
-  else trees<-tr$trees
-  return(trees)
+  if (Nb.cell.outlier>0) {
+    resu<-add.outliers(tr$trees, Nb.cell.outlier, out.type, bl.mult)
+  }
+  else {
+    resu<-list()
+    resu$outl<-NULL
+    resu$trees<-tr$trees
+  }
+  class(resu$trees)<-"multiPhylo"
+  return(resu)
 }
