@@ -29,7 +29,7 @@ In the latter case, if the number of outliers (\code{Nb.cell.outlier}) id odd, t
 \item{bl.mult}{Multiplier of terminal branches of outlier species when \code{out.type="topology"} or \code{out.type="both"}. Ignored otherwise.}
 }
 \value{
-A list of trees in \code{multiPhylo} format.
+A list X containing a list of trees in \code{multiPhylo} format (X$trees) and a list of outliers (X$outl).
 }
 \description{
 Simple (simplistic) simulation of trees with outliers.
@@ -45,7 +45,9 @@ and is then duplicated and modified according to the parameters chosen by the us
 # 4 gene/species outliers of type "topology", branch length variance = 0.6.
 # The branch length multiplier is set to 2 but this is
 # ignored if out.type="topology"
-trees<-simtrees(30,120,2,3,4,0.6, "topology",2)
+simu<-simtrees(30,120,2,3,4,0.6, "topology",2)
+trees<-simu$trees #list of trees
+outl<-simu$outl #list of simulated outliers and their type
 
 
 

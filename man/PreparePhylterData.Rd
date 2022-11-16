@@ -49,7 +49,7 @@ or a list of class 'phylterinitial' only, if InitialOnly=TRUE.
 }
 \description{
 Prepare datasets for the \code{phylter} function. Detects possible issues, 
-discads genes if necessary, imputes missing data if any, and reorders row- and col-names.
+discards genes if necessary, imputes missing data if any, and reorders row- and col-names.
 For internal usage mostly.
 }
 \examples{
