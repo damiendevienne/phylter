@@ -1,6 +1,6 @@
 Package: phylter
 Title: Detect and Remove Outliers in Phylogenomics Datasets
-Version: 0.9.3
+Version: 0.9.4
 Imports: ape, RSpectra, stats, utils, ggplot2, reshape2, mrfDepth, Rfast
 Authors@R: c(
     person("Damien M.", "de Vienne", role = "aut", email = "damien.de-vienne@univ-lyon1.fr"),
