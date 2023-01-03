@@ -92,6 +92,15 @@ Save the results of the analysis to an external file, for example to perform cle
 ```R
 write.phylter(results, file = "phylter.out")
 ```
+## How **phylter** works
+
+The PhylteR method, in its entirety, is depicted in the next figure. It starts with K distance matrices obtained from K orthologous genes families by either computing pairwise distances (sum of branch lengths) between species in each gene family tree, or directly from each gene family multiple sequence alignment (MSA). All the matrices are given the same dimensionality, using the mean values to impute missing data if any, and are then normalised by dividing each matrix by its median or its mean value (default is median). The normalisation by median prevents genes from fast- (resp. slow-) evolving orthologous gene families to be erroneously considered outliers, and is a better choice than a normalisation by the mean as it is less affected by outlier values. 
+
+From the K matrices obtained, an incremental process starts, consisting in three main steps (1) comparison of the matrices with the DISTATIS method (Abdi et al. 2005; Abdi et al. 2012), (2) detection of gene outliers, and (3) evaluation of the impact of removing these gene outliers on the overall concordance between the matrices. Note that we refer to gene outliers as single genes in single species that do not follow the general trend, while outlier gene families refer to sets of orthologous genes for a group of species (also referred to as gene trees) that do not agree with the other gene families. 
+These steps are repeated until no more gene outlier is detected, or until the removal of the identified gene outliers does not increase the concordance between the matrices more than a certain amount specified by the user. Before finishing the optimization, PhylteR performs a last action consisting in checking whether some outlier gene families still exist despite the removal of outlier genes already performed. These outlier gene families correspond to  gene families whose lack of correlation with others is not due to a few outliers but are globally not following the trend. If outlier gene families are discarded there, the optimization restarts as it may have unblocked the detection of other gene outliers.
+
+
+![method_new4.png](method_new4.png)
 
 
 ## Example
@@ -130,13 +139,14 @@ Typing `plot(results, "genes")` allows exploring the number of outliers identifi
 
 ![img/pergenes.png](img/pergenes.png)
 
+We observe that a few gene families have a lot of outliers, while others have none. One gene family has even almost half of its gene sequences discarded. 
+
+
 Typing `plot(results, "species")` allows exploring the number of genes for which each species was identified as outlier. 
 
 ![img/perspecies.png](img/perspecies.png)
 
-   
-We see that no species is particularly problematic. On the other hand it seems that a few collection of genes are different from the others, one of them having almost half of its species discarded. 
-
+Here we see that no no species is particularly problematic. Almost each species is an outlier in at least one gene family.
 
 #### Visualize the 2-way reference matrix from which outliers are detected
 
