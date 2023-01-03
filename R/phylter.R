@@ -35,7 +35,8 @@
 #' than this value. Default to 1e-5.
 #' @param InitialOnly Logical. If TRUE, only the Initial state of the data is computed. 
 #' @param normalizeby Should the gene x species matrix be normalized prior to outlier detection, and how.
-#' @param parallel Should the computations be parallelized when possible? Default to TRUE. 
+#' @param parallel Should the computations be parallelized when possible? Default to TRUE. Note that the number of threads 
+#' cannot be set by the user when `parallel=TRUE`. It uses all available cores on the machine. 
 #' @return A list of class 'phylter' with the 'Initial' (before filtering) and 'Final' (after filtering) states, 
 #' or a list of class 'phylterinitial' only, if InitialOnly=TRUE. The function also returns the list of DiscardedGenes, if any. 
 #' @examples

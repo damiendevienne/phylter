@@ -52,21 +52,25 @@ results <- phylter(trees, gene.names = names)
 >The phylter() function is called as follows by default:
 >```R
 >phylter(X, bvalue = 0, distance = "patristic", k = 3, k2 = k, Norm = "median", 
->  Norm.cutoff = 1e-6, gene.names = NULL, test.island = FALSE, 
->  verbose = TRUE, stop.criteria = 1e-5)
+>  Norm.cutoff = 0.001, gene.names = NULL, test.island = TRUE, 
+>  verbose = TRUE, stop.criteria = 1e-5, InitialOnly = FALSE, normalizeby = "row", parallel = TRUE)
 >```
 >
->Possible options are:
+>Arguments are as follows:
+>- `X`: A list of phylogenetic trees (phylo object) or a list of distance matrices. Trees can have different number of leaves and matrices can have different dimensions. If this is the case, missing values are imputed.
 >- `bvalue`: If X is a list of trees, nodes with a support below `bvalue` will be collapsed prior to the outlier detection.
 >- `distance`: If X is a list of trees, type of distance used to compute the pairwise matrices for each tree. Can be "patristic" (sum of branch lengths separating tips, the default) or "nodal" (number of nodes separating tips).
 >- `k`: Strength of outlier detection. The higher this value the less outliers detected.
 >- `k2`: Same as `k` for complete gene outlier detection. To preserve complete genes from being discarded, `k2` can be increased. By default, `k2 = k`.
 >- `Norm`:  Should the matrices be normalized prior to the complete analysis and how. If "median", matrices are divided by their median; if "mean" they are divided by their mean; if "none", no normalization if performed. Normalizing ensures that fast-evolving (and slow-evolving) genes are not treated as outliers. Normalization by median is a better choice as it is less sensitive to outlier values.
 >- `Norm.cutoff`: Value of the median (if `Norm = "median"`) or the mean (if `Norm = "mean"`) below which matrices are simply discarded from the analysis. This prevents dividing by 0, and allows getting rid of genes that contain mostly branches of length 0 and are therefore uninformative anyway. Discarded genes, if any, are listed in the output (`out$DiscardedGenes`).
->- `gene.names`: List of gene names used to rename elements in `X`. If NULL (the default), elements are named 1,2,..,length(X).
+>- `gene.names`: List of gene names used to rename elements in `X`. If NULL (the default), elements are named 1,2,...,length(X).
 >- `test.island`: If TRUE (the default), only the highest value in an *island* of outliers is considered an outlier. This prevents non-outliers hitchhiked by outliers to be considered outliers themselves.
 >- `verbose`: If TRUE (the default), messages are written during the filtering process to get information on what is happening.
 >- `stop.criteria`: The optimization stops when the gain (quality of compromise) between round *n* and round *n*+1 is smaller than this value. Default to 1e-5.
+>- `InitialOnly`: Logical. If TRUE, only the Initial state of the data is computed.
+>- `normalizeby`: Should the gene x species matrix be normalized prior to outlier detection, and how.
+>- `parallel`: Logical. Should the computations be parallelized when possible? Default to TRUE. Note that the number of threads cannot be set by the user when `parallel=TRUE`. It uses all available cores on the machine. 
 
 **4.** Analyze the results
 
@@ -91,7 +95,7 @@ write.phylter(results, file = "phylter.out")
 
 
 ## Example
-A `carnivora` dataset comprised of 255 genes for 53 species (Allio et al. 2021) is included in the package. To load it and test `phylter` on it: 
+A `carnivora` dataset comprised of 125 genes for 53 species (Allio et al. 2021) is included in the package. To load it and test `phylter` on it: 
 ```R
 data(carnivora)
 results <- phylter(carnivora) # for example

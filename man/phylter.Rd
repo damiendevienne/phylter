@@ -67,7 +67,8 @@ than this value. Default to 1e-5.}
 
 \item{normalizeby}{Should the gene x species matrix be normalized prior to outlier detection, and how.}
 
-\item{parallel}{Should the computations be parallelized when possible? Default to TRUE.}
+\item{parallel}{Should the computations be parallelized when possible? Default to TRUE. Note that the number of threads 
+cannot be set by the user when `parallel=TRUE`. It uses all available cores on the machine.}
 }
 \value{
 A list of class 'phylter' with the 'Initial' (before filtering) and 'Final' (after filtering) states, 
