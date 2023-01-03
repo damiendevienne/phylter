@@ -13,7 +13,7 @@
 
 
 ## Installation
-**phylter** is not yet on CRAN. To install the development version:    
+**phylter** is not yet on CRAN (deposit in process). To install the development version:    
 
 1. Install the release version of `remotes` from CRAN:
 ```R

@@ -3,7 +3,7 @@
 \docType{data}
 \name{carnivora}
 \alias{carnivora}
-\title{255 genes trees for 53 carnivora species}
+\title{125 genes trees for 53 carnivora species}
 \format{
 A list of named trees of class multiPhylo
 }
@@ -14,9 +14,9 @@ A list of named trees of class multiPhylo
 carnivora
 }
 \description{
-This dataset contains 255 carnivora gene trees for 53 carnivora species. 
+This dataset contains 125 carnivora gene trees for 53 carnivora species. 
 It is a subset of the dataset used in Allio et al. (2021), obtained 
-by only keeping genes for which all 53 species were present.
+by randomly selecting 125 genes for which all 53 species were present.
 }
 \examples{
 data(carnivora)
