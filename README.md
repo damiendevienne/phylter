@@ -100,7 +100,7 @@ From the K matrices obtained, an incremental process starts, consisting in three
 These steps are repeated until no more gene outlier is detected, or until the removal of the identified gene outliers does not increase the concordance between the matrices more than a certain amount specified by the user. Before finishing the optimization, PhylteR performs a last action consisting in checking whether some outlier gene families still exist despite the removal of outlier genes already performed. These outlier gene families correspond to  gene families whose lack of correlation with others is not due to a few outliers but are globally not following the trend. If outlier gene families are discarded there, the optimization restarts as it may have unblocked the detection of other gene outliers.
 
 
-![method_new4.png](method_new4.png)
+![img/method_new4.png](img/method_new4.png)
 
 
 ## Example
