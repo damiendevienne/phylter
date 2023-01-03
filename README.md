@@ -97,7 +97,7 @@ write.phylter(results, file = "phylter.out")
 ## Example
 
 ### Running phylter
-A `carnivora` dataset comprised of 125 genes for 53 species (Allio et al. 2021) is included in the package. To load it and test `phylter` on it: 
+A `carnivora` dataset comprised of 125 genes for 53 species (small subset from Allio et al. 2021) is included in the package. To load it and test `phylter` on it: 
 
 ```R
 data(carnivora)
@@ -105,6 +105,9 @@ results <- phylter(carnivora) # for example
 ```
 
 ### Exploring the results
+
+#### Summary
+
 Typing `summaray(results)` gives the following information: 
 
 ```console
@@ -117,16 +120,39 @@ Loss (data filtering): 1.42%
 
 ```
 
+To fully understand the result, it is important to start with definitions. In **phylter**, we refer to *gene outliers* or simply *outliers* as single genes in single species that do not follow the general trend, while *outlier gene families* or *complete gene outliers* refer to sets of orthologous genes for a group of species (also referred to as gene trees) that do not agree with the other gene families. Finally, *complete species outliers* are species that are absent after outlier removal because they were found to be always associated to gene outliers. 
+ 
+We see that with default parameters on the small carnivora dataset, 94 outliers were identified. 
+
+#### Visualize the distribution of outliers
+
+Typing `plot(results, "genes")` allows exploring the number of outliers identified by **phylter** for each gene. Here is how it looks for the example dataset: 
+
+![img/pergenes.png](img/pergenes.png)
+
+Typing `plot(results, "species")` allows exploring the number of genes for which each species was identified as outlier. 
+
+![img/perspecies.png](img/perspecies.png)
 
    
+We see that no species is particularly problematic. On the other hand it seems that a few collection of genes are different from the others, one of them having almost half of its species discarded. 
+
+
+#### Visualize the 2-way reference matrix from which outliers are detected
+
+![img/2WR.png](img/2WR.png)
+
+
 ---
 ## References
 
 - Abdi, H., O’Toole, A.J., Valentin, D. & Edelman, B. (2005). *DISTATIS: The analysis of multiple distance matrices.* Proceedings of the IEEE Computer Society: International Conference on Computer Vision and Pattern Recognition (San Diego, CA, USA). doi: 10.1109/CVPR.2005.445. https://www.utdallas.edu/~herve/abdi-distatis2005.pdf
 
-- Hubert, M. and Vandervieren, E. (2008). *An adjusted boxplot for skewed distributions.* Computational Statistics and Data Analysis. doi: 10.1016/j.csda.2007.11.008. 
+- Allio, R., Tilak, M. K., Scornavacca, C., Avenant, N. L., Kitchener, A. C., Corre, E., ... & Delsuc, F. (2021). High-quality carnivoran genomes from roadkill samples enable comparative species delineation in aardwolf and bat-eared fox. Elife, 10, e63167. https://doi.org/10.7554/eLife.63167
 
-- de Vienne D.M., Ollier S. et Aguileta G. (2012). *Phylo-MCOA: A Fast and Efficient Method to Detect Outlier Genes and Species in Phylogenomics Using Multiple Co-inertia Analysis.* Molecular Biology and Evolution. doi: 10.1093/molbev/msr317 (This is the ancestor of phylter).
+- Hubert, M. and Vandervieren, E. (2008). *An adjusted boxplot for skewed distributions.* Computational Statistics and Data Analysis. https://doi.org/10.1016/j.csda.2007.11.008
+
+- de Vienne D.M., Ollier S. et Aguileta G. (2012). *Phylo-MCOA: A Fast and Efficient Method to Detect Outlier Genes and Species in Phylogenomics Using Multiple Co-inertia Analysis.* Molecular Biology and Evolution. https://doi.org/10.1093/molbev/msr317 (This is the ancestor of phylter). 
 
 
 ---
