@@ -98,6 +98,7 @@ write.phylter(results, file = "phylter.out")
 
 ### Running phylter
 A `carnivora` dataset comprised of 125 genes for 53 species (Allio et al. 2021) is included in the package. To load it and test `phylter` on it: 
+
 ```R
 data(carnivora)
 results <- phylter(carnivora) # for example
@@ -105,7 +106,8 @@ results <- phylter(carnivora) # for example
 
 ### Exploring the results
 Typing `summaray(results)` gives the following information: 
-```connsole
+
+```console
 Total number of outliers detected: 94
   Number of complete gene outliers : 0
   Number of complete species outliers : 0
