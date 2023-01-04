@@ -47,7 +47,7 @@ library("phylter")
 
 ## Quick start
 
-Here is a brief introduction to the use **phylter** on a collection of gene trees. To better understand how phylter really works, go to the section entitled [How phylter works](#how-phylter-works). To see its usage on a small biological dataset and view the different outputs of the tool, go to [Example](#example) section. For a full list of functions in the **phlyter** package you can download the full manual in pdf by clivking [here](man/manual/phylter_0.9.5.pdf) <a href="man/manual/phylter_0.9.5.pdf" download> HERE</a>
+Here is a brief introduction to the use **phylter** on a collection of gene trees. To better understand how phylter really works, go to the section entitled [How phylter works](#how-phylter-works). To see its usage on a small biological dataset and view the different outputs of the tool, go to [Example](#example) section. For a full list of functions in the **phlyter** package you can download the full manual in pdf from [here](man/manual/phylter_0.9.5.pdf).
 
 **1.** With the `read.tree` function from the `ape` package, read trees from external file and save as a list called `trees`.
 ```R
@@ -111,14 +111,17 @@ write.phylter(results, file = "phylter.out")
 
 The phylteR method, in its entirety, is depicted in Figure 1. It starts with K distance matrices obtained from K orthologous genes families by either computing pairwise distances (sum of branch lengths) between species in each gene family tree, or directly from each gene family multiple sequence alignment (MSA). All the matrices are given the same dimensionality, using the mean values to impute missing data if any, and are then normalised by dividing each matrix by its median or its mean value (default is median). The normalisation by median prevents genes from fast- (resp. slow-) evolving orthologous gene families to be erroneously considered outliers, and is a better choice than a normalisation by the mean as it is less affected by outlier values. 
 
-From the K matrices obtained, an incremental process starts, consisting in three main steps (1) comparison of the matrices with the DISTATIS method (Abdi et al. 2005; Abdi et al. 2012), (2) detection of gene outliers, and (3) evaluation of the impact of removing these gene outliers on the overall concordance between the matrices. Note that we refer to gene outliers as single genes in single species that do not follow the general trend, while outlier gene families refer to sets of orthologous genes for a group of species (also referred to as gene trees) that do not agree with the other gene families. 
-These steps are repeated until no more gene outlier is detected, or until the removal of the identified gene outliers does not increase the concordance between the matrices more than a certain amount specified by the user. Before finishing the optimization, phylteR performs a last action consisting in checking whether some outlier gene families still exist despite the removal of outlier genes already performed. These outlier gene families correspond to  gene families whose lack of correlation with others is not due to a few outliers but are globally not following the trend. If outlier gene families are discarded there, the optimization restarts as it may have unblocked the detection of other gene outliers.
 
 ![man/figures/method_new4.png](man/figures/method_new4.png)
 
 <p align="center">
    <b>Figure 1.</b> Principle of the PhylteR method for identifying outliers in phylogenomic datasets. The method relies on DISTATIS (grey block), an extension of multidimensional scaling to three dimensions. 
 </p>
+
+
+From the K matrices obtained, an incremental process starts, consisting in three main steps (1) comparison of the matrices with the DISTATIS method (Abdi et al. 2005; Abdi et al. 2012), (2) detection of gene outliers, and (3) evaluation of the impact of removing these gene outliers on the overall concordance between the matrices. Note that we refer to gene outliers as single genes in single species that do not follow the general trend, while outlier gene families refer to sets of orthologous genes for a group of species (also referred to as gene trees) that do not agree with the other gene families. 
+These steps are repeated until no more gene outlier is detected, or until the removal of the identified gene outliers does not increase the concordance between the matrices more than a certain amount specified by the user. Before finishing the optimization, phylteR performs a last action consisting in checking whether some outlier gene families still exist despite the removal of outlier genes already performed. These outlier gene families correspond to  gene families whose lack of correlation with others is not due to a few outliers but are globally not following the trend. If outlier gene families are discarded there, the optimization restarts as it may have unblocked the detection of other gene outliers.
+
 
 ## Example
 
