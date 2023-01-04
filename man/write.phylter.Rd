@@ -19,8 +19,7 @@ write.phylter(
 If \code{""} (the default), \code{write.phylyer()} prints to the standard output.}
 
 \item{include.discarded}{Logical. If TRUE (the default) the elements discarded before the analysis
-are still in the list of Outliers in the output. Useful for cleaning datasets after a phylter analysis.
-If \code{""} (the default), \code{write.phylyer()} prints to the standard output.}
+are still in the list of Outliers in the output. Useful for cleaning datasets after a phylter analysis.}
 
 \item{pdfreport}{Logical. Should a full report of the phylter analysis}
 

@@ -9,7 +9,6 @@
 #' If \code{""} (the default), \code{write.phylyer()} prints to the standard output.
 #' @param include.discarded Logical. If TRUE (the default) the elements discarded before the analysis
 #' are still in the list of Outliers in the output. Useful for cleaning datasets after a phylter analysis.
-#' If \code{""} (the default), \code{write.phylyer()} prints to the standard output.
 #' @param pdfreport Logical. Should a full report of the phylter analysis
 #  (with graphs) be reported as a pdf file? Default to TRUE
 #' @param pdfreport.file If \code{report=TRUE}, name of the pdf file where the 
