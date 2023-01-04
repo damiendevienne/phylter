@@ -102,7 +102,7 @@ These steps are repeated until no more gene outlier is detected, or until the re
 ![man/figures/method_new4.png](man/figures/method_new4.png)
 
 <p align="center">
-   **Figure 1.** Principle of the PhylteR method for identifying outliers in phylogenomic datasets. The method relies on DISTATIS (grey block), an extension of multidimensional scaling to three dimensions. 
+   <b>Figure 1.</b> Principle of the PhylteR method for identifying outliers in phylogenomic datasets. The method relies on DISTATIS (grey block), an extension of multidimensional scaling to three dimensions. 
 </p>
 
 ## Example
