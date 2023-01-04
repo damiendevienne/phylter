@@ -256,7 +256,11 @@ At each step of the iterative process of **phylter** (Figure 1), a Quality score
 
 ### Writing the output
 
-**phylter** can write two types of outut files: a pdf report, containing a summary of the results and all the figures presented above, and a text report 
+**phylter** can write two types of outut files: a pdf report, containing a summary of the results and all the figures presented above, and a text report with a summary of the **phylter** run performed and a formatted list of outliers. 
+- to get the **pdf report**, simply type `write.phylter(results, pdfreport=TRUE)`. This will generate a file called `report.pdf`. An example of such a file can be can be seen [here](man/figures/report.pdf)
+- to get the **text report**, easy to parse and to use with other scripts in order (for instance) to clean the multiple sequence alignement or to prune outliers in gene trees, you just have to type `write.phylter(results, file="output.txt")`. This will generate a file called `output.txt` that will ressemble [this one](man/figures/output.txt).
+
+
 
 ---
 ## References
