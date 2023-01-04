@@ -11,7 +11,17 @@
 
 **phylter** is written in R language.
 
-> - [Installation](#installation)
+___
+**TABLE OF CONTENT**
+- [Installation](#installation)
+- [Quick start](#quick-start)
+   - [Options](#options)
+- [How phylter works](#how-phylter-works)
+- [Example](#example)
+   - [Running phylter](#running-phylter)
+   - [Exploring the results](#exploring the results)
+   - [Writing the output](#writing-the-output)
+___
 
 
 ## Installation
@@ -35,7 +45,10 @@ library("phylter")
 > Note: phylter requires R version > 4.0, otherwise it cannot be installed. Also, R uses the GNU Scientific Library. On Ubuntu, this can be installed prior to the installation of the phylter package by typing `sudo apt install libgsl-dev` in a terminal. 
 
 
-## Usage
+## Quick start
+
+Here is a brief introduction to the use **phylter** on a collection of gene trees. To better understand how phylter really works, click [here](#how-phylter-works). To see its usage on a small biological dataset and view the different outputs of the tool, click [here](#example)
+
 **1.** With the `read.tree` function from the `ape` package, read trees from external file and save as a list called `trees`.
 ```R
 if (!requireNamespace("ape", quietly = TRUE))
@@ -156,6 +169,7 @@ Here we see that no no species is particularly problematic. Almost each species 
 
 ![man/figures/2WR.png](man/figures/2WR.png)
 
+### Writing the output
 
 ---
 ## References
