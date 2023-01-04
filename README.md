@@ -11,17 +11,17 @@
 
 **phylter** is written in R language.
 
-___
-**TABLE OF CONTENT**
-- [Installation](#installation)
-- [Quick start](#quick-start)
-   - [Options](#options)
-- [How phylter works](#how-phylter-works)
-- [Example](#example)
-   - [Running phylter](#running-phylter)
-   - [Exploring the results](#exploring the results)
-   - [Writing the output](#writing-the-output)
-___
+
+> **TABLE OF CONTENT**
+> - [Installation](#installation)
+> - [Quick start](#quick-start)
+>    - [Options](#options)
+> - [How phylter works](#how-phylter-works)
+> - [Example](#example)
+>    - [Running phylter](#running-phylter)
+>    - [Exploring the results](#exploring-the-results)
+>    - [Writing the output](#writing-the-output)
+> - [References](#references)
 
 
 ## Installation
