@@ -35,7 +35,7 @@ write.phylter<-function(x, file="", include.discarded=TRUE, pdfreport=FALSE, pdf
 		file <- stdout()
 	}
 	cat(paste("# \n",sep=""),file=file)
-	cat(paste("# -- Phylter v. ",packageVersion("phylter")," -- \n",sep=""),file=file, append=TRUE)
+	cat(paste("# -- phylter v. ",packageVersion("phylter")," -- \n",sep=""),file=file, append=TRUE)
 	cat(paste("# ",date(),"\n", sep=""),file=file, append=TRUE)
 	cat(paste("# \n# \n# \n",sep=""),file=file, append=TRUE)
 	parameters<-x$call[(names(x$call)!="gene.names")&(names(x$call)!="call")]
@@ -43,7 +43,7 @@ write.phylter<-function(x, file="", include.discarded=TRUE, pdfreport=FALSE, pdf
 	cat(paste("# ",paste(names(parameters),parameters, sep="="),sep=""), sep="\n",file=file, append=TRUE)
 	phylter_summary<-summary(x)
 	cat(paste("# \n# CLEANING STEP\n# \n",sep=""),file=file, append=TRUE)
-	cat(paste("# Initial number of genes passed to Phylter: ",phylter_summary$nb.discarded+length(x$Initial$matrices),"\n",sep=""),file=file, append=TRUE)
+	cat(paste("# Initial number of genes passed to phylter: ",phylter_summary$nb.discarded+length(x$Initial$matrices),"\n",sep=""),file=file, append=TRUE)
 	cat(paste("# Number of genes discarded before the analysis: ",length(x$DiscardedGenes),"\n",sep=""),file=file, append=TRUE)
 	if (length(phylter_summary$nb.discarded)>0) cat(paste("# Genes discarded: ",paste(x$DiscardedGenes, collapse=";"),"\n",sep=""),file=file, append=TRUE)
 
@@ -72,11 +72,11 @@ write.phylter<-function(x, file="", include.discarded=TRUE, pdfreport=FALSE, pdf
 		#open pdf file
 		pdf(pdfreport.file, paper="a4")
 		plot.new()
-		text1<-paste("- Phylter v. ",packageVersion("phylter")," - ", sep="")
+		text1<-paste("- phylter v. ",packageVersion("phylter")," - ", sep="")
 		text1<-paste(text1, date(),sep="\n")
 		callstr<-paste(strsplit(toString(x$call),")")[[1]][1],")",sep="")
 		text2<-paste("\nCall: ",callstr, "\n\n", sep="")
-		text2<-paste(text2, "Initial number of genes passed to Phylter: ",phylter_summary$nb.discarded+length(x$Initial$matrices),"\n",sep="")
+		text2<-paste(text2, "Initial number of genes passed to phylter: ",phylter_summary$nb.discarded+length(x$Initial$matrices),"\n",sep="")
 		text2<-paste(text2, "Number of genes discarded before the analysis: ",length(x$DiscardedGenes),"\n\n",sep="")
 		text2<-paste(text2, "Number of genes analyzed: ", dim(x$Initial$WR)[2],"\n",sep="")
 		text2<-paste(text2, "Number of species analyzed: ", dim(x$Initial$WR)[1],"\n",sep="")
