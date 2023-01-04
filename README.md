@@ -249,6 +249,11 @@ Removing outliers in a dataset can be seen as a way of decreasing the "dispersio
 
 ![man/figures/phylterdispersion.png](man/figures/phylterdispersion.png)
 
+#### Visualize the evolution of the quality score of the compromise matrix
+At each step of the iterative process of **phylter** (Figure 1), a Quality score is computed. This score increases when outleirs are removed, and the gain in quality achieved by removing the outliers at each step is one of the criteria for stopping the process. The evolution of this score can be visualized with phylter by typing ```plotopti(results)```. The output is given below. 
+
+![man/figures/phylteropti.png](man/figures/phylteropti.png)
+
 ### Writing the output
 
 ---
