@@ -1,0 +1,135 @@
+# 
+# -- Phylter v. 0.9.4 -- 
+# Wed Jan  4 18:04:02 2023
+# 
+# 
+# 
+# PARAMETERS
+# 
+# bvalue=0
+# distance=patristic
+# k=3
+# k2=3
+# Norm=median
+# Norm.cutoff=0.001
+# test.island=TRUE
+# verbose=TRUE
+# stop.criteria=1e-05
+# InitialOnly=FALSE
+# normalizeby=row
+# 
+# CLEANING STEP
+# 
+# Initial number of genes passed to Phylter: 125
+# Number of genes discarded before the analysis: 0
+# Genes discarded: 
+# 
+# SUMMARY
+# 
+# Number of genes analyzed: 125
+# Number of species analyzed: 53
+# Total number of outliers detected: 94
+# Number of complete gene outliers : 0
+# Number of complete species outliers : 0
+# Initial score of the compromise: 0.862353534028202
+# Final score of the compromise: 0.944259987303488
+# Gain: 8.19% 
+# Loss (data filtering): 1.42% 
+# 
+# OUTLIERS (including discarded elements, if any)
+# 
+# Genes	Species
+ENSG00000005381_MPO	Arctocephalus_gazella
+ENSG00000005381_MPO	Ursus_maritimus
+ENSG00000005381_MPO	Ailurus_fulgens
+ENSG00000106511_MEOX2	Panthera_tigris
+ENSG00000106511_MEOX2	Mustela_putorius
+ENSG00000114686_MRPL3	Procyon_lotor
+ENSG00000116157_GPX7	Vulpes_vulpes
+ENSG00000116761_CTH	Otocyon_megalotis
+ENSG00000120053_GOT1	Phoca_vitulina
+ENSG00000120053_GOT1	Gulo_gulo
+ENSG00000123307_NEUROD4	Arctocephalus_gazella
+ENSG00000132254_ARFIP2	Panthera_leo
+ENSG00000132254_ARFIP2	Odobenus_rosmarus
+ENSG00000132254_ARFIP2	Felis_catus
+ENSG00000132254_ARFIP2	Arctocephalus_gazella
+ENSG00000132693_CRP	Hyaena_hyaena
+ENSG00000132693_CRP	Pteronura_brasiliensis
+ENSG00000132693_CRP	Neovison_vison
+ENSG00000132693_CRP	Eumetopias_jubatus
+ENSG00000133135_RNF128	Cryptoprocta_ferox
+ENSG00000133135_RNF128	Panthera_tigris
+ENSG00000133135_RNF128	Phoca_vitulina
+ENSG00000134240_HMGCS2	Gulo_gulo
+ENSG00000134240_HMGCS2	Spilogale_gracilis
+ENSG00000138675_FGF5	Taxidea_taxus
+ENSG00000138675_FGF5	Lutra_lutra
+ENSG00000143125_PROK1	Potos_flavus
+ENSG00000149573_MPZL2	Paradoxurus_hermaphroditus
+ENSG00000073111_MCM2	Paradoxurus_hermaphroditus
+ENSG00000106511_MEOX2	Manis_javanica
+ENSG00000106511_MEOX2	Acinonyx_jubatus
+ENSG00000106511_MEOX2	Panthera_pardus
+ENSG00000106511_MEOX2	Leptonychotes_weddellii
+ENSG00000114686_MRPL3	Arctocephalus_gazella
+ENSG00000116157_GPX7	Canis_familiaris
+ENSG00000116157_GPX7	Otocyon_megalotis
+ENSG00000116761_CTH	Vulpes_vulpes
+ENSG00000132693_CRP	Enhydra_lutris
+ENSG00000132693_CRP	Crocuta_Crocuta
+ENSG00000132693_CRP	Arctocephalus_gazella
+ENSG00000132693_CRP	Zalophus_californianus
+ENSG00000133135_RNF128	Ursus_americanus
+ENSG00000138675_FGF5	Mustela_putorius
+ENSG00000138675_FGF5	Mellivora_capensis
+ENSG00000143125_PROK1	Paradoxurus_hermaphroditus
+ENSG00000149573_MPZL2	Mungos_mungo
+ENSG00000106511_MEOX2	Panthera_onca
+ENSG00000106511_MEOX2	Felis_catus
+ENSG00000106511_MEOX2	Enhydra_lutris
+ENSG00000106511_MEOX2	Ailuropoda_melanoleuca
+ENSG00000106511_MEOX2	Odobenus_rosmarus
+ENSG00000106511_MEOX2	Paradoxurus_hermaphroditus
+ENSG00000106511_MEOX2	Neofelis_nebulosa
+ENSG00000114686_MRPL3	Taxidea_taxus
+ENSG00000116157_GPX7	Lycaon_pictus
+ENSG00000132693_CRP	Lutra_lutra
+ENSG00000133135_RNF128	Procyon_lotor
+ENSG00000138675_FGF5	Enhydra_lutris
+ENSG00000143125_PROK1	Nasua_narica
+ENSG00000144355_DLX1	Acinonyx_jubatus
+ENSG00000149573_MPZL2	Suricata_suricatta
+ENSG00000149573_MPZL2	Helogale_parvula
+ENSG00000106511_MEOX2	Lynx_pardinus
+ENSG00000106511_MEOX2	Gulo_gulo
+ENSG00000106511_MEOX2	Ursus_maritimus
+ENSG00000106511_MEOX2	Eumetopias_jubatus
+ENSG00000106511_MEOX2	Neomonachus_schauinslandi
+ENSG00000106511_MEOX2	Potos_flavus
+ENSG00000106511_MEOX2	Panthera_leo
+ENSG00000106511_MEOX2	Prionailurus_bengalensis
+ENSG00000106511_MEOX2	Canis_familiaris
+ENSG00000106511_MEOX2	Neovison_vison
+ENSG00000114686_MRPL3	Pteronura_brasiliensis
+ENSG00000116761_CTH	Canis_familiaris
+ENSG00000133135_RNF128	Mellivora_capensis
+ENSG00000133135_RNF128	Acinonyx_jubatus
+ENSG00000138675_FGF5	Gulo_gulo
+ENSG00000138675_FGF5	Neovison_vison
+ENSG00000143125_PROK1	Gulo_gulo
+ENSG00000149573_MPZL2	Cryptoprocta_ferox
+ENSG00000106511_MEOX2	Lynx_canadensis
+ENSG00000106511_MEOX2	Zalophus_californianus
+ENSG00000106511_MEOX2	Mirounga_angustirostris
+ENSG00000133135_RNF128	Pteronura_brasiliensis
+ENSG00000143125_PROK1	Otocyon_megalotis
+ENSG00000106511_MEOX2	Puma_concolor
+ENSG00000106511_MEOX2	Callorhinus_ursinus
+ENSG00000143125_PROK1	Vulpes_vulpes
+ENSG00000143196_DPT	Ailurus_fulgens
+ENSG00000138675_FGF5	Pteronura_brasiliensis
+ENSG00000143125_PROK1	Lycaon_pictus
+ENSG00000143125_PROK1	Manis_javanica
+ENSG00000116761_CTH	Lycaon_pictus
+ENSG00000143196_DPT	Taxidea_taxus
