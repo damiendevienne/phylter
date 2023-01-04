@@ -193,6 +193,29 @@ List of class phylterfinal
 12 $matrices         125       Species x Species gene matrices (list)            
 ```
 
+As an example, you can access to the initial distance matrices by typing `results$Initial$mat.data` or to the weights associated to each gene by typing `results$Initial$weights` (see Figure 1). 
+
+Maybe more interesting is to **get access to the list of outliers identified by phylter**. As we can see above, this is done by typing `results$Final$Outliers`. This prints a matrix with two columns (extract below). Each row is an outlier. The first column represent the gene family were these outlier was found and the second column is the species identified as outlier in this gene family.  
+
+```console
+> results$Final$Outliers
+      [,1]                      [,2]                        
+ [1,] "ENSG00000005381_MPO"     "Arctocephalus_gazella"     
+ [2,] "ENSG00000005381_MPO"     "Ursus_maritimus"           
+ [3,] "ENSG00000005381_MPO"     "Ailurus_fulgens"           
+ [4,] "ENSG00000106511_MEOX2"   "Panthera_tigris"           
+ [5,] "ENSG00000106511_MEOX2"   "Mustela_putorius"          
+ [6,] "ENSG00000114686_MRPL3"   "Procyon_lotor"             
+ [7,] "ENSG00000116157_GPX7"    "Vulpes_vulpes"             
+ [8,] "ENSG00000116761_CTH"     "Otocyon_megalotis"         
+ [9,] "ENSG00000120053_GOT1"    "Phoca_vitulina"            
+[10,] "ENSG00000120053_GOT1"    "Gulo_gulo"                 
+[11,] "ENSG00000123307_NEUROD4" "Arctocephalus_gazella"     
+...
+```
+
+All the informations present in these different objects returned by **phylter** can be difficult to fully understand and to easily use for other steps of bioinfprmatics pipelines. For this reason, multuipole functions are proposed to either visualize the results or write the results in formatted output files that can be used further. These are detailed in the next sections. 
+
 
 #### Visualize the distribution of outliers
 
