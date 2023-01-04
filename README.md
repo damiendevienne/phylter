@@ -101,8 +101,10 @@ These steps are repeated until no more gene outlier is detected, or until the re
 
 
 ![man/figures/method_new4.png](man/figures/method_new4.png)
-<font size="1">**Figure 1.** Overview of the way **phylter** works</font>
 
+<p align="center">
+Your content
+</p>
 ## Example
 
 ### Running phylter
