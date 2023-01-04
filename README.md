@@ -234,9 +234,13 @@ Here we see that no no species is particularly problematic. Almost each species 
 
 #### Visualize the 2-way reference matrix from which outliers are detected
 
-The 2WR matrix (see Figure 1) is the species x genes matrix computed at each loop of the **phylter** iterative process, from which outliers are detected. A large value in one cell of this matrix (ligh blue cells in the following figure) refers to one species in one gene tree whose position is not in accordance with its position in the other gene trees. The two 2WR matrices below represent the 2WR matrix before and after using **phylter**. In yellow we see the outliers that **phylter** identified and discarded during the process. We observe that the cells with high values on the left matrix were those identified as outliers by **phylter**, which is expected. The fact that some cells on the left matrix do not seem so different from theothers but are still identified as outlirs by phylter is because the process is iterative and these less-obvious outliers were maybe more obvious after having discareded a first set of outliers.
+The 2WR matrix (see Figure 1) is the species x genes matrix computed at each loop of the **phylter** iterative process, from which outliers are detected. A large value in one cell of this matrix (ligh blue cells in the following figure) refers to one species in one gene tree whose position is not in accordance with its position in the other gene trees. The two 2WR matrices below represent the 2WR matrix before (left) and after (right) using **phylter**. In yellow we see the outliers that **phylter** identified and discarded during the process. We observe that the cells with high values on the left matrix were those identified as outliers by **phylter**, which is expected. The fact that some cells on the left matrix do not seem so different from the others but are still identified as outlirs by phylter is because the process is iterative and these less-obvious outliers were maybe more obvious after having discareded a first set of outliers.
 
 ![man/figures/2WR.png](man/figures/2WR.png)
+
+#### visualize the effect of phylter in terms of data dispersion
+
+
 
 ### Writing the output
 
