@@ -9,7 +9,7 @@
 **phylter** detects outliers with a method proposed by Hubert & Vandervieren (2008) for skewed data.  
 **phylter** does not accept that the same taxa is present multiple times in the same gene. 
 
-**phylter** is written in R language.
+**phylter** is written in R language. If you don't use R or don't want to use R, a **containerized version of phylyer** is also available at this address: [https://wheredoweputthis.org](https://wheredoweputthis.org)
 
 
 > **TABLE OF CONTENT**
