@@ -47,7 +47,7 @@ library("phylter")
 
 ## Quick start
 
-Here is a brief introduction to the use **phylter** on a collection of gene trees. To better understand how phylter really works, click [here](#how-phylter-works). To see its usage on a small biological dataset and view the different outputs of the tool, click [here](#example)
+Here is a brief introduction to the use **phylter** on a collection of gene trees. To better understand how phylter really works, go to the section entitled [How phylter works](#how-phylter-works). To see its usage on a small biological dataset and view the different outputs of the tool, go to [Example](#example) section. For a full list of functions in the **phlyter** package you can consult the full manual in pdf [here](man/manual/phylter_0.9.5.pdf)
 
 **1.** With the `read.tree` function from the `ape` package, read trees from external file and save as a list called `trees`.
 ```R
