@@ -256,6 +256,8 @@ At each step of the iterative process of **phylter** (Figure 1), a Quality score
 
 ### Writing the output
 
+**phylter** can write two types of outut files: a pdf report, containing a summary of the results and all the figures presented above, and a text report 
+
 ---
 ## References
 
