@@ -100,7 +100,7 @@ From the K matrices obtained, an incremental process starts, consisting in three
 These steps are repeated until no more gene outlier is detected, or until the removal of the identified gene outliers does not increase the concordance between the matrices more than a certain amount specified by the user. Before finishing the optimization, phylteR performs a last action consisting in checking whether some outlier gene families still exist despite the removal of outlier genes already performed. These outlier gene families correspond to  gene families whose lack of correlation with others is not due to a few outliers but are globally not following the trend. If outlier gene families are discarded there, the optimization restarts as it may have unblocked the detection of other gene outliers.
 
 
-![man/figures/method_new4.png](img/method_new4.png)
+![man/figures/method_new4.png](man/figures/method_new4.png)
 
 
 ## Example
@@ -137,20 +137,20 @@ We see that with default parameters on the small carnivora dataset, 94 outliers 
 
 Typing `plot(results, "genes")` allows exploring the number of outliers identified by **phylter** for each gene. Here is how it looks for the example dataset: 
 
-![man/figures/pergenes.png](img/pergenes.png)
+![man/figures/pergenes.png](man/figures/pergenes.png)
 
 We observe that a few gene families have a lot of outliers, while others have none. One gene family has even almost half of its gene sequences discarded. 
 
 
 Typing `plot(results, "species")` allows exploring the number of genes for which each species was identified as outlier. 
 
-![man/figures/perspecies.png](img/perspecies.png)
+![man/figures/perspecies.png](man/figures/perspecies.png)
 
 Here we see that no no species is particularly problematic. Almost each species is an outlier in at least one gene family.
 
 #### Visualize the 2-way reference matrix from which outliers are detected
 
-![man/figures/2WR.png](img/2WR.png)
+![man/figures/2WR.png](man/figures/2WR.png)
 
 
 ---
