@@ -126,7 +126,7 @@ These steps are repeated until no more gene outlier is detected, or until the re
 ## Example
 
 ### Running phylter
-A `carnivora` dataset comprised of 125 genes for 53 species (small subset from Allio et al. 2021) is included in the package. To load it and test `phylter` on it: 
+A `carnivora` dataset (small subset from Allio et al. 2021) comprised of 125 gene families for 53 species (53x125=6625 genes in total) is included in the package. To load it and test `phylter` on it: 
 
 ```R
 data(carnivora)
@@ -137,7 +137,7 @@ results <- phylter(carnivora) # for example
 
 #### Summary
 
-Typing `summaray(results)` gives the following information: 
+Typing `summary(results)` gives the following information: 
 
 ```console
 Total number of outliers detected: 94
@@ -149,6 +149,50 @@ Loss (data filtering): 1.42%
 
 ```
 We see that with default parameters on the small carnivora dataset, 94 *gene outliers* were identified. No complete gene outliers (or *outlier gene families* were detected, meaning  that there are no gene families totally uncorrelated with the rest. There is also no complete specoes outliers, i.e. species whose position is very variable in the different gene trees (thgose are often called rogue taxa).
+
+#### Detailed output
+The variable called `results` is a large object (a list) of class `phylter`. 
+
+It is divided into two subgroups (lists) defining the *Initial* (`results$Initial`) and the *Final* (`results$Final`) states for all the objects manipulated by **phylter** (see Figure 1). 
+
+You can view the content of these lists and the description of each object it contains, like this:
+
+```console
+> results$Initial
+Phylter Analysis - initial state
+List of class phylterinitial
+
+  Object      Dimension Content                                         
+1 $mat.data   125       List of original distance matrices, one per gene
+2 $WR         53 x 125  Species x Genes reference matrix                
+3 $RV         125 x 125 Genes x Genes RV correlation coefficients matrix
+4 $weights    125       Weight of each gene in the compromise           
+5 $compromise 53 x 53   Species x Species compromise matrix             
+6 $F          53 x 6    Distatis coordinates of compromise              
+7 $matrices   125       Distatis coordinates of gene matrices (list)    
+8 $PartialF   125       Species x Species gene matrices (list)          
+
+
+
+> results$Final
+Phylter Analysis - final state
+List of class phylterfinal
+
+   Object            Dimension Content                                           
+1  $WR               53 x 125  Species x Genes reference matrix                  
+2  $RV               125 x 125 Genes x Genes RV correlation coefficients matrix  
+3  $weights          125       Weight of each gene in the compromise             
+4  $compromise       53 x 53   Species x Species compromise matrix               
+5  $F                53 x 8    Distatis coordinates of compromise                
+6  $PartialF         125       Distatis coordinates of gene matrices (list)      
+7  $species.order    53        Name and order of species                         
+8  $AllOptiScores    11        Evolution of quality of compromise (11 steps)     
+9  $CELLSREMOVED     94 x 2    Index of cells removed (may contain imputed cells)
+10 $Outliers         94 x 2    Outliers detected (one row = one outlier cell)    
+11 $CompleteOutliers 2         Complete outliers (Gene and Species, if any)      
+12 $matrices         125       Species x Species gene matrices (list)            
+```
+
 
 #### Visualize the distribution of outliers
 
