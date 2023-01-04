@@ -145,10 +145,7 @@ Gain (concordance between matrices): 8.19%
 Loss (data filtering): 1.42% 
 
 ```
-
-To fully understand the result, it is important to start with definitions. In **phylter**, we refer to *gene outliers* or simply *outliers* as single genes in single species that do not follow the general trend, while *outlier gene families* or *complete gene outliers* refer to sets of orthologous genes for a group of species (also referred to as gene trees) that do not agree with the other gene families. Finally, *complete species outliers* are species that are absent after outlier removal because they were found to be always associated to gene outliers. 
- 
-We see that with default parameters on the small carnivora dataset, 94 outliers were identified. 
+We see that with default parameters on the small carnivora dataset, 94 *gene outliers* were identified. No complete gene outliers (or *outlier gene families* were detected, meaning  that there are no gene families totally uncorrelated with the rest. There is also no complete specoes outliers, i.e. species whose position is very variable in the different gene trees (thgose are often called rogue taxa).
 
 #### Visualize the distribution of outliers
 
@@ -166,6 +163,8 @@ Typing `plot(results, "species")` allows exploring the number of genes for which
 Here we see that no no species is particularly problematic. Almost each species is an outlier in at least one gene family.
 
 #### Visualize the 2-way reference matrix from which outliers are detected
+
+The 2WR matrix (see Figure 1) is the species x genes matrix computed at each loop of the **phylter** iterative process, from which outliers are detected. A large value in one cell of this matrix (ligh blue cells in the following figure) refers to one species in one gene tree whose position is not in accordance with its position in the other gene trees. The two 2WR matrices below represent the 2WR matrix before and after using **phylter**. In yellow we see the outliers that **phylter** identified and discarded during the process. We observe that the cells with high values on the left matrix were those identified as outliers by **phylter**, which is expected. The fact that some cells on the left matrix do not seem so different from theothers but are still identified as outlirs by phylter is because the process is iterative and these less-obvious outliers were maybe more obvious after having discareded a first set of outliers.
 
 ![man/figures/2WR.png](man/figures/2WR.png)
 
