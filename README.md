@@ -240,7 +240,7 @@ The 2WR matrix (see Figure 1) is the species x genes matrix computed at each loo
 
 #### visualize the effect of phylter in terms of data dispersion
 
-Removing outliers in a dataset can be seen as a way of decreasing the "dispersion" of data if they were to be represented on a 2D map. With phylter, this can be easily viewed. For each species in each gene, We can compute the distance, in the compromise space (see Figure 1), it distance to the reference position of the species. This can be done along the x and the y axes for example, and be compared before and after the use of phylter. This is what is represented hereafter. We observe a sharp descrease of the dispersal of the points. 
+Removing outliers in a dataset can be seen as a way of decreasing the "dispersion" of data if they were to be represented on a 2D map. With phylter, this can be easily viewed. For each species, we can compute the distance, in the compromise space (see Figure 1), between its position in a given gene tree and its reference position. This can be done along the x and the y axes for example, and be compared before and after the use of **phylter**. This is what is represented hereafter. We observe a sharp descrease of the dispersal of the points after having employed phylter on the dataset. 
 
 ![man/figures/phylterdispersion.png](man/figures/phylterdispersion.png)
 
