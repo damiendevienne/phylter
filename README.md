@@ -13,17 +13,19 @@
 
 > Note: if you don't use R or don't want to use R, a **containerized version of phylter** is also available: [https://wheredoweputthis.org](https://wheredoweputthis.org)
 
+___
 
-> **TABLE OF CONTENT**
-> - [Installation](#installation)
-> - [Quick start](#quick-start)
->    - [Options](#options)
-> - [How phylter works](#how-phylter-works)
-> - [Example](#example)
->    - [Running phylter](#running-phylter)
->    - [Exploring the results](#exploring-the-results)
->    - [Writing the output](#writing-the-output)
-> - [References](#references)
+
+**TABLE OF CONTENT**
+- [Installation](#installation)
+- [Quick start](#quick-start)
+   - [Options](#options)
+- [How phylter works](#how-phylter-works)
+- [Example](#example)
+   - [Running phylter](#running-phylter)
+   - [Exploring the results](#exploring-the-results)
+   - [Writing the output](#writing-the-output)
+- [References](#references)
 
 
 ## Installation
