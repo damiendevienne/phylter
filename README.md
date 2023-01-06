@@ -14,7 +14,7 @@
 
 **`phylter`** is written in R language. 
 
-<! -- > Note: if you don't use R or don't want to use R, a **containerized version of phylter** is also available: [https://wheredoweputthis.org](https://wheredoweputthis.org) -->
+<!-- > Note: if you don't use R or don't want to use R, a **containerized version of phylter** is also available: [https://wheredoweputthis.org](https://wheredoweputthis.org) -->
 
 
 ## Installation
@@ -42,7 +42,7 @@ library("phylter")
 ## Usage
 
 Here is a brief introduction to the use `phylter` on a collection of gene trees. 
-<! -- For more more detailed examples, please go to [ADD LINK TO THE AUTOMATICALLY GENERATED WEBSITEWEB](ADD LINK TO THE AUTOMATICALLY GENERATED WEBSITEWEB). -->
+<!-- For more more detailed examples, please go to [ADD LINK TO THE AUTOMATICALLY GENERATED WEBSITEWEB](ADD LINK TO THE AUTOMATICALLY GENERATED WEBSITEWEB). -->
 
 
 **1.** With the `read.tree` function from the `ape` package, read trees from external file and save as a list called `trees`.
@@ -104,12 +104,12 @@ plot(results, "genes")
 # Show the number of genes where each species is found, and how many are outliers
 plot(results, "species") 
 
-# Compare before and after genes x species matrices, highlighting missing data and outliers identified
-# (not efficient for large datasets)
+# Compare before and after genes x species matrices, highlighting missing data and outliers 
+# identified (not efficient for large datasets)
 plot2WR(results) 
 
 # Plot the dispersion of data before and after outlier removal. One dot represents one 
-# gene x species association.
+# gene x species association
 plotDispersion(results) 
 
 # Plot the genes x genes matrix showing pairwise correlation between genes
@@ -125,7 +125,7 @@ plotopti(results)
 write.phylter(results, file = "phylter.out")
 ```
 
----
+
 ## References
 
 - Abdi, H., O’Toole, A.J., Valentin, D. & Edelman, B. (2005). *DISTATIS: The analysis of multiple distance matrices.* Proceedings of the IEEE Computer Society: International Conference on Computer Vision and Pattern Recognition (San Diego, CA, USA). doi: 10.1109/CVPR.2005.445. https://www.utdallas.edu/~herve/abdi-distatis2005.pdf
