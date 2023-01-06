@@ -14,7 +14,7 @@
 
 **`phylter`** is written in R language. 
 
-# > Note: if you don't use R or don't want to use R, a **containerized version of phylter** is also available: [https://wheredoweputthis.org](https://wheredoweputthis.org)
+<! -- > Note: if you don't use R or don't want to use R, a **containerized version of phylter** is also available: [https://wheredoweputthis.org](https://wheredoweputthis.org) -->
 
 
 ## Installation
@@ -42,7 +42,7 @@ library("phylter")
 ## Usage
 
 Here is a brief introduction to the use `phylter` on a collection of gene trees. 
-# For more more detailed examples, please go to [ADD LINK TO THE AUTOMATICALLY GENERATED WEBSITEWEB](ADD LINK TO THE AUTOMATICALLY GENERATED WEBSITEWEB).
+<! -- For more more detailed examples, please go to [ADD LINK TO THE AUTOMATICALLY GENERATED WEBSITEWEB](ADD LINK TO THE AUTOMATICALLY GENERATED WEBSITEWEB). -->
 
 
 **1.** With the `read.tree` function from the `ape` package, read trees from external file and save as a list called `trees`.
@@ -125,10 +125,7 @@ plotopti(results)
 write.phylter(results, file = "phylter.out")
 ```
 
-<br />
 ---
-<br />
-
 ## References
 
 - Abdi, H., O’Toole, A.J., Valentin, D. & Edelman, B. (2005). *DISTATIS: The analysis of multiple distance matrices.* Proceedings of the IEEE Computer Society: International Conference on Computer Vision and Pattern Recognition (San Diego, CA, USA). doi: 10.1109/CVPR.2005.445. https://www.utdallas.edu/~herve/abdi-distatis2005.pdf
