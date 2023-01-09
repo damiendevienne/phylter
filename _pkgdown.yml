@@ -1,0 +1,10 @@
+template:
+  bootstrap: 5
+
+bslib:
+  trailing_slash_redirect: true
+  
+  navbar:
+    structure:
+    left:  [intro, reference, articles, tutorials, news]
+  right: [search, github]
