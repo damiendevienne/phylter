@@ -40,6 +40,11 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
+      - name: Install libgsl-dev
+        if: runner.os != 'Windows'
+        run: |
+          sudo apt-get install libgsl-dev
+          
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           pak-version: devel
