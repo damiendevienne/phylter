@@ -1,13 +1,13 @@
 Package: phylter
 Title: Detect and Remove Outliers in Phylogenomics Datasets
 Version: 0.9.5
-Imports: ape, RSpectra, stats, utils, ggplot2, reshape2, mrfDepth, Rfast
+Imports: ape, ggplot2, mrfDepth, reshape2, Rfast, RSpectra, stats, utils
+Suggests: knitr
 Authors@R: c(
     person("Damien M.", "de Vienne", role = "aut", email = "damien.de-vienne@univ-lyon1.fr"),
     person("Stéphane", "Dray", role = "aut", email = "stephane.dray@univ-lyon1.fr"),
     person("Aurélie", "Siberchicot", role = c("aut", "cre"), email = "aurelie.siberchicot@univ-lyon1.fr")
     )
-Maintainer: Aurélie Siberchicot <aurelie.siberchicot@univ-lyon1.fr>
 License: GPL (>= 2)
 Description: Analyzis and filtering of phylogenomics datasets. 
 	It takes an input either a collection of gene trees (then transformed to matrices) or directly a collection of gene matrices and performs an iterative process to identify
@@ -17,3 +17,4 @@ Depends: R (>= 4.0)
 BugReports: https://github.com/damiendevienne/phylter/issues
 Encoding: UTF-8
 RoxygenNote: 7.2.2
+VignetteBuilder: knitr
