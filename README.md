@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.com/damiendevienne/phylter.svg?branch=master)](https://travis-ci.com/damiendevienne/phylter)
 [![R-CMD-check](https://github.com/damiendevienne/phylter/workflows/R-CMD-check/badge.svg)](https://github.com/damiendevienne/phylter/actions)
-# PhylteR, a tool for analyzing, visualizing and filtering phylogenomics datasets <img src="man/figures/logophylter.png" align="right" width="20%" />
+# PhylteR, a tool for analyzing, visualizing and filtering phylogenomics datasets <img src="man/figures/logophyltersquare.png" align="right" width="20%" />
 
 ## Overview
 
