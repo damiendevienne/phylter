@@ -120,7 +120,37 @@
 <span> Norm.cutoff <span class="op">=</span> <span class="fl">0.001</span>, gene.names <span class="op">=</span> <span class="cn">NULL</span>, test.island <span class="op">=</span> <span class="cn">TRUE</span>, </span>
 <span> verbose <span class="op">=</span> <span class="cn">TRUE</span>, stop.criteria <span class="op">=</span> <span class="fl">1e-5</span>, InitialOnly <span class="op">=</span> <span class="cn">FALSE</span>, normalizeby <span class="op">=</span> <span class="st">"row"</span>, </span>
 <span> parallel <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p>Arguments are as follows: - <code>X</code>: A list of phylogenetic trees (phylo object) or a list of distance matrices. Trees can have different number of leaves and matrices can have different dimensions. If this is the case, missing values are imputed. - <code>bvalue</code>: If <code>X</code> is a list of trees, nodes with a support below <code>bvalue</code> will be collapsed prior to the outlier detection. - <code>distance</code>: If <code>X</code> is a list of trees, type of distance used to compute the pairwise matrices for each tree. Can be “patristic” (sum of branch lengths separating tips, the default) or “nodal” (number of nodes separating tips). - <code>k</code>: Strength of outlier detection. The higher this value the less outliers detected. - <code>k2</code>: Same as <code>k</code> for complete gene outlier detection. To preserve complete genes from being discarded, <code>k2</code> can be increased. By default, <code>k2 = k</code>. - <code>Norm</code>: Should the matrices be normalized prior to the complete analysis and how. If “median”, matrices are divided by their median; if “mean”, they are divided by their mean; if “none”, no normalization if performed. Normalizing ensures that fast-evolving (and slow-evolving) genes are not treated as outliers. Normalization by median is a better choice as it is less sensitive to outlier values. - <code>Norm.cutoff</code>: Value of the median (if <code>Norm = "median"</code>) or the mean (if <code>Norm = "mean"</code>) below which matrices are simply discarded from the analysis. This prevents dividing by 0, and allows getting rid of genes that contain mostly branches of length 0 and are therefore uninformative anyway. Discarded genes, if any, are listed in the output (<code>out$DiscardedGenes</code>). - <code>gene.names</code>: List of gene names used to rename elements in <code>X</code>. If NULL (the default), elements are named 1,2,…,length(X). - <code>test.island</code>: If <code>TRUE</code> (the default), only the highest value in an <em>island</em> of outliers is considered an outlier. This prevents non-outliers hitchhiked by outliers to be considered outliers themselves. - <code>verbose</code>: If <code>TRUE</code> (the default), messages are written during the filtering process to get information on what is happening. - <code>stop.criteria</code>: The optimization stops when the gain (quality of compromise) between round <em>n</em> and round <em>n</em>+1 is smaller than this value. Default to 1e-5. - <code>InitialOnly</code>: Logical. If <code>TRUE</code>, only the Initial state of the data is computed. - <code>normalizeby</code>: Should the gene x species matrix be normalized prior to outlier detection, and how. - <code>parallel</code>: Logical. Should the computations be parallelized when possible? Default to <code>TRUE</code>. Note that the number of threads cannot be set by the user when <code>parallel = TRUE</code>. It uses all available cores on the machine.</p>
+<p>Arguments are as follows:</p>
+<ul>
+<li>
+<code>X</code>: A list of phylogenetic trees (phylo object) or a list of distance matrices. Trees can have different number of leaves and matrices can have different dimensions. If this is the case, missing values are imputed.</li>
+<li>
+<code>bvalue</code>: If <code>X</code> is a list of trees, nodes with a support below <code>bvalue</code> will be collapsed prior to the outlier detection.</li>
+<li>
+<code>distance</code>: If <code>X</code> is a list of trees, type of distance used to compute the pairwise matrices for each tree. Can be “patristic” (sum of branch lengths separating tips, the default) or “nodal” (number of nodes separating tips).</li>
+<li>
+<code>k</code>: Strength of outlier detection. The higher this value the less outliers detected.</li>
+<li>
+<code>k2</code>: Same as <code>k</code> for complete gene outlier detection. To preserve complete genes from being discarded, <code>k2</code> can be increased. By default, <code>k2 = k</code>.</li>
+<li>
+<code>Norm</code>: Should the matrices be normalized prior to the complete analysis and how. If “median”, matrices are divided by their median; if “mean”, they are divided by their mean; if “none”, no normalization if performed. Normalizing ensures that fast-evolving (and slow-evolving) genes are not treated as outliers. Normalization by median is a better choice as it is less sensitive to outlier values.</li>
+<li>
+<code>Norm.cutoff</code>: Value of the median (if <code>Norm = "median"</code>) or the mean (if <code>Norm = "mean"</code>) below which matrices are simply discarded from the analysis. This prevents dividing by 0, and allows getting rid of genes that contain mostly branches of length 0 and are therefore uninformative anyway. Discarded genes, if any, are listed in the output (<code>out$DiscardedGenes</code>).</li>
+<li>
+<code>gene.names</code>: List of gene names used to rename elements in <code>X</code>. If NULL (the default), elements are named 1,2,…,length(X).</li>
+<li>
+<code>test.island</code>: If <code>TRUE</code> (the default), only the highest value in an <em>island</em> of outliers is considered an outlier. This prevents non-outliers hitchhiked by outliers to be considered outliers themselves.</li>
+<li>
+<code>verbose</code>: If <code>TRUE</code> (the default), messages are written during the filtering process to get information on what is happening.</li>
+<li>
+<code>stop.criteria</code>: The optimization stops when the gain (quality of compromise) between round <em>n</em> and round <em>n</em>+1 is smaller than this value. Default to 1e-5.</li>
+<li>
+<code>InitialOnly</code>: Logical. If <code>TRUE</code>, only the Initial state of the data is computed.</li>
+<li>
+<code>normalizeby</code>: Should the gene x species matrix be normalized prior to outlier detection, and how.</li>
+<li>
+<code>parallel</code>: Logical. Should the computations be parallelized when possible? Default to <code>TRUE</code>. Note that the number of threads cannot be set by the user when <code>parallel = TRUE</code>. It uses all available cores on the machine.</li>
+</ul>
 </blockquote>
 <p><strong>4.</strong> Analyze the results</p>
 <p>To get the list of outliers detected by <code>phylter</code>, simply type:</p>
