@@ -68,14 +68,13 @@
   </div>
 </nav><div class="container template-home">
 <div class="row">
-  <main id="main" class="col-md-9"><p><a href="https://travis-ci.com/damiendevienne/phylter" class="external-link"><img src="https://travis-ci.com/damiendevienne/phylter.svg?branch=master" alt="Build Status"></a> <a href="https://github.com/damiendevienne/phylter/actions" class="external-link"><img src="https://github.com/damiendevienne/phylter/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a> # PhylteR, a tool for analyzing, visualizing and filtering phylogenomics datasets <img src="reference/figures/logophyltersquare.png" align="right" width="20%"></p>
-<div class="section level2">
-<h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
-</h2>
+  <main id="main" class="col-md-9"><div class="section level1">
+<div class="page-header"><h1 id="phylter-a-tool-for-analyzing-visualizing-and-filtering-phylogenomics-datasets-">PhylteR, a tool for analyzing, visualizing and filtering phylogenomics datasets <img src="reference/figures/logophyltersquare.png" align="right" width="20%"><a class="anchor" aria-label="anchor" href="#phylter-a-tool-for-analyzing-visualizing-and-filtering-phylogenomics-datasets-"></a>
+</h1></div>
+<p><a href="https://travis-ci.com/damiendevienne/phylter" class="external-link"><img src="https://travis-ci.com/damiendevienne/phylter.svg?branch=master" alt="Build Status"></a> <a href="https://github.com/damiendevienne/phylter/actions" class="external-link"><img src="https://github.com/damiendevienne/phylter/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></p>
 <p><strong><code>phylter</code></strong> is a tool that allows detecting, removing and visualizing outliers in phylogenomics dataset by iteratively removing taxa from gene families (gene trees) and optimizing a score of concordance between individual matrices.<br><strong><code>phylter</code></strong> relies on DISTATIS (Abdi et al, 2005), an extension of multidimensional scaling to 3 dimensions to compare multiple distance matrices at once.<br><strong><code>phylter</code></strong> builds on Phylo-MCOA (de Vienne et al. 2012) but is much faster and accurate.<br><strong><code>phylter</code></strong> takes as input either a collection of phylogenetic trees (that are converted to distance matrices by <code>phylter</code>), or a collection of pairwise distance matrices (obtained from multiple sequence alignements, for instance).<br><strong><code>phylter</code></strong> accepts data with missing values (missing taxa in some genes).<br><strong><code>phylter</code></strong> detects outliers with a method proposed by Hubert &amp; Vandervieren (2008) for skewed data.<br><strong><code>phylter</code></strong> does not accept that the same taxa is present multiple times in the same gene.</p>
 <p><strong><code>phylter</code></strong> is written in R language.</p>
 <!-- > Note: if you don't use R or don't want to use R, a **containerized version of phylter** is also available: [https://wheredoweputthis.org](https://wheredoweputthis.org) -->
-</div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -196,7 +195,7 @@
 <hr>
 <p>For comments, suggestions and bug reports, please open an <a href="https://github.com/damiendevienne/phylter/issues" class="external-link">issue</a> on this GitHub repository.</p>
 </div>
-
+</div>
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
