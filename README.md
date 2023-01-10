@@ -69,6 +69,7 @@ results <- phylter(trees, gene.names = names)
 >```
 >
 >Arguments are as follows:
+>
 >- `X`: A list of phylogenetic trees (phylo object) or a list of distance matrices. Trees can have different number of leaves and matrices can have different dimensions. If this is the case, missing values are imputed.
 >- `bvalue`: If `X` is a list of trees, nodes with a support below `bvalue` will be collapsed prior to the outlier detection.
 >- `distance`: If `X` is a list of trees, type of distance used to compute the pairwise matrices for each tree. Can be "patristic" (sum of branch lengths separating tips, the default) or "nodal" (number of nodes separating tips).
