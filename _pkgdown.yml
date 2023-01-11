@@ -1,5 +1,6 @@
 template:
   bootstrap: 5
+  bootswatch: flatly
 
 bslib:
   trailing_slash_redirect: true
