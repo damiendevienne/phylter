@@ -45,6 +45,11 @@ jobs:
         run: |
           sudo apt-get install libgsl-dev
           
+      - name: Install libs for MacOS
+        if: runner.os == 'MacOS'
+        run: |
+          brew install r-cran-rcppgsl
+          
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           pak-version: devel
