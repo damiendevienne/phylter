@@ -44,11 +44,11 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get install libgsl-dev
-          
-      - name: Install libs for MacOS
-        if: runner.os == 'MacOS'
+
+      - name: Install dependencies
         run: |
-          brew install r-cran-rcppgsl
+          install.packages("RcppGSL", type = "source")
+        shell: Rscript {0}          
           
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
