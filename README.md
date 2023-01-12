@@ -14,6 +14,10 @@
 
 **`phylter`** is written in R language. 
 
+For details about the functions, their usage, and a in-depth description of the use of **phylter** on a biological dataset, step-by-step, please vist the phylter web page : https://damiendevienne.github.io/phylter. 
+
+
+
 <!-- > Note: if you don't use R or don't want to use R, a **containerized version of phylter** is also available: [https://wheredoweputthis.org](https://wheredoweputthis.org) -->
 
 
