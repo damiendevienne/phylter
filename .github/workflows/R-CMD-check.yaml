@@ -3,6 +3,9 @@
 
 on:
   push:
+    paths-ignore:
+      - _pkgdown.yml
+      - README.md
     branches: [main, master]
   pull_request:
     branches: [main, master]
