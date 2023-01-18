@@ -12,7 +12,7 @@ or a list of distance matrices."><!-- mathjax --><script src="https://cdnjs.clou
     
     <a class="navbar-brand me-2" href="../index.html">phylter</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.6</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -166,7 +166,7 @@ or a list of class 'phylterinitial' only, if InitialOnly=TRUE. The function also
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">carnivora</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># using default paramaters</span></span></span>
-<span class="r-in"><span><span class="va">res</span><span class="op">&lt;-</span><span class="fu">phylter</span><span class="op">(</span><span class="va">carnivora</span><span class="op">)</span> <span class="co">#perform the phylter analysis</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">phylter</span><span class="op">(</span><span class="va">carnivora</span>, parallel <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="co"># perform the phylter analysis</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of Genes:    125</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of Species:  53</span>
@@ -196,7 +196,7 @@ or a list of class 'phylterinitial' only, if InitialOnly=TRUE. The function also
 <span class="r-out co"><span class="r-pr">#&gt;</span> Phylter Analysis</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of class phylter</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Call: phylter(X = carnivora)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Call: phylter(X = carnivora, parallel = FALSE)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $Initial	Initial matrices and values, before optimization</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $Final		Final matrices, scores, outliers, after optimization</span>
@@ -212,7 +212,7 @@ or a list of class 'phylterinitial' only, if InitialOnly=TRUE. The function also
 <span class="r-out co"><span class="r-pr">#&gt;</span>    Use plotDispersion(x) to compare Distatis projections before and after</span>
 <span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="va">DiscardedGenes</span> <span class="co"># list of genes discarded prior to the analysis</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> character(0)</span>
-<span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="va">Initial</span> <span class="co">#See all elements prior to the analysis</span></span></span>
+<span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="va">Initial</span> <span class="co"># See all elements prior to the analysis</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Phylter Analysis - initial state</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of class phylterinitial</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -225,7 +225,7 @@ or a list of class 'phylterinitial' only, if InitialOnly=TRUE. The function also
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6 $F          53 x 6    Distatis coordinates of compromise              </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7 $matrices   125       Distatis coordinates of gene matrices (list)    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 8 $PartialF   125       Species x Species gene matrices (list)          </span>
-<span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="va">Final</span> <span class="co">#See all elements at the end of the analysis</span></span></span>
+<span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="va">Final</span> <span class="co"># See all elements at the end of the analysis</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Phylter Analysis - final state</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of class phylterfinal</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -255,7 +255,7 @@ or a list of class 'phylterinitial' only, if InitialOnly=TRUE. The function also
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10 Outliers detected (one row = one outlier cell)    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11 Complete outliers (Gene and Species, if any)      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 12 Species x Species gene matrices (list)            </span>
-<span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="va">Final</span><span class="op">$</span><span class="va">Outliers</span> <span class="co">#Print all outliers detected</span></span></span>
+<span class="r-in"><span><span class="va">res</span><span class="op">$</span><span class="va">Final</span><span class="op">$</span><span class="va">Outliers</span> <span class="co"># Print all outliers detected</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       [,1]                      [,2]                        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1,] "ENSG00000005381_MPO"     "Arctocephalus_gazella"     </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] "ENSG00000005381_MPO"     "Ursus_maritimus"           </span>
@@ -353,8 +353,8 @@ or a list of class 'phylterinitial' only, if InitialOnly=TRUE. The function also
 <span class="r-out co"><span class="r-pr">#&gt;</span> [94,] "ENSG00000143196_DPT"     "Taxidea_taxus"             </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
-<span class="r-in"><span><span class="co"># Change the call to phylter  to use nodal distances, instead of patristic: </span></span></span>
-<span class="r-in"><span><span class="va">res</span><span class="op">&lt;-</span><span class="fu">phylter</span><span class="op">(</span><span class="va">carnivora</span>, distance<span class="op">=</span><span class="st">"nodal"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Change the call to phylter to use nodal distances, instead of patristic: </span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">phylter</span><span class="op">(</span><span class="va">carnivora</span>, distance <span class="op">=</span> <span class="st">"nodal"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of Genes:    125</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of Species:  53</span>

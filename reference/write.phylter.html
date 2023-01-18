@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">phylter</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.6</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -98,7 +98,7 @@ report is written. Default to <code>report.pdf</code></p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">carnivora</span><span class="op">)</span> </span></span>
-<span class="r-in"><span><span class="va">res</span><span class="op">&lt;-</span><span class="fu"><a href="phylter.html">phylter</a></span><span class="op">(</span><span class="va">carnivora</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="phylter.html">phylter</a></span><span class="op">(</span><span class="va">carnivora</span>, parallel <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of Genes:    125</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of Species:  53</span>
@@ -127,8 +127,8 @@ report is written. Default to <code>report.pdf</code></p></dd>
 <span class="r-in"><span><span class="co"># write a full report to the standard output</span></span></span>
 <span class="r-in"><span><span class="fu">write.phylter</span><span class="op">(</span><span class="va">res</span><span class="op">)</span> </span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # -- phylter v. 0.9.5 -- </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # Tue Jan 17 14:11:27 2023</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # -- phylter v. 0.9.6 -- </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # Wed Jan 18 14:19:07 2023</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # </span>
