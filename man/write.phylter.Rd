@@ -34,7 +34,7 @@ Write the summary of the phylter analysis in a txt file or as a pdf report.
 }
 \examples{
 data(carnivora) 
-res<-phylter(carnivora)
+res <- phylter(carnivora, parallel = FALSE)
 # write a full report to the standard output
 write.phylter(res) 
 

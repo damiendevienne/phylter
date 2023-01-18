@@ -7,8 +7,8 @@
 #' @return On object of class \code{summmary.phylter}
 #' @examples 
 #' data(carnivora)
-#' res<-phylter(carnivora)
-#' summary<-summary(res)
+#' res <- phylter(carnivora, parallel = FALSE)
+#' summary <- summary(res)
 #' class(summary)
 #' @export
 
@@ -47,8 +47,8 @@ summary.phylter<-function(object, ...) {
 #' @return NA   
 #' @examples
 #' data(carnivora)
-#' res<-phylter(carnivora)
-#' summary<-summary(res)
+#' res <- phylter(carnivora, parallel = FALSE)
+#' summary <- summary(res)
 #' print(summary)
 #' @export
 
@@ -74,7 +74,7 @@ print.summary.phylter<-function(x, ...) {
 #' @return Print formatting   
 #' @examples
 #' data(carnivora)
-#' res<-phylter(carnivora)
+#' res <- phylter(carnivora, parallel = FALSE)
 #' print(res)
 #' @export
 
@@ -105,7 +105,7 @@ print.phylter<-function(x, ...) {
 #' @return NA 
 #' @examples
 #' data(carnivora)
-#' res<-phylter(carnivora)
+#' res <- phylter(carnivora, parallel = FALSE) 
 #' print(res$Initial)
 #' @export
 
@@ -140,7 +140,7 @@ print.phylterinitial<-function(x, ...) {
 #' @return NA   
 #' @examples
 #' data(carnivora)
-#' res<-phylter(carnivora)
+#' res <- phylter(carnivora, parallel = FALSE) 
 #' print(res$Final)
 #' @export
 

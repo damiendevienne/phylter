@@ -18,7 +18,7 @@
 #' 
 #' @examples
 #' data(carnivora) 
-#' res<-phylter(carnivora)
+#' res <- phylter(carnivora, parallel = FALSE)
 #' # write a full report to the standard output
 #' write.phylter(res) 
 #' 

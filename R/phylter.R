@@ -43,16 +43,16 @@
 #' data(carnivora)
 #'
 #' # using default paramaters
-#' res<-phylter(carnivora) #perform the phylter analysis
+#' res <- phylter(carnivora, parallel = FALSE) # perform the phylter analysis
 #' res # brief summary of the analysis
 #' res$DiscardedGenes # list of genes discarded prior to the analysis
-#' res$Initial #See all elements prior to the analysis
-#' res$Final #See all elements at the end of the analysis
-#' res$Final$Outliers #Print all outliers detected
+#' res$Initial # See all elements prior to the analysis
+#' res$Final # See all elements at the end of the analysis
+#' res$Final$Outliers # Print all outliers detected
 #' 
 #' \donttest{
-#' # Change the call to phylter  to use nodal distances, instead of patristic: 
-#' res<-phylter(carnivora, distance="nodal")
+#' # Change the call to phylter to use nodal distances, instead of patristic: 
+#' res <- phylter(carnivora, distance = "nodal")
 #' }
 #' 
 #' @importFrom utils tail combn

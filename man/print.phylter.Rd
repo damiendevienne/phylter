@@ -19,6 +19,6 @@ Print on screen a simple description of the content of phylter objects
 }
 \examples{
 data(carnivora)
-res<-phylter(carnivora)
+res <- phylter(carnivora, parallel = FALSE)
 print(res)
 }

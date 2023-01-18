@@ -19,7 +19,7 @@ Prints on screen the summary of an object of class \code{summmary.phylter} as re
 }
 \examples{
 data(carnivora)
-res<-phylter(carnivora)
-summary<-summary(res)
+res <- phylter(carnivora, parallel = FALSE)
+summary <- summary(res)
 print(summary)
 }

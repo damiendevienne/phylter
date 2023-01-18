@@ -81,7 +81,7 @@ optimization.
 data(carnivora)
 
 # perform phylter analysis
-res<-phylter(carnivora)
+res <- phylter(carnivora, parallel = FALSE)
 
 # plot for each gene the number of outlier species
 plot(res, "genes")

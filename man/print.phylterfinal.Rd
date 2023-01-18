@@ -19,6 +19,6 @@ Print on screen a simple description of the content of objects of class \code{ph
 }
 \examples{
 data(carnivora)
-res<-phylter(carnivora)
+res <- phylter(carnivora, parallel = FALSE) 
 print(res$Final)
 }
