@@ -23,8 +23,15 @@ For details about the functions, their usage, and a in-depth description of the 
 
 ## Installation
 
-**`phylter`** is not yet on CRAN (deposit in process). 
-To install the development version:
+**`phylter`** is now on CRAN. 
+
+
+Installation is as easy as typing what follows at the R command prompt: 
+```R
+install.packages("phylter")
+```
+
+If you want the latest version, you can also install the development version of **phylter**:
 
 1. Install the release version of `remotes` from CRAN:
 ```R
