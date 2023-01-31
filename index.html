@@ -78,21 +78,25 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p><strong><code>phylter</code></strong> is not yet on CRAN (deposit in process). To install the development version:</p>
+<p><strong><code>phylter</code></strong> is now on CRAN.</p>
+<p>Installation is as easy as typing what follows at the R command prompt:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"phylter"</span><span class="op">)</span></span></code></pre></div>
+<p>If you want the latest version, you can also install the development version of <strong>phylter</strong>:</p>
 <ol style="list-style-type: decimal">
 <li>Install the release version of <code>remotes</code> from CRAN:</li>
 </ol>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
 <li>Install the development version of <code>phylter</code> from GitHub:</li>
 </ol>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"damiendevienne/phylter"</span><span class="op">)</span></span></code></pre></div>
 <ol start="3" style="list-style-type: decimal">
 <li>Once installed, the package can be loaded:</li>
 </ol>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st">"phylter"</span><span class="op">)</span></span></code></pre></div>
 <blockquote>
 <p>Note: phylter requires R version &gt; 4.0, otherwise it cannot be installed. Also, R uses the GNU Scientific Library. On Ubuntu, this can be installed prior to the installation of the phylter package by typing <code>sudo apt install libgsl-dev</code> in a terminal.</p>
@@ -103,18 +107,18 @@
 </h2>
 <p>Here is a brief introduction to the use <code>phylter</code> on a collection of gene trees. <!-- For more more detailed examples, please go to [ADD LINK TO THE AUTOMATICALLY GENERATED WEBSITEWEB](ADD LINK TO THE AUTOMATICALLY GENERATED WEBSITEWEB). --></p>
 <p><strong>1.</strong> With the <code>read.tree</code> function from the <code>ape</code> package, read trees from external file and save as a list called <code>trees</code>.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"ape"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span>   <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"ape"</span><span class="op">)</span></span>
 <span><span class="va">trees</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html" class="external-link">read.tree</a></span><span class="op">(</span><span class="st">"treefile.tre"</span><span class="op">)</span></span></code></pre></div>
 <p><strong>2.</strong> (optional) Read or get gene names somewhere (same order as the trees) and save it as a vector called <code>names</code>.</p>
 <p><strong>3.</strong> Run <code>phylter</code> on your trees (see details below for possible options).</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/phylter.html">phylter</a></span><span class="op">(</span><span class="va">trees</span>, gene.names <span class="op">=</span> <span class="va">names</span><span class="op">)</span></span></code></pre></div>
 <blockquote>
 <h4 id="options">Options</h4>
 <p>The <code>phylter</code> function is called as follows by default:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/phylter.html">phylter</a></span><span class="op">(</span><span class="va">X</span>, bvalue <span class="op">=</span> <span class="fl">0</span>, distance <span class="op">=</span> <span class="st">"patristic"</span>, k <span class="op">=</span> <span class="fl">3</span>, k2 <span class="op">=</span> <span class="va">k</span>, Norm <span class="op">=</span> <span class="st">"median"</span>, </span>
 <span> Norm.cutoff <span class="op">=</span> <span class="fl">0.001</span>, gene.names <span class="op">=</span> <span class="cn">NULL</span>, test.island <span class="op">=</span> <span class="cn">TRUE</span>, </span>
 <span> verbose <span class="op">=</span> <span class="cn">TRUE</span>, stop.criteria <span class="op">=</span> <span class="fl">1e-5</span>, InitialOnly <span class="op">=</span> <span class="cn">FALSE</span>, normalizeby <span class="op">=</span> <span class="st">"row"</span>, </span>
@@ -153,10 +157,10 @@
 </blockquote>
 <p><strong>4.</strong> Analyze the results</p>
 <p>To get the list of outliers detected by <code>phylter</code>, simply type:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">results</span><span class="op">$</span><span class="va">Final</span><span class="op">$</span><span class="va">Outliers</span></span></code></pre></div>
 <p>In addition, many functions allow looking at the outliers detected and comparing before and after <em>phy</em>ltering.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get a summary: nb of outliers, gain in concordance, etc.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">results</span><span class="op">)</span></span>
 <span></span>
@@ -180,7 +184,7 @@
 <span><span class="co"># Plot optimization scores during optimization</span></span>
 <span><span class="fu"><a href="reference/plot.phylter.html">plotopti</a></span><span class="op">(</span><span class="va">results</span><span class="op">)</span> </span></code></pre></div>
 <p><strong>5.</strong> Save the results of the analysis to an external file, for example to perform cleaning on raw alignments or pruning gene trees based on the results from <code>phylter</code>.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/write.phylter.html">write.phylter</a></span><span class="op">(</span><span class="va">results</span>, file <span class="op">=</span> <span class="st">"phylter.out"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -199,6 +203,7 @@
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
+<li><a href="https://cloud.r-project.org/package=phylter" class="external-link">View on CRAN</a></li>
 <li><a href="https://github.com/damiendevienne/phylter/" class="external-link">Browse source code</a></li>
 <li><a href="https://github.com/damiendevienne/phylter/issues" class="external-link">Report a bug</a></li>
 </ul>
