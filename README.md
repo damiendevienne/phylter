@@ -52,7 +52,7 @@ library("phylter")
 
 ## Usage
 
-Here is a brief introduction to the use `phylter` on a collection of gene trees. 
+Here is a brief introduction to the use `phylter` on a collection of gene trees. For more detailed explanations and a use case example, please visit  https://damiendevienne.github.io/phylter/.
 <!-- For more more detailed examples, please go to [ADD LINK TO THE AUTOMATICALLY GENERATED WEBSITEWEB](ADD LINK TO THE AUTOMATICALLY GENERATED WEBSITEWEB). -->
 
 
