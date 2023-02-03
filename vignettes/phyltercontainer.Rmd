@@ -1,0 +1,26 @@
+---
+title: phylter in a container
+author: Damien de Vienne
+date: '`r Sys.Date()`'
+output:
+  html_vignette:
+  # pdf_document:
+    toc: yes
+    number_sections: yes
+    toc_depth: 4
+    fig_caption: true
+urlcolor: blue
+linkcolor: blue
+toccolor: 'blue'
+header-includes: \renewcommand*\familydefault{\sfdefault} 
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{phylter in a container} 
+  %!\VignetteEncoding{UTF-8}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
+require(phylter)
+require(ape)
+```

@@ -4,4 +4,3 @@
 ^\.travis\.yml$
 ^\.github$
 _pkgdown.yml
-vignettes/.phyltercontainer.Rmd
