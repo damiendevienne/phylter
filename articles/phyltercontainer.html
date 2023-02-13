@@ -82,15 +82,21 @@ Vienne</h4>
     
     
 <div class="section level2">
-<h2 id="run-phylter-from-containers">Run PhylteR from containers<a class="anchor" aria-label="anchor" href="#run-phylter-from-containers"></a>
+<h2 id="phylter-in-a-container">PhylteR in a container<a class="anchor" aria-label="anchor" href="#phylter-in-a-container"></a>
 </h2>
-<p>The PhylteR method is available as container version with Docker and
-Singularity. Thees containers can be used to run R and PhylteR.
-Alternatively, they contain build in python 3 scrips to run PhylteR and
-perform additional tasks, such as pruning input trees from outliers
-detected and/or removing the corresponding outlier sequences in
-sequences files (in fasta format).</p>
-<p>Both container contain the flowing scripts:</p>
+<p>In addition to the R package <strong>phylter</strong> available on
+CRAN (<a href="https://cran.r-project.org/web/packages/phylter/index.html" class="external-link uri">https://cran.r-project.org/web/packages/phylter/index.html</a>)
+and on GitHub (<a href="https://github.com/damiendevienne/phylter" class="external-link uri">https://github.com/damiendevienne/phylter</a>),
+<em>containerized</em> versions of <strong>phylter</strong> (docker and
+singularity) are also proposed. This may ease the use of
+<strong>phylter</strong> use on some computing infrastructures
+(clusters) or for users reluctant to the R language.</p>
+<p>The containers host python3 scrips allowing to easily run
+<strong>phylter</strong> with the same options than with the R package,
+but also perform additional tasks such as removing (pruning) outliers
+from input trees and/or filtering out outlier sequences from (aligned)
+sequence files (fasta format).</p>
+<p>The containers contain the flowing scripts:</p>
 <ul>
 <li><p><code>PhylteR_run.py</code>: parse arguments and launch PhylteR.
 It requires a job name that used as output directory (-j) and the path
