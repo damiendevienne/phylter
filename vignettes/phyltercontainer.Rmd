@@ -69,15 +69,15 @@ The command above creates the directory `Carnivora_docker` that will contain:
 
 3. Run **phylter** on the example Carnivora dataset AND prune trees AND remove outliers from fasta files
 
-You may want to run **phylter** and to subsequently remove the identified outliers from both the gene trees and the sequences files. For this to be performed, the sequence files must contain the same name as the corresponding tree, minus the extension if any. For example, a sequence file named `ENSG00000274286_ADRA2B_final_align_NT.aln` will be matched automatically to a tree file named `ENSG00000274286_ADRA2B.treefile`: `phylter.py` will identoify the gene ID as being **ENSG00000274286_ADRA2B**.
+You may want to run **phylter** and to subsequently remove the identified outliers from both the gene trees and the sequences files. For this to be performed, the sequence files must contain the same name as the corresponding tree, minus the extension if any. For example, a sequence file named `ENSG00000274286_ADRA2B_final_align_NT.aln` will be matched automatically to a tree file named `ENSG00000274286_ADRA2B.treefile`: `phylter.py` will identify the gene ID as being **ENSG00000274286_ADRA2B**.
 
 
 ```sh
 sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/phylter_docker phylter.py -j Carnivora_docker -t /usr/container-data/trees -p TRUE -s /usr/container-data/alignments -g TRUE
 ```
-- `-p TRUE` specifies that the input trees should be pruned by removing the outliers identified by phylteR. A new directorry containing the pruned trees is created (see after). 
-- `-s` specifies the directory containing the sequences (see above for specifications regarding naming conventions). If this directory is specified, the input sequences will be filtered by removing the outliers identified by phylteR. A new directorry containing the filtered sequences is created (see after). 
-- `-g TRUE` specifies that a full report (in pdf) should be produced.
+- `-p TRUE` specifies that the input trees should be pruned by removing the outliers identified by **phylter**. A new directorry containing the pruned trees is created (see after). 
+- `-s` specifies the directory containing the sequences (see above for specifications regarding naming conventions). If this directory is specified, the input sequences will be filtered by removing the outliers identified by **phylter**. A new directorry containing the filtered sequences is created (see after). 
+- `-g TRUE` specifies that a full report (in pdf) should be produced (in addition to the default `phylter.out` file).
 
 The command above generates, in addition to the two files described in the previous example:
 
@@ -87,18 +87,19 @@ The command above generates, in addition to the two files described in the previ
 
 - `report.pdf`: a PDF report containing a summary of the results.
 
-4. See all **phylter** options. 
-phylter.py allows specifying all the options available in the R package. To see this list of options, simply type:
+4. View all **phylter** options
+
+`phylter.py` allows specifying all the options available in the R package. To see this list of options, simply use the `-h` option:
 ```sh
 sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/phylter_docker phylter.py -h
 ```
 
 ## Run PhylteR with Singularity
 
-PhylteR is also available as a [singularity](https://docs.sylabs.io/guides/3.0/user-guide/index.html) container : (https://cloud.sylabs.io/library/theo.treecou/tool/phylter_singularity):
+PhylteR is also available as a [singularity](https://docs.sylabs.io/guides/3.0/user-guide/index.html) container : (https://cloud.sylabs.io/library/theo.treecou/tool/phylter_singularity). Here are instructions to install (or build) and run it:
 
 
-1. Pull the latest version of PhylteR container from the Sylabs repository:
+1. Pull the latest version of **phylter** container from the Sylabs repository:
 
 ```sh
 sudo singularity pull PhylteR.sif library://theo.treecou/tool/phylter_singularity:latest
@@ -110,14 +111,13 @@ Alternatively, you can build a singularity image from the Docker Hub repository:
 sudo singularity pull PhylteR.sif docker://treecoutheo/phylter_docker:latest
 ```
 
-2. Running PhylteR on the carnivora example dataset:
+2. Run **phylter** on the carnivora example dataset:
 
 ```sh
 singularity exec PhylteR.sif phylter.py -j Carnivora_singularity -t /usr/container-data/trees
 ```
 
-Please, refer to the description of the docker container to see how to use the options available with the `phylter.py` function.
-
+Please, refer to the description of the docker container to see how to use all the options available with the `phylter.py` function.
 
 
 # References
