@@ -200,16 +200,24 @@ results.</p></li>
 </ol>
 <p>Instead of performing the <strong>phylter</strong> analysis and the
 filtering of outliers at the same time, you can do it in multiple steps.
-here is how, on the example dataset: 1. Run phylter:
-<code>sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/phylter_docker phylter.py -j Carnivora_docker -t /usr/container-data/trees</code>
-the output file <code>phylter.out</code> will be used for performing the
-pruning and/or the sequence filtering (see below).</p>
-<ol start="2" style="list-style-type: decimal">
-<li><p>Prune trees with <code>prune_tree_outliers.R</code>:
-<code>sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/ BLABLABLA</code></p></li>
-<li><p>Filter alignments with <code>remove_sequence_outliers.py</code>:
-<code>sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/ BLABLABALABJDLHUIDFHDUI</code></p></li>
-<li><p>View all <strong>phylter</strong> options</p></li>
+here is how, on the example dataset:</p>
+<ul>
+<li>Run phylter:</li>
+</ul>
+<p><code>sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/phylter_docker phylter.py -j Carnivora_docker -t /usr/container-data/trees</code></p>
+<p>The output file <code>phylter.out</code> will be used for performing
+the pruning and/or the sequence filtering (see below).</p>
+<ul>
+<li>Prune trees with <code>prune_tree_outliers.R</code>:</li>
+</ul>
+<p><code>sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/ BLABLABLA</code></p>
+<ul>
+<li>Filter alignments with
+<code>remove_sequence_outliers.py</code>:</li>
+</ul>
+<p><code>sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/ BLABLABALABJDLHUIDFHDUI</code></p>
+<ol start="5" style="list-style-type: decimal">
+<li>View all <strong>phylter</strong> options</li>
 </ol>
 <p><code>phylter.py</code> allows specifying all the options available
 in the R package. To see this list of options, simply use the
