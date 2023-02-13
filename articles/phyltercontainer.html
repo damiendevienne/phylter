@@ -157,23 +157,24 @@ any. For example, a sequence file named
 <code>ENSG00000274286_ADRA2B_final_align_NT.aln</code> will be matched
 automatically to a tree file named
 <code>ENSG00000274286_ADRA2B.treefile</code>: <code>phylter.py</code>
-will identoify the gene ID as being
+will identify the gene ID as being
 <strong>ENSG00000274286_ADRA2B</strong>.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> docker run <span class="at">-v</span> <span class="va">$PWD</span>:<span class="va">$PWD</span> <span class="at">-w</span> <span class="va">$PWD</span> treecoutheo/phylter_docker phylter.py <span class="at">-j</span> Carnivora_docker <span class="at">-t</span> /usr/container-data/trees <span class="at">-p</span> TRUE <span class="at">-s</span> /usr/container-data/alignments <span class="at">-g</span> TRUE</span></code></pre></div>
 <ul>
 <li>
 <code>-p TRUE</code> specifies that the input trees should be pruned
-by removing the outliers identified by phylteR. A new directorry
-containing the pruned trees is created (see after).</li>
+by removing the outliers identified by <strong>phylter</strong>. A new
+directorry containing the pruned trees is created (see after).</li>
 <li>
 <code>-s</code> specifies the directory containing the sequences
 (see above for specifications regarding naming conventions). If this
 directory is specified, the input sequences will be filtered by removing
-the outliers identified by phylteR. A new directorry containing the
-filtered sequences is created (see after).</li>
+the outliers identified by <strong>phylter</strong>. A new directorry
+containing the filtered sequences is created (see after).</li>
 <li>
 <code>-g TRUE</code> specifies that a full report (in pdf) should be
-produced.</li>
+produced (in addition to the default <code>phylter.out</code>
+file).</li>
 </ul>
 <p>The command above generates, in addition to the two files described
 in the previous example:</p>
@@ -194,31 +195,33 @@ been identified as outliers.</p></li>
 results.</p></li>
 </ul>
 <ol start="4" style="list-style-type: decimal">
-<li>See all <strong>phylter</strong> options. phylter.py allows
-specifying all the options available in the R package. To see this list
-of options, simply type:</li>
+<li>View all <strong>phylter</strong> options</li>
 </ol>
+<p><code>phylter.py</code> allows specifying all the options available
+in the R package. To see this list of options, simply use the
+<code>-h</code> option:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> docker run <span class="at">-v</span> <span class="va">$PWD</span>:<span class="va">$PWD</span> <span class="at">-w</span> <span class="va">$PWD</span> treecoutheo/phylter_docker phylter.py <span class="at">-h</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="run-phylter-with-singularity">Run PhylteR with Singularity<a class="anchor" aria-label="anchor" href="#run-phylter-with-singularity"></a>
 </h3>
 <p>PhylteR is also available as a <a href="https://docs.sylabs.io/guides/3.0/user-guide/index.html" class="external-link">singularity</a>
-container : (<a href="https://cloud.sylabs.io/library/theo.treecou/tool/phylter_singularity" class="external-link uri">https://cloud.sylabs.io/library/theo.treecou/tool/phylter_singularity</a>):</p>
+container : (<a href="https://cloud.sylabs.io/library/theo.treecou/tool/phylter_singularity" class="external-link uri">https://cloud.sylabs.io/library/theo.treecou/tool/phylter_singularity</a>).
+Here are instructions to install (or build) and run it:</p>
 <ol style="list-style-type: decimal">
-<li>Pull the latest version of PhylteR container from the Sylabs
-repository:</li>
+<li>Pull the latest version of <strong>phylter</strong> container from
+the Sylabs repository:</li>
 </ol>
 <div class="sourceCode" id="cb5"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> singularity pull PhylteR.sif library://theo.treecou/tool/phylter_singularity:latest</span></code></pre></div>
 <p>Alternatively, you can build a singularity image from the Docker Hub
 repository:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> singularity pull PhylteR.sif docker://treecoutheo/phylter_docker:latest</span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
-<li>Running PhylteR on the carnivora example dataset:</li>
+<li>Run <strong>phylter</strong> on the carnivora example dataset:</li>
 </ol>
 <div class="sourceCode" id="cb7"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">singularity</span> exec PhylteR.sif phylter.py <span class="at">-j</span> Carnivora_singularity <span class="at">-t</span> /usr/container-data/trees</span></code></pre></div>
 <p>Please, refer to the description of the docker container to see how
-to use the options available with the <code>phylter.py</code>
+to use all the options available with the <code>phylter.py</code>
 function.</p>
 </div>
 </div>
