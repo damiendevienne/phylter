@@ -90,14 +90,17 @@ Alternatively, they contain build in python 3 scrips to run PhylteR and
 perform additional tasks, such as pruning input trees from outliers
 detected and/or removing the corresponding outlier sequences in
 sequences files (in fasta format).</p>
-<p>Both container contain the flowing scripts: -
-<code>PhylteR_run.py</code>: parse arguments and launch PhylteR. It
-requires a job name that used as output directory (-j) and the path of a
-directory containing genes trees only (-t, one tree by file). Can also
-filter sequences files in fasta format from outlier sequences. -
-<code>PhylteR_run.R</code>: run phylter(). -
-<code>prune_outliers.R</code>: prune trees from outliers using ape’s
-keep.tips() function.</p>
+<p>Both container contain the flowing scripts:</p>
+<ul>
+<li><p><code>PhylteR_run.py</code>: parse arguments and launch PhylteR.
+It requires a job name that used as output directory (-j) and the path
+of a directory containing genes trees only (-t, one tree by file). Can
+also filter sequences files in fasta format from outlier
+sequences.</p></li>
+<li><p><code>PhylteR_run.R</code>: run phylter().</p></li>
+<li><p><code>prune_outliers.R</code>: prune trees from outliers using
+ape’s keep.tips() function.</p></li>
+</ul>
 <p>They also contain a toy dataset of 255 Carnivora genes trees and
 alignments from Allio et al. 2021 that is used to illustrate how to use
 both containers.</p>
@@ -127,10 +130,13 @@ container in /usr/container-data/trees:</li>
 </ol>
 <div class="sourceCode" id="cb3"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> docker run <span class="at">-v</span> <span class="va">$PWD</span>:<span class="va">$PWD</span> <span class="at">-w</span> <span class="va">$PWD</span> treecoutheo/phylter_docker PhylteR_run.py <span class="at">-j</span> Carnivora_docker <span class="at">-t</span> /usr/container-data/trees</span></code></pre></div>
 <p>This command create the directory Carnivora_docker in your working
-directory with inside: - <code>PhylteR_all_tree_named</code>: a single
-file containing all trees with the gene ID preceding the newick. -
-<code>phylter.out</code>: phylter output containing the log of the run
-and the list of identify outliers.</p>
+directory with inside:</p>
+<ul>
+<li><p><code>PhylteR_all_tree_named</code>: a single file containing all
+trees with the gene ID preceding the newick.</p></li>
+<li><p><code>phylter.out</code>: phylter output containing the log of
+the run and the list of identify outliers.</p></li>
+</ul>
 <ol start="4" style="list-style-type: decimal">
 <li>You may also want to prune trees and remove outliers from sequences
 files. The sequences files must contain the same name as the
@@ -143,18 +149,21 @@ Carnivora dataset contains the name of its corresponding tree files
 <strong>ENSG00000274286_ADRA2B</strong>.</li>
 </ol>
 <div class="sourceCode" id="cb4"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> docker run <span class="at">-v</span> <span class="va">$PWD</span>:<span class="va">$PWD</span> <span class="at">-w</span> <span class="va">$PWD</span> treecoutheo/phylter_docker PhylteR_run.py <span class="at">-j</span> Carnivora_docker <span class="at">-t</span> /usr/container-data/trees <span class="at">-p</span> TRUE <span class="at">-s</span> /usr/container-data/alignments <span class="at">-g</span> TRUE</span></code></pre></div>
-<p>This command generates: -
-<code>Carnivora_docker/trees_PhylteR/</code>: a directory containing
-trees pruned from their outliers. The number of trees inside the
-directory can be lower than the number of trees used as input. Trees
+<p>This command generates:</p>
+<ul>
+<li><p><code>Carnivora_docker/trees_PhylteR/</code>: a directory
+containing trees pruned from their outliers. The number of trees inside
+the directory can be lower than the number of trees used as input. Trees
 that identified as complete outlier are simply removed from the pruned
-dataset. - <code>Carnivora_docker/seqs_PhylteR/</code>: a directory
+dataset.</p></li>
+<li><p><code>Carnivora_docker/seqs_PhylteR/</code>: a directory
 containing sequences filtered from their outliers. The number of
 sequences files inside the directory can be lower than the number of
 sequences files used as input. Sequences files that identified as
-complete outlier are simply removed from the filtered dataset. -
-<code>report.pdf</code>: a PDF report containing a summary of the
-results.</p>
+complete outlier are simply removed from the filtered dataset.</p></li>
+<li><p><code>report.pdf</code>: a PDF report containing a summary of the
+results.</p></li>
+</ul>
 </div>
 <div class="section level3">
 <h3 id="run-phylter-with-singularity">Run PhylteR with Singularity<a class="anchor" aria-label="anchor" href="#run-phylter-with-singularity"></a>
