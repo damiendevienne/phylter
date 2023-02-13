@@ -25,12 +25,14 @@ require(phylter)
 require(ape)
 ```
 
-# Run PhylteR from containers
+# PhylteR in a container
 
-The PhylteR method is available as container version with Docker and Singularity. Thees containers can be used to run R and PhylteR. Alternatively, they contain build in python 3 scrips to run PhylteR and perform additional tasks, such as pruning input trees from outliers detected and/or removing the corresponding outlier sequences in sequences files (in fasta format).
+In addition to the R package **phylter** available on CRAN (https://cran.r-project.org/web/packages/phylter/index.html) and on GitHub (https://github.com/damiendevienne/phylter), *containerized* versions of **phylter** (docker and singularity) are also proposed. This may ease the use of **phylter** use on some computing infrastructures (clusters) or for users reluctant to the R language. 
+
+The containers host python3 scrips allowing to easily run **phylter** with the same options than with the R package, but also perform additional tasks such as removing (pruning) outliers from input trees and/or filtering out outlier sequences from (aligned) sequence files (fasta format).
 
 
-Both container contain the flowing scripts:
+The containers contain the flowing scripts:
 
 - `PhylteR_run.py`: parse arguments and launch PhylteR. It requires a job name that used as output directory (-j) and the path of a directory containing genes trees only (-t, one tree by file). Can also filter sequences files in fasta format from outlier sequences.
 
