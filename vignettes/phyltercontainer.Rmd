@@ -1,5 +1,5 @@
 ---
-title: phylter in a container
+title: PhylteR in a container
 author: Damien de Vienne
 date: '`r Sys.Date()`'
 output:
@@ -15,7 +15,7 @@ toccolor: 'blue'
 header-includes: \renewcommand*\familydefault{\sfdefault}
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{phylter in a container}
+  %\VignetteIndexEntry{PhylteR in a container}
   %!\VignetteEncoding{UTF-8}
   \usepackage[utf8]{inputenc}
 ---
