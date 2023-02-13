@@ -14,5 +14,5 @@ articles:
 - title: Articles
   navbar: ~
   contents:
-  - 1-Use o phylter
-  - 2-PhylteR in a container
+  - runphylter
+  - phyltercontainer
