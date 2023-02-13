@@ -113,16 +113,14 @@ the <code>phylter.py</code> function and its options.</p>
 <blockquote>
 <p>Warning: you may need administrator rights to use docker!</p>
 </blockquote>
-<div class="section level4">
-<h4 id="pull-the-latest-version-of-phylter-container-from-the-docker-hub-repository">1. Pull the latest version of <strong>phylter</strong> container
-from the Docker Hub repository:<a class="anchor" aria-label="anchor" href="#pull-the-latest-version-of-phylter-container-from-the-docker-hub-repository"></a>
-</h4>
+<ol style="list-style-type: decimal">
+<li>Pull the latest version of <strong>phylter</strong> container from
+the Docker Hub repository:</li>
+</ol>
 <div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> docker pull treecoutheo/phylter_docker:latest</span></code></pre></div>
-</div>
-<div class="section level4">
-<h4 id="run-phylter-on-the-example-carnivora-dataset">2. Run <strong>phylter</strong> on the example Carnivora
-dataset<a class="anchor" aria-label="anchor" href="#run-phylter-on-the-example-carnivora-dataset"></a>
-</h4>
+<ol start="2" style="list-style-type: decimal">
+<li>Run <strong>phylter</strong> on the example Carnivora dataset</li>
+</ol>
 <div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> docker run <span class="at">-v</span> <span class="va">$PWD</span>:<span class="va">$PWD</span> <span class="at">-w</span> <span class="va">$PWD</span> treecoutheo/phylter_docker phylter.py <span class="at">-j</span> Carnivora_docker <span class="at">-t</span> /usr/container-data/trees</span></code></pre></div>
 <ul>
 <li>
@@ -147,11 +145,10 @@ the trees with the gene ID preceding the newick.</li>
 <code>phylter.out</code>: the phylter output file containing the log
 of the run and the list of identified outliers.</li>
 </ul>
-</div>
-<div class="section level4">
-<h4 id="run-phylter-on-the-example-carnivora-dataset-and-prune-trees-and-remove-outliers-from-fasta-files">3. Run <strong>phylter</strong> on the example Carnivora dataset AND
-prune trees AND remove outliers from fasta files<a class="anchor" aria-label="anchor" href="#run-phylter-on-the-example-carnivora-dataset-and-prune-trees-and-remove-outliers-from-fasta-files"></a>
-</h4>
+<ol start="3" style="list-style-type: decimal">
+<li>Run <strong>phylter</strong> on the example Carnivora dataset AND
+prune trees AND remove outliers from fasta files</li>
+</ol>
 <p>You may want to run <strong>phylter</strong> and to subsequently
 remove the identified outliers from both the gene trees and the
 sequences files. For this to be performed, the sequence files must
@@ -197,11 +194,10 @@ been identified as outliers.</p></li>
 <li><p><code>report.pdf</code>: a PDF report containing a summary of the
 results.</p></li>
 </ul>
-</div>
-<div class="section level4">
-<h4 id="prune-trees-and-filter-out-sequences-after-the-phylter-run-">4. Prune trees and filter out sequences AFTER the
-<strong>phylter</strong> run.<a class="anchor" aria-label="anchor" href="#prune-trees-and-filter-out-sequences-after-the-phylter-run-"></a>
-</h4>
+<ol start="4" style="list-style-type: decimal">
+<li>Prune trees and filter out sequences AFTER the
+<strong>phylter</strong> run.</li>
+</ol>
 <p>Instead of performing the <strong>phylter</strong> analysis and the
 filtering of outliers at the same time, you can do it in multiple steps.
 here is how, on the example dataset:</p>
@@ -220,15 +216,13 @@ the pruning and/or the sequence filtering (see below).</p>
 <code>remove_sequence_outliers.py</code>:</li>
 </ul>
 <p><code>sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/ BLABLABALABJDLHUIDFHDUI</code></p>
-</div>
-<div class="section level4">
-<h4 id="view-all-phylter-options">. View all <strong>phylter</strong> options<a class="anchor" aria-label="anchor" href="#view-all-phylter-options"></a>
-</h4>
+<ol start="5" style="list-style-type: decimal">
+<li>View all <strong>phylter</strong> options</li>
+</ol>
 <p><code>phylter.py</code> allows specifying all the options available
 in the R package. To see this list of options, simply use the
 <code>-h</code> option:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> docker run <span class="at">-v</span> <span class="va">$PWD</span>:<span class="va">$PWD</span> <span class="at">-w</span> <span class="va">$PWD</span> treecoutheo/phylter_docker phylter.py <span class="at">-h</span></span></code></pre></div>
-</div>
 </div>
 <div class="section level3">
 <h3 id="run-phylter-with-singularity">Run PhylteR with Singularity<a class="anchor" aria-label="anchor" href="#run-phylter-with-singularity"></a>
@@ -236,28 +230,23 @@ in the R package. To see this list of options, simply use the
 <p>PhylteR is also available as a <a href="https://docs.sylabs.io/guides/3.0/user-guide/index.html" class="external-link">singularity</a>
 container : (<a href="https://cloud.sylabs.io/library/theo.treecou/tool/phylter_singularity" class="external-link uri">https://cloud.sylabs.io/library/theo.treecou/tool/phylter_singularity</a>).
 Here are instructions to install (or build) and run it:</p>
-<div class="section level4">
-<h4 id="pull-the-latest-version-of-phylter-container-from-the-sylabs-repository">1. Pull the latest version of <strong>phylter</strong> container
-from the Sylabs repository:<a class="anchor" aria-label="anchor" href="#pull-the-latest-version-of-phylter-container-from-the-sylabs-repository"></a>
-</h4>
+<ol style="list-style-type: decimal">
+<li>Pull the latest version of <strong>phylter</strong> container from
+the Sylabs repository:</li>
+</ol>
 <div class="sourceCode" id="cb5"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> singularity pull PhylteR.sif library://theo.treecou/tool/phylter_singularity:latest</span></code></pre></div>
 <p>Alternatively, you can build a singularity image from the Docker Hub
 repository:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> singularity pull PhylteR.sif docker://treecoutheo/phylter_docker:latest</span></code></pre></div>
-</div>
-<div class="section level4">
-<h4 id="run-phylter-on-the-carnivora-example-dataset">2. Run <strong>phylter</strong> on the carnivora example
-dataset:<a class="anchor" aria-label="anchor" href="#run-phylter-on-the-carnivora-example-dataset"></a>
-</h4>
+<ol start="2" style="list-style-type: decimal">
+<li>Run <strong>phylter</strong> on the carnivora example dataset:</li>
+</ol>
 <div class="sourceCode" id="cb7"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">singularity</span> exec PhylteR.sif phylter.py <span class="at">-j</span> Carnivora_singularity <span class="at">-t</span> /usr/container-data/trees</span></code></pre></div>
-</div>
-<div class="section level4">
-<h4 id="more-options">3. More options<a class="anchor" aria-label="anchor" href="#more-options"></a>
-</h4>
-<p>Please, refer to the description of the docker container to see how
-to use all the options available with the <code>phylter.py</code>
-function.</p>
-</div>
+<ol start="3" style="list-style-type: decimal">
+<li>More options Please, refer to the description of the docker
+container to see how to use all the options available with the
+<code>phylter.py</code> function.</li>
+</ol>
 </div>
 </div>
 <div class="section level2">
