@@ -210,12 +210,12 @@ the pruning and/or the sequence filtering (see below).</p>
 <ul>
 <li>Prune trees with <code>prune_tree_outliers.R</code>:</li>
 </ul>
-<p><code>sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/ BLABLABLA</code></p>
+<p><code>sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/phylter_docker prune_tree_outliers.R container-data_phylter /usr/container-data/trees Carnivora_docker/phylter.out</code></p>
 <ul>
 <li>Filter alignments with
 <code>remove_sequence_outliers.py</code>:</li>
 </ul>
-<p><code>sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/ BLABLABALABJDLHUIDFHDUI</code></p>
+<p><code>sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/phylter_docker remove_sequence_outliers.py -j container-data_phylter -s /usr/container-data/alignments -o Carnivora_docker/phylter.out</code></p>
 <ol start="5" style="list-style-type: decimal">
 <li>View all <strong>phylter</strong> options</li>
 </ol>
