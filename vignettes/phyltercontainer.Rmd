@@ -31,8 +31,11 @@ The PhylteR method is available as container version with Docker and Singularity
 
 
 Both container contain the flowing scripts:
+
 - `PhylteR_run.py`: parse arguments and launch PhylteR. It requires a job name that used as output directory (-j) and the path of a directory containing genes trees only (-t, one tree by file). Can also filter sequences files in fasta format from outlier sequences.
+
 - `PhylteR_run.R`: run phylter().
+
 - `prune_outliers.R`: prune trees from outliers using ape's keep.tips() function.
 
 They also contain a toy dataset of 255 Carnivora genes trees and alignments from Allio et al. 2021 that is used to illustrate how to use both containers.
@@ -60,7 +63,9 @@ sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/phylter_docker PhylteR_run.py -
 sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/phylter_docker PhylteR_run.py -j Carnivora_docker -t /usr/container-data/trees
 ```
 This command create the directory Carnivora_docker in your working directory with inside:
+
 - `PhylteR_all_tree_named`: a single file containing all trees with the gene ID preceding the newick.
+
 - `phylter.out`: phylter output containing the log of the run and the list of identify outliers.
 
 
@@ -70,8 +75,11 @@ This command create the directory Carnivora_docker in your working directory wit
 sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/phylter_docker PhylteR_run.py -j Carnivora_docker -t /usr/container-data/trees -p TRUE -s /usr/container-data/alignments -g TRUE
 ```
 This command generates:
+
 - `Carnivora_docker/trees_PhylteR/`: a directory containing trees pruned from their outliers. The number of trees inside the directory can be lower than the number of trees used as input. Trees that identified as complete outlier are simply removed from the pruned dataset.
+
 - `Carnivora_docker/seqs_PhylteR/`: a directory containing sequences filtered from their outliers. The number of sequences files inside the directory can be lower than the number of sequences files used as input. Sequences files that identified as complete outlier are simply removed from the filtered dataset.
+
 - `report.pdf`: a PDF report containing a summary of the results.
 
 
