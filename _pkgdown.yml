@@ -9,3 +9,10 @@ bslib:
     structure:
     left:  [intro, reference, articles, tutorials, news]
   right: [search, github]
+
+articles:
+- title: Articles
+  navbar: ~
+  contents:
+  - 1-Use o phylter
+  - 2-PhylteR in a container
