@@ -1,5 +1,5 @@
 ---
-title: Use of phylter
+title: 1-Use of phylter
 author: Damien de Vienne
 date: '`r Sys.Date()`'
 output:
@@ -15,7 +15,7 @@ toccolor: 'blue'
 header-includes: \renewcommand*\familydefault{\sfdefault} 
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{Use of phylter} 
+  %\VignetteIndexEntry{1-Use of phylter} 
   %!\VignetteEncoding{UTF-8}
   \usepackage[utf8]{inputenc}
 ---
