@@ -91,19 +91,23 @@ The command above generates, in addition to the two files described in the previ
 4. Prune trees and filter out sequences AFTER the **phylter** run. 
 
 Instead of performing the **phylter** analysis and the filtering of outliers at the same time, you can do it in multiple steps. here is how, on the example dataset:
- 1. Run phylter: 
+
+  - Run phylter:
+
 `sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/phylter_docker phylter.py -j Carnivora_docker -t /usr/container-data/trees`
-the output file `phylter.out` will be used for performing the pruning and/or the sequence filtering (see below).
+
+The output file `phylter.out` will be used for performing the pruning and/or the sequence filtering (see below).
  
- 2. Prune trees with `prune_tree_outliers.R`: 
- `sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/ BLABLABLA`
+  - Prune trees with `prune_tree_outliers.R`: 
+
+`sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/ BLABLABLA`
  
- 3. Filter alignments with `remove_sequence_outliers.py`: 
+  - Filter alignments with `remove_sequence_outliers.py`: 
+
 `sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/ BLABLABALABJDLHUIDFHDUI`
 
 
 5. View all **phylter** options
-
 
 `phylter.py` allows specifying all the options available in the R package. To see this list of options, simply use the `-h` option:
 ```sh
