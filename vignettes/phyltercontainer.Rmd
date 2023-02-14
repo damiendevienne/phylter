@@ -54,6 +54,7 @@ sudo docker pull treecoutheo/phylter_docker:latest
 ```
 
 2. Run **phylter** on the example Carnivora dataset
+
 ```sh
 sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/phylter_docker phylter.py -j Carnivora_docker -t /usr/container-data/trees
 ```
@@ -94,18 +95,22 @@ Instead of performing the **phylter** analysis and the filtering of outliers at 
 
   - Run phylter:
 
-`sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/phylter_docker phylter.py -j Carnivora_docker -t /usr/container-data/trees`
-
+```sh
+sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/phylter_docker phylter.py -j Carnivora_docker -t /usr/container-data/trees
+```
 The output file `phylter.out` will be used for performing the pruning and/or the sequence filtering (see below).
 
   - Prune trees with `prune_tree_outliers.R`:
 
-`sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/phylter_docker prune_tree_outliers.R container-data_phylter /usr/container-data/trees Carnivora_docker/phylter.out`
+```sh
+sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/phylter_docker prune_tree_outliers.R container-data_phylter /usr/container-data/trees Carnivora_docker/phylter.out
+```
 
   - Filter alignments with `remove_sequence_outliers.py`:
 
-`sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/phylter_docker remove_sequence_outliers.py -j container-data_phylter -s /usr/container-data/alignments -o Carnivora_docker/phylter.out`
-
+```sh
+sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/phylter_docker remove_sequence_outliers.py -j container-data_phylter -s /usr/container-data/alignments -o Carnivora_docker/phylter.out
+```
 
 5. View all **phylter** options
 
