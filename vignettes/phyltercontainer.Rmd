@@ -139,7 +139,7 @@ sudo singularity pull PhylteR.sif docker://treecoutheo/phylter_docker:latest
 2. Run **phylter** on the carnivora example dataset:
 
 ```sh
-singularity exec PhylteR.sif phylter.py -j Carnivora_singularity -t /usr/container-data/trees
+singularity exec -B $PWD PhylteR.sif phylter.py -j Carnivora_singularity -t /usr/container-data/trees
 ```
 
 3. More options
