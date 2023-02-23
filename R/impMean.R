@@ -75,7 +75,7 @@ impMean <- function(matrices) {
       pairs2correct<-tmpM[is.na(tmpM$value),1:2]
       newval<-apply(pairs2correct,1, function(x,y) ImputeFromClosestNeighbors(x[1],x[2],y), y=MEANMAT)
       MEANMAT[as.numeric(rownames(pairs2correct))]<-newval
-      warning("\n",nrow(pairs2correct)/2," pairs of species were never found together in trees. \nMean distances are thus infered using their closest neighbors.\n")
+      warning("\n",nrow(pairs2correct)/2," pairs of species were never found together in trees. \nMean distances were thus infered using their closest neighbors.\n")
     }
     ALL<-lapply(matrices.extended, ReplaceMissingValue, matrix2=MEANMAT)
   }
