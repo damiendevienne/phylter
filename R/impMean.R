@@ -65,13 +65,13 @@ impMean <- function(matrices) {
   listsp <- unique(unlist(sp.per.mat))
   length.indiv <- unlist(lapply(sp.per.mat, length))
   tmp <- rep(1,length(length.indiv))
-  if (sum(length(listsp)-length.indiv)>0) qual<-1 
+  if (sum(length(listsp)-length.indiv)>0) qual<-1 ##Meaning that imputation is necessary
   if (qual == 1) {
     matrices.extended<-lapply(matrices, AddColAndRow, allrowsandcol=listsp) #grows matrices and add NA to missing cells
     MEANMAT<-Reduce('+',lapply(matrices.extended, function(x) replace(x,is.na(x),0)))/Reduce("+", lapply(matrices.extended, Negate(is.na)))
     #If NA are present in this matrix, it means that some species were never found together in any tree. If so we need to find a way to imputethe distance by looking at the distance of their close neighbors (and print a warning). 
     if(anyNA(MEANMAT)) {
-      tmpM<-melt(MEANMAT)
+      tmpM<-melt(MEANMAT, as.is=TRUE) #as.is=TRUE prevents tip names to be considered integers (and creating bug afterwards).
       pairs2correct<-tmpM[is.na(tmpM$value),1:2]
       newval<-apply(pairs2correct,1, function(x,y) ImputeFromClosestNeighbors(x[1],x[2],y), y=MEANMAT)
       MEANMAT[as.numeric(rownames(pairs2correct))]<-newval
@@ -86,3 +86,10 @@ impMean <- function(matrices) {
   return(ALL)
 }
 
+
+
+
+for (i in 1:nrow(pairs2correct)) {
+  x<-pairs2correct[i,]
+}
+ImputeFromClosestNeighbors(x[1],x[2],y), y=MEANMAT)
