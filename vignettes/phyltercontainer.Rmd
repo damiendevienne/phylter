@@ -27,7 +27,7 @@ require(ape)
 
 # PhylteR in a container
 
-In addition to the R package **phylter** available on CRAN (https://cran.r-project.org/web/packages/phylter/index.html) and on GitHub (https://github.com/damiendevienne/phylter), *containerized* versions of **phylter** (docker and singularity) are also proposed.
+In addition to the R package **phylter** available on CRAN (https://CRAN.R-project.org/package=phylter) and on GitHub (https://github.com/damiendevienne/phylter), *containerized* versions of **phylter** (docker and singularity) are also proposed.
 
 This may ease the use of **phylter** on some computing infrastructures (clusters) or for users reluctant to the R language.
 
