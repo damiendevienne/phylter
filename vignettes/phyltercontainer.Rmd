@@ -136,14 +136,37 @@ Alternatively, you can build a singularity image from the Docker Hub repository:
 sudo singularity pull PhylteR.sif docker://treecoutheo/phylter_docker:latest
 ```
 
-2. Run **phylter** on the carnivora example dataset:
+2.a Run **phylter** on the carnivora example dataset:
 
 ```sh
 singularity exec -B $PWD PhylteR.sif phylter.py -j Carnivora_singularity -t /usr/container-data/trees
 ```
-
-3. More options
+> Note: For more options
 Please, refer to the description of the docker container to see how to use all the options available with the `phylter.py` function.
+
+
+2.b Alternatively, you can open a console in the singularity container as follows and use R in that console:
+
+
+```sh
+singularity shell -B $PWD PhylteR.sif
+
+R # this launch the version of R from inside the singularity
+```
+
+Then:
+
+```R
+
+library(phylter)
+
+list_trees <- Sys.glob("/usr/container-data/trees/ENSG*.treefile")
+
+trees <- lapply(list_trees, ape::read.tree)
+
+results <- phylter(trees)
+
+```
 
 
 # References
