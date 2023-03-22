@@ -238,15 +238,29 @@ the Sylabs repository:</li>
 <p>Alternatively, you can build a singularity image from the Docker Hub
 repository:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> singularity pull PhylteR.sif docker://treecoutheo/phylter_docker:latest</span></code></pre></div>
-<ol start="2" style="list-style-type: decimal">
-<li>Run <strong>phylter</strong> on the carnivora example dataset:</li>
-</ol>
+<p>2.a Run <strong>phylter</strong> on the carnivora example
+dataset:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">singularity</span> exec <span class="at">-B</span> <span class="va">$PWD</span> PhylteR.sif phylter.py <span class="at">-j</span> Carnivora_singularity <span class="at">-t</span> /usr/container-data/trees</span></code></pre></div>
-<ol start="3" style="list-style-type: decimal">
-<li>More options Please, refer to the description of the docker
+<blockquote>
+<p>Note: For more options Please, refer to the description of the docker
 container to see how to use all the options available with the
-<code>phylter.py</code> function.</li>
-</ol>
+<code>phylter.py</code> function.</p>
+</blockquote>
+<p>2.b Alternatively, you can open a console in the singularity
+container as follows and use R in that console:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">singularity</span> shell <span class="at">-B</span> <span class="va">$PWD</span> PhylteR.sif</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="ex">R</span> <span class="co"># this launch the version of R from inside the singularity</span></span></code></pre></div>
+<p>Then:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">phylter</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">list_trees</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.glob.html" class="external-link">Sys.glob</a></span><span class="op">(</span><span class="st">"/usr/container-data/trees/ENSG*.treefile"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">trees</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">list_trees</span>, <span class="fu">ape</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/ape/man/read.tree.html" class="external-link">read.tree</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/phylter.html">phylter</a></span><span class="op">(</span><span class="va">trees</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
