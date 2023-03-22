@@ -16,10 +16,7 @@
 
 For details about the functions, their usage, and a in-depth description of the use of **phylter** on a biological dataset, step-by-step, please vist the phylter web page : https://damiendevienne.github.io/phylter. 
 
-If you are not familiar with R, you can also use a containerized version of **phylter** (Docker or Singularity). You will find all the instructions here: https://damiendevienne.github.io/phylter/articles/phyltercontainer.html
-
-
-<!-- > Note: if you don't use R or don't want to use R, a **containerized version of phylter** is also available: [https://wheredoweputthis.org](https://wheredoweputthis.org) -->
+> Note: if you don't use R or don't want to use R, **containerized versions of phylter** are also available (Docker and Singularity): [https://damiendevienne.github.io/phylter/articles/phyltercontainer.html]([https://wheredoweputthis.org](https://damiendevienne.github.io/phylter/articles/phyltercontainer.html)
 
 
 ## Installation
