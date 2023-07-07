@@ -1,0 +1,5 @@
+## extract from the archived package mrfDepth - 07/2023
+
+## Use the R_HOME indirection to support installations of multiple R version
+PKG_LIBS = $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
+phylter_FFLAGS = $(FPICFLAGS) $(SHLIB_FFLAGS)

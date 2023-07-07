@@ -39,7 +39,6 @@
 #' outliers<-detect.outliers(mat)
 #' outliers$cells # matrix where each row represents one cell in the input matrix
 #' 
-#' @importFrom mrfDepth medcouple
 #' @importFrom stats dist quantile IQR
 #' @export
 detect.outliers <- function(X, k = 3, test.island=TRUE, normalizeby="row") {
