@@ -1,11 +1,11 @@
-# extract from the archived package mrfDepth - 07/2023
+# extract from the package mrfDepth - 07/2023
 
 #' A robust measure of skewness for univariate data
 #' 
 #' @description
 #' Computes the medcouple, a robust measure of skewness for univariate data. 
 #' For multivariate data the medcouple is calculated on each column of the data matrix.
-#' @note This function is extracted from the archived package mrfDepth - 07/2023
+#' @note This function is extracted from the package mrfDepth - 07/2023
 #' @usage medcouple(x, do.reflect = NULL)
 #' @param x An \eqn{n} by \eqn{p} data matrix.
 #' @param do.reflect Logical indicating whether the medcouple should also be computed on the reflected sample \code{-x}, with final result \eqn{(mc}(\code{x})\eqn{-mc(-}\code{x}\eqn{))/2}. \cr Defaults \code{TRUE} when \eqn{n<=100} and to \code{FALSE} otherwise.

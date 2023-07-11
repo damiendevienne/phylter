@@ -28,7 +28,7 @@ For numerical accuracy it is advised, for small data sets, to compute the medcou
 Note that missing values are not allowed.
 }
 \note{
-This function is extracted from the archived package mrfDepth - 07/2023
+This function is extracted from the package mrfDepth - 07/2023
 }
 \examples{
 # Calculate the medcouple of univariate data sets.
