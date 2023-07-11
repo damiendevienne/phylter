@@ -24,18 +24,19 @@
 #' @useDynLib phylter, .registration=TRUE
 #' @importFrom stats complete.cases
 #' @examples 
-#' # Calculate the medcouple of a bivariate data set.
-#' # Note that the medcouple of each variable is returned.
-#' # data(bloodfat)
-#' # medcouple(bloodfat)
-#' # For smaller data sets it is advisable to calculate
-#' # the medcouple on both the sample and the reflected sample.
-#' # small.data <- bloodfat[1:25,]
-#' # medcouple(small.data, do.reflect = FALSE)
-#' # -medcouple(-small.data, do.reflect = FALSE)
-#' # Small difference are due to numerical instabilities. 
+#' # Calculate the medcouple of univariate data sets.
+#' # For 2000 normally distributed values
+#' # the medcouple value is close to 0 because 
+#' # data are not skewed
+#' x<-rnorm(2000)
+#' medcouple(x) 
+#' # For 2000 values following a lognormal
+#' # distribution (mean 0,sd 1), medcouple is close to 1
+#' # because values are right-skewed
+#' y<-rnorm(2000)
+#' medcouple(y) 
 #' # Use the option do.reflect to increase expected accuracy. 
-#' # medcouple(small.data, do.reflect = TRUE)
+#' medcouple(y, do.reflect = TRUE)
 
 medcouple <- function(x, do.reflect=NULL){
     
