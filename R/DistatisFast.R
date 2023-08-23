@@ -34,10 +34,10 @@
 #' # Get a list of matrices 
 #' # from the carnivora dataset
 #' data(carnivora) 
-#' matrices<-phylter(carnivora, InitialOnly=TRUE)$matrices
+#' matrices <- phylter(carnivora, InitialOnly = TRUE, parallel = FALSE)$matrices
 #' 
 #' # Perform a Distatis analysis on these matrices: 
-#' distatis<-DistatisFast(matrices)
+#' distatis <- DistatisFast(matrices, parallel = FALSE)
 #' 
 #' #distatis is a list with multiple elements: 
 #' distatis$alpha #weigh of each matrix (how much it correlates with others)

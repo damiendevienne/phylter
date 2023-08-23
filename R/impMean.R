@@ -12,7 +12,7 @@
 #' in the same order and missing data (if any) imputed.
 #' @examples 
 #' data(carnivora)
-#' matrices<-phylter(carnivora, InitialOnly=TRUE)$matrices
+#' matrices <- phylter(carnivora, InitialOnly = TRUE, parallel = FALSE)$matrices
 #' 
 #' # remove n species randomly (n between 1 and 5) in each matrix (to mimic missing data)
 #' fun<-function(mat) {

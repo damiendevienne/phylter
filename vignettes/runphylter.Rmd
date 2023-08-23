@@ -172,7 +172,7 @@ A `carnivora` dataset (small subset from Allio et al. 2021) comprised of 125 gen
 
 ```{r, results='hide'}
 data(carnivora, package = "phylter")
-results <- phylter(carnivora) # for example
+results <- phylter(carnivora, parallel = FALSE) # for example
 ```
 
 ## Exploring the results

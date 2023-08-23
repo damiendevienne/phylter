@@ -20,7 +20,7 @@ in this gene tree and (ii) the average position of this species in all other gen
 }
 \examples{
 data(carnivora)
-matrices<-phylter(carnivora, InitialOnly=TRUE)$matrices
+matrices<-phylter(carnivora, InitialOnly=TRUE, parallel=FALSE)$matrices
 ds<-DistatisFast(matrices)
 WR<-Dist2WR(ds) #returns the gene x species matrix
 

@@ -164,7 +164,7 @@ list_trees <- Sys.glob("/usr/container-data/trees/ENSG*.treefile")
 
 trees <- lapply(list_trees, ape::read.tree)
 
-results <- phylter(trees)
+results <- phylter(trees, parallel = FALSE)
 
 ```
 

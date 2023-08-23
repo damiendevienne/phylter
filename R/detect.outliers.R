@@ -33,7 +33,7 @@
 #' # Get the initial gene x species matrix
 #' # from the carnivora dataset
 #' data(carnivora) 
-#' mat<-phylter(carnivora, InitialOnly=TRUE)$WR
+#' mat <- phylter(carnivora, InitialOnly = TRUE, parallel = FALSE)$WR
 #' 
 #' # detect outliers in this matrix
 #' outliers<-detect.outliers(mat)
