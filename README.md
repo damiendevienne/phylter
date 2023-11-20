@@ -18,7 +18,7 @@ For details about the functions, their usage, and a in-depth description of the 
 
 > Note: if you don't use R or don't want to use R, **containerized versions of phylter** are also available (Docker and Singularity): [https://damiendevienne.github.io/phylter/articles/phyltercontainer.html](https://damiendevienne.github.io/phylter/articles/phyltercontainer.html)
 
-> if you use **phylter**, please cite: Aurore Comte, Théo Tricou, Eric Tannier, Julien Joseph, Aurélie Siberchicot, Simon Penel, Rémi Allio, Frédéric Delsuc, Stéphane Dray, Damien M de Vienne, PhylteR: Efficient Identification of Outlier Sequences in Phylogenomic Datasets, Molecular Biology and Evolution, Volume 40, Issue 11, November 2023, msad234, [https://doi.org/10.1093/molbev/msad234](https://doi.org/10.1093/molbev/msad234)
+> if you use **phylter**, please cite: Comte, A., Tricou, T., Tannier, E., Joseph, J., Siberchicot, A., Penel, S., Allio, R., Delsuc, F., Dray, S., de Vienne, D.M. (2023). PhylteR: Efficient Identification of Outlier Sequences in Phylogenomic Datasets, Molecular Biology and Evolution, 40(11) msad234, [https://doi.org/10.1093/molbev/msad234](https://doi.org/10.1093/molbev/msad234)
 
 
 ## Installation
@@ -144,7 +144,7 @@ write.phylter(results, file = "phylter.out")
 
 - Allio, R., Tilak, M. K., Scornavacca, C., Avenant, N. L., Kitchener, A. C., Corre, E., ... & Delsuc, F. (2021). High-quality carnivoran genomes from roadkill samples enable comparative species delineation in aardwolf and bat-eared fox. Elife, 10, e63167. https://doi.org/10.7554/eLife.63167
 
-- Comte, A., Tricou, T., Tannier, E., Joseph, J., Siberchicot, A., Penel, S., Allio, R., Delsuc, F., Dray, S., de Vienne, D.M. PhylteR: Efficient Identification of Outlier Sequences in Phylogenomic Datasets, Molecular Biology and Evolution, 40(11), msad234, [https://doi.org/10.1093/molbev/msad234](https://doi.org/10.1093/molbev/msad234)
+- Comte, A., Tricou, T., Tannier, E., Joseph, J., Siberchicot, A., Penel, S., Allio, R., Delsuc, F., Dray, S., de Vienne, D.M. (2023). PhylteR: Efficient Identification of Outlier Sequences in Phylogenomic Datasets, Molecular Biology and Evolution, 40(11), msad234, [https://doi.org/10.1093/molbev/msad234](https://doi.org/10.1093/molbev/msad234)
 
 - Hubert, M. and Vandervieren, E. (2008). *An adjusted boxplot for skewed distributions.* Computational Statistics and Data Analysis. https://doi.org/10.1016/j.csda.2007.11.008
 
