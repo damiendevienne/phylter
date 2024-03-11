@@ -8,8 +8,8 @@
 <meta name="description" content="phylter">
 <title>2-PhylteR in a container • phylter</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="2-PhylteR in a container">
 <meta property="og:description" content="phylter">
@@ -73,7 +73,7 @@
                         <h4 data-toc-skip class="author">Damien de
 Vienne</h4>
             
-            <h4 data-toc-skip class="date">2023-11-20</h4>
+            <h4 data-toc-skip class="date">2024-03-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/damiendevienne/phylter/blob/HEAD/vignettes/phyltercontainer.Rmd" class="external-link"><code>vignettes/phyltercontainer.Rmd</code></a></small>
       <div class="d-none name"><code>phyltercontainer.Rmd</code></div>
@@ -117,11 +117,11 @@ the <code>phylter.py</code> function and its options.</p>
 <li>Pull the latest version of <strong>phylter</strong> container from
 the Docker Hub repository:</li>
 </ol>
-<div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> docker pull treecoutheo/phylter_docker:latest</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">sudo</span> docker pull treecoutheo/phylter_docker:latest</span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
 <li>Run <strong>phylter</strong> on the example Carnivora dataset</li>
 </ol>
-<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> docker run <span class="at">-v</span> <span class="va">$PWD</span>:<span class="va">$PWD</span> <span class="at">-w</span> <span class="va">$PWD</span> treecoutheo/phylter_docker phylter.py <span class="at">-j</span> Carnivora_docker <span class="at">-t</span> /usr/container-data/trees</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">sudo</span> docker run <span class="at">-v</span> <span class="va">$PWD</span>:<span class="va">$PWD</span> <span class="at">-w</span> <span class="va">$PWD</span> treecoutheo/phylter_docker phylter.py <span class="at">-j</span> Carnivora_docker <span class="at">-t</span> /usr/container-data/trees</span></code></pre></div>
 <ul>
 <li>
 <code>$PWD</code> specifies that you work in your local
@@ -159,7 +159,7 @@ automatically to a tree file named
 <code>ENSG00000274286_ADRA2B.treefile</code>: <code>phylter.py</code>
 will identify the gene ID as being
 <strong>ENSG00000274286_ADRA2B</strong>.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> docker run <span class="at">-v</span> <span class="va">$PWD</span>:<span class="va">$PWD</span> <span class="at">-w</span> <span class="va">$PWD</span> treecoutheo/phylter_docker phylter.py <span class="at">-j</span> Carnivora_docker <span class="at">-t</span> /usr/container-data/trees <span class="at">-p</span> TRUE <span class="at">-s</span> /usr/container-data/alignments <span class="at">-g</span> TRUE</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">sudo</span> docker run <span class="at">-v</span> <span class="va">$PWD</span>:<span class="va">$PWD</span> <span class="at">-w</span> <span class="va">$PWD</span> treecoutheo/phylter_docker phylter.py <span class="at">-j</span> Carnivora_docker <span class="at">-t</span> /usr/container-data/trees <span class="at">-p</span> TRUE <span class="at">-s</span> /usr/container-data/alignments <span class="at">-g</span> TRUE</span></code></pre></div>
 <ul>
 <li>
 <code>-p TRUE</code> specifies that the input trees should be pruned
@@ -204,25 +204,25 @@ here is how, on the example dataset:</p>
 <ul>
 <li>Run phylter:</li>
 </ul>
-<div class="sourceCode" id="cb4"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> docker run <span class="at">-v</span> <span class="va">$PWD</span>:<span class="va">$PWD</span> <span class="at">-w</span> <span class="va">$PWD</span> treecoutheo/phylter_docker phylter.py <span class="at">-j</span> Carnivora_docker <span class="at">-t</span> /usr/container-data/trees</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">sudo</span> docker run <span class="at">-v</span> <span class="va">$PWD</span>:<span class="va">$PWD</span> <span class="at">-w</span> <span class="va">$PWD</span> treecoutheo/phylter_docker phylter.py <span class="at">-j</span> Carnivora_docker <span class="at">-t</span> /usr/container-data/trees</span></code></pre></div>
 <p>The output file <code>phylter.out</code> will be used for performing
 the pruning and/or the sequence filtering (see below).</p>
 <ul>
 <li>Prune trees with <code>prune_tree_outliers.R</code>:</li>
 </ul>
-<div class="sourceCode" id="cb5"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> docker run <span class="at">-v</span> <span class="va">$PWD</span>:<span class="va">$PWD</span> <span class="at">-w</span> <span class="va">$PWD</span> treecoutheo/phylter_docker prune_tree_outliers.R container-data_phylter /usr/container-data/trees Carnivora_docker/phylter.out</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">sudo</span> docker run <span class="at">-v</span> <span class="va">$PWD</span>:<span class="va">$PWD</span> <span class="at">-w</span> <span class="va">$PWD</span> treecoutheo/phylter_docker prune_tree_outliers.R container-data_phylter /usr/container-data/trees Carnivora_docker/phylter.out</span></code></pre></div>
 <ul>
 <li>Filter alignments with
 <code>remove_sequence_outliers.py</code>:</li>
 </ul>
-<div class="sourceCode" id="cb6"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> docker run <span class="at">-v</span> <span class="va">$PWD</span>:<span class="va">$PWD</span> <span class="at">-w</span> <span class="va">$PWD</span> treecoutheo/phylter_docker remove_sequence_outliers.py <span class="at">-j</span> container-data_phylter <span class="at">-s</span> /usr/container-data/alignments <span class="at">-o</span> Carnivora_docker/phylter.out</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">sudo</span> docker run <span class="at">-v</span> <span class="va">$PWD</span>:<span class="va">$PWD</span> <span class="at">-w</span> <span class="va">$PWD</span> treecoutheo/phylter_docker remove_sequence_outliers.py <span class="at">-j</span> container-data_phylter <span class="at">-s</span> /usr/container-data/alignments <span class="at">-o</span> Carnivora_docker/phylter.out</span></code></pre></div>
 <ol start="5" style="list-style-type: decimal">
 <li>View all <strong>phylter</strong> options</li>
 </ol>
 <p><code>phylter.py</code> allows specifying all the options available
 in the R package. To see this list of options, simply use the
 <code>-h</code> option:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> docker run <span class="at">-v</span> <span class="va">$PWD</span>:<span class="va">$PWD</span> <span class="at">-w</span> <span class="va">$PWD</span> treecoutheo/phylter_docker phylter.py <span class="at">-h</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">sudo</span> docker run <span class="at">-v</span> <span class="va">$PWD</span>:<span class="va">$PWD</span> <span class="at">-w</span> <span class="va">$PWD</span> treecoutheo/phylter_docker phylter.py <span class="at">-h</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="run-phylter-with-singularity">Run PhylteR with Singularity<a class="anchor" aria-label="anchor" href="#run-phylter-with-singularity"></a>
@@ -234,13 +234,13 @@ Here are instructions to install (or build) and run it:</p>
 <li>Pull the latest version of <strong>phylter</strong> container from
 the Sylabs repository:</li>
 </ol>
-<div class="sourceCode" id="cb8"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> singularity pull PhylteR.sif library://theo.treecou/tool/phylter_singularity:latest</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">sudo</span> singularity pull PhylteR.sif library://theo.treecou/tool/phylter_singularity:latest</span></code></pre></div>
 <p>Alternatively, you can build a singularity image from the Docker Hub
 repository:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> singularity pull PhylteR.sif docker://treecoutheo/phylter_docker:latest</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">sudo</span> singularity pull PhylteR.sif docker://treecoutheo/phylter_docker:latest</span></code></pre></div>
 <p>2.a Run <strong>phylter</strong> on the carnivora example
 dataset:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">singularity</span> exec <span class="at">-B</span> <span class="va">$PWD</span> PhylteR.sif phylter.py <span class="at">-j</span> Carnivora_singularity <span class="at">-t</span> /usr/container-data/trees</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="ex">singularity</span> exec <span class="at">-B</span> <span class="va">$PWD</span> PhylteR.sif phylter.py <span class="at">-j</span> Carnivora_singularity <span class="at">-t</span> /usr/container-data/trees</span></code></pre></div>
 <blockquote>
 <p>Note: For more options Please, refer to the description of the docker
 container to see how to use all the options available with the
@@ -248,9 +248,9 @@ container to see how to use all the options available with the
 </blockquote>
 <p>2.b Alternatively, you can open a console in the singularity
 container as follows and use R in that console:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">singularity</span> shell <span class="at">-B</span> <span class="va">$PWD</span> PhylteR.sif</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="ex">R</span> <span class="co"># this launch the version of R from inside the singularity</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="ex">singularity</span> shell <span class="at">-B</span> <span class="va">$PWD</span> PhylteR.sif</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="ex">R</span> <span class="co"># this launch the version of R from inside the singularity</span></span></code></pre></div>
 <p>Then:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
