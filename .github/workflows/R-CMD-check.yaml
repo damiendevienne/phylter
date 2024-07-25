@@ -51,8 +51,8 @@ jobs:
       - name: Install libraries for macOS
         if: runner.os == 'macOS'
         run: |
-          brew reinstall pkg-config
           brew install gsl
+          brew reinstall pkg-config
           
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
