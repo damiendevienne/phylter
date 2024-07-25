@@ -1,8 +1,7 @@
 pandoc: 3.1.11
-pkgdown: 2.0.7
+pkgdown: 2.1.0
 pkgdown_sha: ~
 articles:
   phyltercontainer: phyltercontainer.html
   runphylter: runphylter.html
-last_built: 2024-03-11T08:30Z
-
+last_built: 2024-07-25T10:20Z
