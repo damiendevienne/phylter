@@ -38,7 +38,7 @@ are present in all genes.}
 detected (see details).}
 
 \item{k2}{Same as k for complete gene outlier detection. To preserve complete genes from 
-being discarded, k2 can be increased. By default, k2 = k. (see above)}
+being discarded, k2 can be increased. By default, k2 = k (see above).}
 
 \item{Norm}{Should the matrices be normalized prior to the complete analysis and how. If "median" (the default), matrices are divided by their median, if 
 "mean" they are divided by their mean, if "none", no normalization if performed. Normalizing ensures that fast-evolving 
@@ -48,7 +48,7 @@ being discarded, k2 can be increased. By default, k2 = k. (see above)}
 \code{Norm="mean"}) of phylogenetic distance matrices below which genes are simply discarded from the analysis. This
 prevents dividing by 0, and allows getting rid of genes that contain mostly branches
 of length 0 and are therefore uninformative anyway. Discarded genes, if any, are listed in 
-the output (\code{out$DiscardedGenes}).}
+the output \code{out$DiscardedGenes}.}
 
 \item{gene.names}{List of gene names used to rename elements in X. If NULL (the default), 0
 elements are named 1,2,..,length(X).}

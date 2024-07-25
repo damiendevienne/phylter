@@ -15,7 +15,7 @@
 #' @param k Strength of outlier detection. The higher this value the less outliers
 #' detected (see details).
 #' @param k2 Same as k for complete gene outlier detection. To preserve complete genes from 
-#' being discarded, k2 can be increased. By default, k2 = k. (see above) 
+#' being discarded, k2 can be increased. By default, k2 = k (see above). 
 #' @param Norm Should the matrices be normalized prior to the complete analysis and how. If "median" (the default), matrices are divided by their median, if 
 #' "mean" they are divided by their mean, if "none", no normalization if performed. Normalizing ensures that fast-evolving 
 #' (and slow-evolving) genes are not treated as outliers. Normalization by median is a better choice as it is less sensitive to outlier values. 
@@ -23,7 +23,7 @@
 #' \code{Norm="mean"}) of phylogenetic distance matrices below which genes are simply discarded from the analysis. This
 #' prevents dividing by 0, and allows getting rid of genes that contain mostly branches
 #' of length 0 and are therefore uninformative anyway. Discarded genes, if any, are listed in 
-#' the output (\code{out$DiscardedGenes}).
+#' the output \code{out$DiscardedGenes}.
 #' @param gene.names List of gene names used to rename elements in X. If NULL (the default), 0
 #' elements are named 1,2,..,length(X). 
 #' @param test.island If TRUE (the default), only the highest value in
