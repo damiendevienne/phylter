@@ -1,0 +1,22 @@
+bibentry(bibtype = "Article",
+    title = "{PhylteR}: Efficient Identification of Outlier Sequences in Phylogenomic Datasets",
+    author = c(person(given = "Aurore", family = "Comte"),
+               person(given = "Th\\'eo", family = "Tricou"),
+               person(given = "Eric", family = "Tannier"),
+               person(given = "Julien", family = "Joseph"),
+               person(given = "Aur\\'elie", family = "Siberchicot"),
+               person(given = "Simon", family = "Penel"),
+               person(given = "R\\'emi", family = "Allio"),
+               person(given = "Fr\\'ed\\'eric", family = "Delsuc"),
+               person(given = "St\\'ephane", family = "Dray"),
+               person(given = "Damien M", family = "de Vienne")
+               ),
+    journal = "Molecular Biology and Evolution",
+    volume = "40",
+    number = "11",
+    pages = "msad234",
+    year = "2023",
+    month = "10",
+    doi = "10.1093/molbev/msad234",
+    header = "To cite phylter in publications use:"
+)
