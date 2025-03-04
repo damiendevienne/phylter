@@ -1,7 +1,11 @@
 # PhylteR, a tool for analyzing, visualizing and filtering phylogenomics datasets <img src="man/figures/logophylter.png" align="right" style="float:right; width:20%;"/>
 
-[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/phylter)](https://cran.r-project.org/package=phylter)
+[![CRAN_Release_Badge](https://www.r-pkg.org/badges/version-ago/phylter)](https://cran.r-project.org/package=phylter)
+[![CRAN Downloads](https://cranlogs.r-pkg.org/badges/phylter)](https://cran.r-project.org/package=phylter)
 [![R-CMD-check](https://github.com/damiendevienne/phylter/workflows/R-CMD-check/badge.svg)](https://github.com/damiendevienne/phylter/actions)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![SWH](https://archive.softwareheritage.org/badge/origin/https://github.com/damiendevienne/phylter/)](https://archive.softwareheritage.org/browse/origin/?origin_url=https://github.com/damiendevienne/phylter)
 
 
 **`phylter`** is a tool that allows detecting, removing and visualizing outliers in phylogenomics dataset by iteratively removing taxa from gene families (gene trees) and optimizing a score of concordance between individual matrices.   
