@@ -8,8 +8,8 @@
 <title>1-Use of phylter • phylter</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="1-Use of phylter">
 </head>
 <body>
@@ -60,7 +60,7 @@
                         <h4 data-toc-skip class="author">Damien de
 Vienne</h4>
             
-            <h4 data-toc-skip class="date">2024-07-25</h4>
+            <h4 data-toc-skip class="date">2025-03-04</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/damiendevienne/phylter/blob/master/vignettes/runphylter.Rmd" class="external-link"><code>vignettes/runphylter.Rmd</code></a></small>
       <div class="d-none name"><code>runphylter.Rmd</code></div>
@@ -88,7 +88,7 @@ GitHub:</li>
 <li>Once installed, the package can be loaded:</li>
 </ol>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st">"phylter"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/damiendevienne/phylter" class="external-link">"phylter"</a></span><span class="op">)</span></span></code></pre></div>
 <p>Note that <code>phylter</code> requires R version &gt; 4.0, otherwise
 it cannot be installed. Also, R uses the GNU Scientific Library. On
 Ubuntu, this can be installed prior to the installation of the
@@ -250,7 +250,7 @@ is less affected by outlier values.</p>
 Principle of the phylter method for identifying outliers in phylogenomic
 datasets. The method relies on DISTATIS (grey block), an extension of
 multidimensional scaling to three dimensions.</span>
-<img src="figures/method_new4.png" style="width:700px"></p>
+<img src="figures%2Fmethod_new4.png" style="width:700px"></p>
 </div>
 <p><br></p>
 <p>From the K matrices obtained, an incremental process starts,
@@ -501,7 +501,7 @@ of the outliers. The two matrices are displayed below. It clearly
 appears that the removal of outliers identified by <code>phylter</code>
 increased the overall concordance between the gene matrices by removing
 the few genes that were causing this loss of concordance.</p>
-<p><img src="figures/RVcoeffs.png" style="width:100.0%"></p>
+<p><img src="figures%2FRVcoeffs.png" style="width:100.0%"></p>
 </div>
 <div class="section level4">
 <h4 id="visualize-the-2-way-reference-matrix-from-which-outliers-are-detected">Visualize the 2-way reference matrix from which outliers are
@@ -525,7 +525,7 @@ the others but are still identified as outlirs by <code>phylter</code>
 is because the process is iterative and these less-obvious outliers were
 maybe more obvious after having discarded a first set of outliers. This
 figure is obtained by typing <code>plot2WR(results)</code>.</p>
-<p><img src="figures/2WR.png" style="width:100.0%"></p>
+<p><img src="figures%2F2WR.png" style="width:100.0%"></p>
 </div>
 <div class="section level4">
 <h4 id="visualize-the-distribution-of-outliers">Visualize the distribution of outliers<a class="anchor" aria-label="anchor" href="#visualize-the-distribution-of-outliers"></a>
@@ -533,13 +533,13 @@ figure is obtained by typing <code>plot2WR(results)</code>.</p>
 <p>Typing <code>plot(results, "genes")</code> allows exploring the
 number of outliers identified by <code>phylter</code> for each gene.
 Here is how it looks for the example dataset:</p>
-<p><img src="figures/pergenes.png" style="width:100.0%"></p>
+<p><img src="figures%2Fpergenes.png" style="width:100.0%"></p>
 <p>We observe that a few gene families have a lot of outliers, while
 others have none. One gene family has even almost half of its leaves
 (species) discarded.</p>
 <p>Typing <code>plot(results, "species")</code> allows exploring the
 number of genes for which each species was identified as outlier.</p>
-<p><img src="figures/perspecies.png" style="width:100.0%"></p>
+<p><img src="figures%2Fperspecies.png" style="width:100.0%"></p>
 <p>Here we see that no species is particularly problematic. Almost each
 species is an outlier in at least one gene family.</p>
 </div>
@@ -558,7 +558,7 @@ We observe a sharp decrease of the dispersal of the points after having
 employed <code>phylter</code> on the dataset.</p>
 <p>This figure is obtained by simply typing
 <code>plotDispersion(results)</code>.</p>
-<p><img src="figures/phylterdispersion.png" style="width:100.0%"></p>
+<p><img src="figures%2Fphylterdispersion.png" style="width:100.0%"></p>
 </div>
 <div class="section level4">
 <h4 id="visualize-the-evolution-of-the-quality-score-of-the-compromise-matrix">Visualize the evolution of the quality score of the compromise
@@ -571,7 +571,7 @@ removing the outliers at each step is one of the criteria for stopping
 the overall iterative process. The evolution of this score can be
 visualized with <code>phylter</code> by typing
 <code>plotopti(results)</code>. The output is given below.</p>
-<p><img src="figures/phylteropti.png" style="width:100.0%"></p>
+<p><img src="figures%2Fphylteropti.png" style="width:100.0%"></p>
 <p>We see that on this dataset, <code>phylter</code> performed 11 steps
 before stopping.</p>
 </div>
@@ -637,7 +637,7 @@ this GitHub repository.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>
