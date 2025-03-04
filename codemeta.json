@@ -1,0 +1,175 @@
+{
+  "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+  "@type": "SoftwareSourceCode",
+  "identifier": "phylter",
+  "description": "Analyzis and filtering of phylogenomics datasets. It takes an input either a collection of gene trees (then transformed to matrices) or directly a collection of gene matrices and performs an iterative process to identify what species in what genes are outliers, and whose elimination significantly improves the concordance between the input matrices. The methods builds upon the Distatis approach (Abdi et al. (2005) <doi:10.1101/2021.09.08.459421>), a generalization of classical multidimensional scaling to multiple distance matrices.",
+  "name": "phylter: Detect and Remove Outliers in Phylogenomics Datasets",
+  "issueTracker": "https://github.com/damiendevienne/phylter/issues",
+  "license": "https://spdx.org/licenses/GPL-2.0",
+  "version": "0.9.12",
+  "programmingLanguage": {
+    "@type": "ComputerLanguage",
+    "name": "R",
+    "url": "https://r-project.org"
+  },
+  "runtimePlatform": "R version 4.4.3 (2025-02-28)",
+  "provider": {
+    "@id": "https://cran.r-project.org",
+    "@type": "Organization",
+    "name": "Comprehensive R Archive Network (CRAN)",
+    "url": "https://cran.r-project.org"
+  },
+  "author": [
+    {
+      "@type": "Person",
+      "givenName": "Damien M.",
+      "familyName": "de Vienne",
+      "email": "damien.de-vienne@univ-lyon1.fr",
+      "@id": "https://orcid.org/0000-0001-9532-5251"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Stéphane",
+      "familyName": "Dray",
+      "email": "stephane.dray@univ-lyon1.fr",
+      "@id": "https://orcid.org/0000-0003-0153-1105"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Théo",
+      "familyName": "Tricou",
+      "email": "treecou.theo@gmail.com",
+      "@id": "https://orcid.org/0000-0002-4432-2680"
+    }
+  ],
+  "contributor": [
+    {
+      "@type": "Person",
+      "givenName": "Aurélie",
+      "familyName": "Siberchicot",
+      "email": "aurelie.siberchicot@univ-lyon1.fr",
+      "@id": "https://orcid.org/0000-0002-7638-8318"
+    }
+  ],
+  "maintainer": [
+    {
+      "@type": "Person",
+      "givenName": "Aurélie",
+      "familyName": "Siberchicot",
+      "email": "aurelie.siberchicot@univ-lyon1.fr",
+      "@id": "https://orcid.org/0000-0002-7638-8318"
+    }
+  ],
+  "softwareSuggestions": [
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "knitr",
+      "name": "knitr",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=knitr"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "rmarkdown",
+      "name": "rmarkdown",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=rmarkdown"
+    }
+  ],
+  "softwareRequirements": {
+    "1": {
+      "@type": "SoftwareApplication",
+      "identifier": "ape",
+      "name": "ape",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=ape"
+    },
+    "2": {
+      "@type": "SoftwareApplication",
+      "identifier": "ggplot2",
+      "name": "ggplot2",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=ggplot2"
+    },
+    "3": {
+      "@type": "SoftwareApplication",
+      "identifier": "reshape2",
+      "name": "reshape2",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=reshape2"
+    },
+    "4": {
+      "@type": "SoftwareApplication",
+      "identifier": "Rfast",
+      "name": "Rfast",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=Rfast"
+    },
+    "5": {
+      "@type": "SoftwareApplication",
+      "identifier": "RSpectra",
+      "name": "RSpectra",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=RSpectra"
+    },
+    "6": {
+      "@type": "SoftwareApplication",
+      "identifier": "stats",
+      "name": "stats"
+    },
+    "7": {
+      "@type": "SoftwareApplication",
+      "identifier": "utils",
+      "name": "utils"
+    },
+    "8": {
+      "@type": "SoftwareApplication",
+      "identifier": "R",
+      "name": "R",
+      "version": ">= 4.0"
+    },
+    "SystemRequirements": null
+  },
+  "fileSize": "3564.616KB",
+  "codeRepository": "https://github.com/damiendevienne/phylter",
+  "readme": "https://github.com/damiendevienne/phylter/blob/master/README.md",
+  "contIntegration": "https://github.com/damiendevienne/phylter/actions",
+  "developmentStatus": "https://www.repostatus.org/#active",
+  "keywords": ["phylogenetic-trees", "phylogenetics", "phylogenomics"],
+  "relatedLink": "https://CRAN.R-project.org/package=phylter"
+}
