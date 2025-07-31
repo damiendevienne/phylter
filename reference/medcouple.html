@@ -35,7 +35,7 @@ For multivariate data the medcouple is calculated on each column of the data mat
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>A robust measure of skewness for univariate data</h1>
-      <small class="dont-index">Source: <a href="https://github.com/damiendevienne/phylter/blob/master/R/medcouple.R" class="external-link"><code>R/medcouple.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/damiendevienne/phylter/blob/v0.9.12/R/medcouple.R" class="external-link"><code>R/medcouple.R</code></a></small>
       <div class="d-none name"><code>medcouple.Rd</code></div>
     </div>
 
@@ -96,7 +96,7 @@ Note that missing values are not allowed.</p>
 <span class="r-in"><span><span class="co"># data are not skewed</span></span></span>
 <span class="r-in"><span><span class="va">x</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">2000</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">medcouple</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> </span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -0.03818627</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -0.0369128</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "medcouple"</span>
 <span class="r-in"><span><span class="co"># For 2000 values following a lognormal</span></span></span>
@@ -104,12 +104,12 @@ Note that missing values are not allowed.</p>
 <span class="r-in"><span><span class="co"># because values are right-skewed</span></span></span>
 <span class="r-in"><span><span class="va">y</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">2000</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">medcouple</span><span class="op">(</span><span class="va">y</span><span class="op">)</span> </span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.07197037</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.07324025</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "medcouple"</span>
 <span class="r-in"><span><span class="co"># Use the option do.reflect to increase expected accuracy. </span></span></span>
 <span class="r-in"><span><span class="fu">medcouple</span><span class="op">(</span><span class="va">y</span>, do.reflect <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.07197037</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.07324025</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "medcouple"</span>
 </code></pre></div>
@@ -123,7 +123,7 @@ Note that missing values are not allowed.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer></div>
