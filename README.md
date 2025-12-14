@@ -6,6 +6,7 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![SWH](https://archive.softwareheritage.org/badge/origin/https://github.com/damiendevienne/phylter/)](https://archive.softwareheritage.org/browse/origin/?origin_url=https://github.com/damiendevienne/phylter)
+[![Conda version](https://anaconda.org/conda-forge/r-phylter/badges/version.svg)](https://anaconda.org/conda-forge/r-phylter)
 
 
 **`phylter`** is a tool that allows detecting, removing and visualizing outliers in phylogenomics dataset by iteratively removing taxa from gene families (gene trees) and optimizing a score of concordance between individual matrices.   
