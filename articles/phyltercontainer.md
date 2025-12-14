@@ -1,0 +1,212 @@
+# 2-PhylteR in a container
+
+## PhylteR in a container
+
+In addition to the R package **phylter** available on CRAN
+(<https://CRAN.R-project.org/package=phylter>) and on GitHub
+(<https://github.com/damiendevienne/phylter>), *containerized* versions
+of **phylter** (docker and singularity) are also proposed.
+
+This may ease the use of **phylter** on some computing infrastructures
+(clusters) or for users reluctant to the R language.
+
+The containers host python3 scrips allowing to easily run **phylter**
+with the same options than with the R package, but also perform
+additional tasks such as removing (pruning) outliers from input trees
+and/or filtering out outlier sequences from (aligned) sequence files
+(fasta format).
+
+Using **phylter** from the container simply consists in running the
+`phylter.py` function, specifying various options such as the directory
+containing the gene trees (with -t), the job name (with -j), etc.
+
+The containers also contain a toy dataset of 255 Carnivora genes trees
+and alignments from Allio et al. (2021) that will allow you to test both
+the correct installation of the container(s), and the use of the
+`phylter.py` function and its options.
+
+### Run PhylteR with Docker
+
+PhylteR is available as a [Docker](https://docs.docker.com/) container:
+<https://hub.docker.com/r/treecoutheo/phylter_docker>.
+
+Here are the steps needed to use the docker version of **phylter**:
+
+> Warning: you may need administrator rights to use docker!
+
+1.  Pull the latest version of **phylter** container from the Docker Hub
+    repository:
+
+``` sh
+sudo docker pull treecoutheo/phylter_docker:latest
+```
+
+2.  Run **phylter** on the example Carnivora dataset
+
+``` sh
+sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/phylter_docker phylter.py -j Carnivora_docker -t /usr/container-data/trees
+```
+
+- `$PWD` specifies that you work in your local **P**resent **W**orking
+  **D**irectory. This should not be changed.
+- `-j` specifies the job name for this **phylter** run (and thus the
+  name of the output folder)
+- `-t` specifies the folder containing the input gene trees in Newick
+  format (one tree per file)
+
+The command above creates the directory `Carnivora_docker` that will
+contain:
+
+- `PhylteR_all_tree_named`: a single file containing all the trees with
+  the gene ID preceding the newick.
+- `phylter.out`: the phylter output file containing the log of the run
+  and the list of identified outliers.
+
+3.  Run **phylter** on the example Carnivora dataset AND prune trees AND
+    remove outliers from fasta files
+
+You may want to run **phylter** and to subsequently remove the
+identified outliers from both the gene trees and the sequences files.
+For this to be performed, the sequence files must contain the same name
+as the corresponding tree, minus the extension if any. For example, a
+sequence file named `ENSG00000274286_ADRA2B_final_align_NT.aln` will be
+matched automatically to a tree file named
+`ENSG00000274286_ADRA2B.treefile`: `phylter.py` will identify the gene
+ID as being **ENSG00000274286_ADRA2B**.
+
+``` sh
+sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/phylter_docker phylter.py -j Carnivora_docker -t /usr/container-data/trees -p TRUE -s /usr/container-data/alignments -g TRUE
+```
+
+- `-p TRUE` specifies that the input trees should be pruned by removing
+  the outliers identified by **phylter**. A new directorry containing
+  the pruned trees is created (see after).
+- `-s` specifies the directory containing the sequences (see above for
+  specifications regarding naming conventions). If this directory is
+  specified, the input sequences will be filtered by removing the
+  outliers identified by **phylter**. A new directorry containing the
+  filtered sequences is created (see after).
+- `-g TRUE` specifies that a full report (in pdf) should be produced (in
+  addition to the default `phylter.out` file).
+
+The command above generates, in addition to the two files described in
+the previous example:
+
+- `Carnivora_docker/trees_PhylteR/`: a directory containing the trees
+  pruned from their outliers. Note that the number of trees inside the
+  directory can be lower than the number of trees used as input in case
+  all species from a gene tree have been identified as outliers.
+
+- `Carnivora_docker/seqs_PhylteR/`: a directory containing sequences
+  with outlier sequences filtered out. The number of sequences files
+  inside the directory can be lower than the number of sequences files
+  used as input. Again, the number of sequence files inside the
+  directory can be lower than the number of trees sequence files in the
+  input directory in case all species from a gene tree have been
+  identified as outliers.
+
+- `report.pdf`: a PDF report containing a summary of the results.
+
+4.  Prune trees and filter out sequences AFTER the **phylter** run.
+
+Instead of performing the **phylter** analysis and the filtering of
+outliers at the same time, you can do it in multiple steps. here is how,
+on the example dataset:
+
+- Run phylter:
+
+``` sh
+sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/phylter_docker phylter.py -j Carnivora_docker -t /usr/container-data/trees
+```
+
+The output file `phylter.out` will be used for performing the pruning
+and/or the sequence filtering (see below).
+
+- Prune trees with `prune_tree_outliers.R`:
+
+``` sh
+sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/phylter_docker prune_tree_outliers.R container-data_phylter /usr/container-data/trees Carnivora_docker/phylter.out
+```
+
+- Filter alignments with `remove_sequence_outliers.py`:
+
+``` sh
+sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/phylter_docker remove_sequence_outliers.py -j container-data_phylter -s /usr/container-data/alignments -o Carnivora_docker/phylter.out
+```
+
+5.  View all **phylter** options
+
+`phylter.py` allows specifying all the options available in the R
+package. To see this list of options, simply use the `-h` option:
+
+``` sh
+sudo docker run -v $PWD:$PWD -w $PWD treecoutheo/phylter_docker phylter.py -h
+```
+
+### Run PhylteR with Singularity
+
+PhylteR is also available as a
+[singularity](https://docs.sylabs.io/guides/3.0/user-guide/index.html)
+container :
+(<https://cloud.sylabs.io/library/theo.treecou/tool/phylter_singularity>).
+Here are instructions to install (or build) and run it:
+
+1.  Pull the latest version of **phylter** container from the Sylabs
+    repository:
+
+``` sh
+sudo singularity pull PhylteR.sif library://theo.treecou/tool/phylter_singularity:latest
+```
+
+Alternatively, you can build a singularity image from the Docker Hub
+repository:
+
+``` sh
+sudo singularity pull PhylteR.sif docker://treecoutheo/phylter_docker:latest
+```
+
+2.a Run **phylter** on the carnivora example dataset:
+
+``` sh
+singularity exec -B $PWD PhylteR.sif phylter.py -j Carnivora_singularity -t /usr/container-data/trees
+```
+
+> Note: For more options Please, refer to the description of the docker
+> container to see how to use all the options available with the
+> `phylter.py` function.
+
+2.b Alternatively, you can open a console in the singularity container
+as follows and use R in that console:
+
+``` sh
+singularity shell -B $PWD PhylteR.sif
+
+R # this launch the version of R from inside the singularity
+```
+
+Then:
+
+``` r
+
+library(phylter)
+
+list_trees <- Sys.glob("/usr/container-data/trees/ENSG*.treefile")
+
+trees <- lapply(list_trees, ape::read.tree)
+
+results <- phylter(trees, parallel = FALSE)
+```
+
+## References
+
+- Allio, R., Tilak, M.K., Scornavacca, C., Avenant, N.L., Kitchener,
+  A.C., Corre, E., Nabholz, B. & Delsuc, F. (2021). *High-quality
+  carnivoran genomes from roadkill samples enable comparative species
+  delineation in aardwolf and bat-eared fox*. eLife, 10, e63167. doi:
+  10.7554/eLife.63167.
+
+------------------------------------------------------------------------
+
+For comments, suggestions and bug reports, please open an
+[issue](https://github.com/damiendevienne/phylter/issues) on this GitHub
+repository.

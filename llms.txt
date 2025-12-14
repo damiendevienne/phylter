@@ -1,0 +1,302 @@
+# PhylteR, a tool for analyzing, visualizing and filtering phylogenomics datasets ![](reference/figures/logophylter.png)
+
+[![CRAN_Release_Badge](https://www.r-pkg.org/badges/version-ago/phylter)](https://cran.r-project.org/package=phylter)
+[![CRAN
+Downloads](https://cranlogs.r-pkg.org/badges/phylter)](https://cran.r-project.org/package=phylter)
+[![R-CMD-check](https://github.com/damiendevienne/phylter/workflows/R-CMD-check/badge.svg)](https://github.com/damiendevienne/phylter/actions)
+[![License: GPL
+v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Project Status: Active – The project has reached a stable, usable
+state and is being actively
+developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![SWH](https://archive.softwareheritage.org/badge/origin/https://github.com/damiendevienne/phylter/)](https://archive.softwareheritage.org/browse/origin/?origin_url=https://github.com/damiendevienne/phylter)
+[![Conda
+version](https://anaconda.org/conda-forge/r-phylter/badges/version.svg)](https://anaconda.org/conda-forge/r-phylter)
+
+**`phylter`** is a tool that allows detecting, removing and visualizing
+outliers in phylogenomics dataset by iteratively removing taxa from gene
+families (gene trees) and optimizing a score of concordance between
+individual matrices.  
+**`phylter`** relies on DISTATIS (Abdi et al, 2005), an extension of
+multidimensional scaling to 3 dimensions to compare multiple distance
+matrices at once.  
+**`phylter`** builds on Phylo-MCOA (de Vienne et al. 2012) but is much
+faster and accurate.  
+**`phylter`** takes as input either a collection of phylogenetic trees
+(that are converted to distance matrices by `phylter`), or a collection
+of pairwise distance matrices (obtained from multiple sequence
+alignements, for instance).  
+**`phylter`** accepts data with missing values (missing taxa in some
+genes).  
+**`phylter`** detects outliers with a method proposed by Hubert &
+Vandervieren (2008) for skewed data.  
+**`phylter`** does not accept that the same taxa is present multiple
+times in the same gene.
+
+**`phylter`** is written in R language.
+
+For details about the functions, their usage, and a in-depth description
+of the use of **phylter** on a biological dataset, step-by-step, please
+vist the phylter web page : <https://damiendevienne.github.io/phylter>.
+
+> Note: if you don’t use R or don’t want to use R, **containerized
+> versions of phylter** are also available (Docker and Singularity):
+> <https://damiendevienne.github.io/phylter/articles/phyltercontainer.html>
+
+> if you use **phylter**, please cite: Comte, A., Tricou, T., Tannier,
+> E., Joseph, J., Siberchicot, A., Penel, S., Allio, R., Delsuc, F.,
+> Dray, S., de Vienne, D.M. (2023). PhylteR: Efficient Identification of
+> Outlier Sequences in Phylogenomic Datasets, Molecular Biology and
+> Evolution, 40(11) msad234, <https://doi.org/10.1093/molbev/msad234>
+
+## Installation
+
+**`phylter`** is now on CRAN.
+
+Installation is as easy as typing what follows at the R command prompt:
+
+``` r
+install.packages("phylter")
+```
+
+If you want the latest version, you can also install the development
+version of **phylter**:
+
+1.  Install the release version of `remotes` from CRAN:
+
+``` r
+install.packages("remotes")
+```
+
+2.  Install the development version of `phylter` from GitHub:
+
+``` r
+remotes::install_github("damiendevienne/phylter")
+```
+
+3.  Once installed, the package can be loaded:
+
+``` r
+library("phylter")
+```
+
+> Note: phylter requires R version \> 4.0, otherwise it cannot be
+> installed. Also, R uses the GNU Scientific Library. On Ubuntu, this
+> can be installed prior to the installation of the phylter package by
+> typing `sudo apt install libgsl-dev` in a terminal.
+
+## Usage
+
+Here is a brief introduction to the use `phylter` on a collection of
+gene trees. For more detailed explanations and a use case example,
+please visit <https://damiendevienne.github.io/phylter/>.
+
+**1.** With the `read.tree` function from the `ape` package, read trees
+from external file and save as a list called `trees`.
+
+``` r
+if (!requireNamespace("ape", quietly = TRUE))
+   install.packages("ape")
+trees <- ape::read.tree("treefile.tre")
+```
+
+**2.** (optional) Read or get gene names somewhere (same order as the
+trees) and save it as a vector called `names`.
+
+**3.** Run `phylter` on your trees (see details below for possible
+options).
+
+``` r
+results <- phylter(trees, gene.names = names)
+```
+
+> #### Options
+>
+> The `phylter` function is called as follows by default:
+>
+> ``` r
+> phylter(X, bvalue = 0, distance = "patristic", k = 3, k2 = k, Norm = "median", 
+>  Norm.cutoff = 0.001, gene.names = NULL, test.island = TRUE, 
+>  verbose = TRUE, stop.criteria = 1e-5, InitialOnly = FALSE, normalizeby = "row", 
+>  parallel = TRUE)
+> ```
+>
+> Arguments are as follows:
+>
+> - `X`: A list of phylogenetic trees (phylo object) or a list of
+>   distance matrices. Trees can have different number of leaves and
+>   matrices can have different dimensions. If this is the case, missing
+>   values are imputed.
+> - `bvalue`: If `X` is a list of trees, nodes with a support below
+>   `bvalue` will be collapsed prior to the outlier detection.
+> - `distance`: If `X` is a list of trees, type of distance used to
+>   compute the pairwise matrices for each tree. Can be “patristic” (sum
+>   of branch lengths separating tips, the default) or “nodal” (number
+>   of nodes separating tips).
+> - `k`: Strength of outlier detection. The higher this value the less
+>   outliers detected.
+> - `k2`: Same as `k` for complete gene outlier detection. To preserve
+>   complete genes from being discarded, `k2` can be increased. By
+>   default, `k2 = k`.
+> - `Norm`: Should the matrices be normalized prior to the complete
+>   analysis and how. If “median”, matrices are divided by their median;
+>   if “mean”, they are divided by their mean; if “none”, no
+>   normalization if performed. Normalizing ensures that fast-evolving
+>   (and slow-evolving) genes are not treated as outliers. Normalization
+>   by median is a better choice as it is less sensitive to outlier
+>   values.
+> - `Norm.cutoff`: Value of the median (if `Norm = "median"`) or the
+>   mean (if `Norm = "mean"`) below which matrices are simply discarded
+>   from the analysis. This prevents dividing by 0, and allows getting
+>   rid of genes that contain mostly branches of length 0 and are
+>   therefore uninformative anyway. Discarded genes, if any, are listed
+>   in the output (`out$DiscardedGenes`).
+> - `gene.names`: List of gene names used to rename elements in `X`. If
+>   NULL (the default), elements are named 1,2,…,length(X).
+> - `test.island`: If `TRUE` (the default), only the highest value in an
+>   *island* of outliers is considered an outlier. This prevents
+>   non-outliers hitchhiked by outliers to be considered outliers
+>   themselves.
+> - `verbose`: If `TRUE` (the default), messages are written during the
+>   filtering process to get information on what is happening.
+> - `stop.criteria`: The optimization stops when the gain (quality of
+>   compromise) between round *n* and round *n*+1 is smaller than this
+>   value. Default to 1e-5.
+> - `InitialOnly`: Logical. If `TRUE`, only the Initial state of the
+>   data is computed.
+> - `normalizeby`: Should the gene x species matrix be normalized prior
+>   to outlier detection, and how.
+> - `parallel`: Logical. Should the computations be parallelized when
+>   possible? Default to `TRUE`. Note that the number of threads cannot
+>   be set by the user when `parallel = TRUE`. It uses all available
+>   cores on the machine.
+
+**4.** Analyze the results
+
+To get the list of outliers detected by `phylter`, simply type:
+
+``` r
+results$Final$Outliers
+```
+
+In addition, many functions allow looking at the outliers detected and
+comparing before and after *phy*ltering.
+
+``` r
+# Get a summary: nb of outliers, gain in concordance, etc.
+summary(results)
+
+# Show the number of species in each gene, and how many per gene are outliers
+plot(results, "genes") 
+
+# Show the number of genes where each species is found, and how many are outliers
+plot(results, "species") 
+
+# Compare before and after genes x species matrices, highlighting missing data and outliers 
+# identified (not efficient for large datasets)
+plot2WR(results) 
+
+# Plot the dispersion of data before and after outlier removal. One dot represents one 
+# gene x species association
+plotDispersion(results) 
+
+# Plot the genes x genes matrix showing pairwise correlation between genes
+plotRV(results) 
+
+# Plot optimization scores during optimization
+plotopti(results) 
+```
+
+**5.** Save the results of the analysis to an external file, for example
+to perform cleaning on raw alignments or pruning gene trees based on the
+results from `phylter`.
+
+``` r
+write.phylter(results, file = "phylter.out")
+```
+
+## References
+
+- Abdi, H., O’Toole, A.J., Valentin, D. & Edelman, B. (2005). *DISTATIS:
+  The analysis of multiple distance matrices.* Proceedings of the IEEE
+  Computer Society: International Conference on Computer Vision and
+  Pattern Recognition (San Diego, CA, USA). doi: 10.1109/CVPR.2005.445.
+  <https://www.utdallas.edu/~herve/abdi-distatis2005.pdf>
+
+- Allio, R., Tilak, M. K., Scornavacca, C., Avenant, N. L.,
+  Kitchener, A. C., Corre, E., … & Delsuc, F. (2021). High-quality
+  carnivoran genomes from roadkill samples enable comparative species
+  delineation in aardwolf and bat-eared fox. Elife, 10, e63167.
+  <https://doi.org/10.7554/eLife.63167>
+
+- Comte, A., Tricou, T., Tannier, E., Joseph, J., Siberchicot, A.,
+  Penel, S., Allio, R., Delsuc, F., Dray, S., de Vienne, D.M. (2023).
+  PhylteR: Efficient Identification of Outlier Sequences in Phylogenomic
+  Datasets, Molecular Biology and Evolution, 40(11), msad234,
+  <https://doi.org/10.1093/molbev/msad234>
+
+- Hubert, M. and Vandervieren, E. (2008). *An adjusted boxplot for
+  skewed distributions.* Computational Statistics and Data Analysis.
+  <https://doi.org/10.1016/j.csda.2007.11.008>
+
+- de Vienne D.M., Ollier S. et Aguileta G. (2012). *Phylo-MCOA: A Fast
+  and Efficient Method to Detect Outlier Genes and Species in
+  Phylogenomics Using Multiple Co-inertia Analysis.* Molecular Biology
+  and Evolution. <https://doi.org/10.1093/molbev/msr317> (This is the
+  ancestor of phylter).
+
+------------------------------------------------------------------------
+
+For comments, suggestions and bug reports, please open an
+[issue](https://github.com/damiendevienne/phylter/issues) on this GitHub
+repository.
+
+# Package index
+
+## All functions
+
+- [`Dist2WR()`](Dist2WR.md) : Compute gene x species matrix from the
+  result of Distatis
+- [`DistatisFast()`](DistatisFast.md) : Fast implementation the
+  multivariate analysis method Distatis
+- [`PreparePhylterData()`](PreparePhylterData.md) : Prepare data for
+  phylter analysis
+- [`carnivora`](carnivora.md) : 125 genes trees for 53 carnivora species
+- [`detect.outliers()`](detect.outliers.md)
+  [`detect.outliers.array()`](detect.outliers.md) : Detection of
+  outliers in 1D and 2D data
+- [`impMean()`](impMean.md) : Imputation of missing values in a
+  collection of matrices
+- [`medcouple()`](medcouple.md) : A robust measure of skewness for
+  univariate data
+- [`normalize()`](normalize.md) : Median normalization of 2D matrix by
+  row or by colomn
+- [`phylter()`](phylter.md) : Filter phylogenomics datasets
+- [`plot(`*`<phylter>`*`)`](plot.phylter.md)
+  [`plot2WR()`](plot.phylter.md) [`plotDispersion()`](plot.phylter.md)
+  [`plotRV()`](plot.phylter.md) [`plotopti()`](plot.phylter.md) : Plot
+  phylter objects
+- [`print(`*`<phylter>`*`)`](print.phylter.md) : Print phylter objects
+- [`print(`*`<phylterfinal>`*`)`](print.phylterfinal.md) : print objects
+  of class phylterfinal
+- [`print(`*`<phylterinitial>`*`)`](print.phylterinitial.md) : print
+  objects of class phylterinitial
+- [`print(`*`<summary.phylter>`*`)`](print.summary.phylter.md) : print
+  summary of phylter objects
+- [`rename.genes()`](rename.genes.md) : Name or rename a list of gene
+  trees or matrices
+- [`simtrees()`](simtrees.md) : Simplistic simulation of gene trees with
+  outliers
+- [`summary(`*`<phylter>`*`)`](summary.phylter.md) : Get summary for
+  phylter objects
+- [`trees2matrices()`](trees2matrices.md) : Convert phylogenetic trees
+  to distance matrices
+- [`write.phylter()`](write.phylter.md) : Write summary of phyter
+  analysis to file(s)
+
+# Articles
+
+### Articles
+
+- [1-Use of phylter](runphylter.md):
+- [2-PhylteR in a container](phyltercontainer.md):
