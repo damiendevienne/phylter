@@ -80,7 +80,7 @@ res <- phylter(carnivora, parallel = FALSE)
 write.phylter(res) 
 #> # 
 #> # -- phylter v. 0.9.12 -- 
-#> # Sun Dec 14 13:08:20 2025
+#> # Sun Dec 14 13:10:27 2025
 #> # 
 #> # 
 #> # 

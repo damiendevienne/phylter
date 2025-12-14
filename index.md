@@ -11,7 +11,7 @@ state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![SWH](https://archive.softwareheritage.org/badge/origin/https://github.com/damiendevienne/phylter/)](https://archive.softwareheritage.org/browse/origin/?origin_url=https://github.com/damiendevienne/phylter)
 [![Conda
-version](https://anaconda.org/conda-forge/r-phylter/badges/version.svg)](https://anaconda.org/conda-forge/r-phylter)
+version](https://anaconda.org/damiendevienne/r-phylter/badges/version.svg)](https://anaconda.org/damiendevienne/r-phylter)
 
 **`phylter`** is a tool that allows detecting, removing and visualizing
 outliers in phylogenomics dataset by iteratively removing taxa from gene
