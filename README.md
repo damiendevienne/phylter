@@ -58,6 +58,18 @@ library("phylter")
 
 ## Usage
 
+A command-line frontend is included in `exec/phylter`:
+
+```sh
+phylter --trees gene_trees.nwk --out analysis
+phylter --trees gene_trees/ --out analysis --report
+```
+
+It uses the installed R package and writes headered outlier/discarded TSV files,
+a text summary and session metadata. See [local installation and CLI usage](tools/README.md)
+for adding the executable to your PATH. The [performance audit](PERFORMANCE.md)
+describes the optimizations, reference comparisons and roadmap for larger datasets.
+
 Here is a brief introduction to the use `phylter` on a collection of gene trees. For more detailed explanations and a use case example, please visit  https://damiendevienne.github.io/phylter/.
 <!-- For more more detailed examples, please go to [ADD LINK TO THE AUTOMATICALLY GENERATED WEBSITEWEB](ADD LINK TO THE AUTOMATICALLY GENERATED WEBSITEWEB). -->
 
@@ -159,4 +171,3 @@ write.phylter(results, file = "phylter.out")
 
 ---
 For comments, suggestions and bug reports, please open an [issue](https://github.com/damiendevienne/phylter/issues) on this GitHub repository.
-

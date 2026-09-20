@@ -97,12 +97,12 @@ double mlmccN2(double x[],const int n){
 	double medc,xmed,xden,x_eps,trial=0.0,eps_trial;
 	//double eps[2],work[n];
 	double eps[2];
-	double * work;
-	work = new double [n];
+	std::vector<double> work_storage(n);
+	double * work = work_storage.data();
     int i,j,k,it=0,ind=n/2,h1,h2;
 	//int iwt[n];
-	int *iwt;
-	iwt = new int [n];
+	std::vector<int> iwt_storage(n);
+	int *iwt = iwt_storage.data();
 	int64_t knew,nr,sum_p,sum_q,nl=0,neq=0;
     	bool converged=true,IsFound=false;
 
@@ -126,10 +126,10 @@ double mlmccN2(double x[],const int n){
     	xmed*=xden;
     	j=1;
     	x_eps=eps[0]*(eps[0]+fabs(xmed));
-    	while(x[j]>x_eps && j<=n)	j++;
+	while(j<=n && x[j]>x_eps)	j++;
     	i=1;
     	double *x2=x+j-1;/* pointer -- corresponding to  x2[i]=x[j];*/
-    	while(x[j]>-x_eps && j<=n){ /* test relative to xmed */
+	while(j<=n && x[j]>-x_eps){ /* test relative to xmed */
     	    	j++;
     	    	i++;
     	}
@@ -216,8 +216,6 @@ double mlmccN2(double x[],const int n){
     	}
 
         
-        delete [] work;
-        delete [] iwt;
         delete [] acand;
         delete [] a_srt;
         delete [] iw_cand;

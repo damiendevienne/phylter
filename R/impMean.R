@@ -68,7 +68,16 @@ impMean <- function(matrices) {
   if (sum(length(listsp)-length.indiv)>0) qual<-1 ##Meaning that imputation is necessary
   if (qual == 1) {
     matrices.extended<-lapply(matrices, AddColAndRow, allrowsandcol=listsp) #grows matrices and add NA to missing cells
-    MEANMAT<-Reduce('+',lapply(matrices.extended, function(x) replace(x,is.na(x),0)))/Reduce("+", lapply(matrices.extended, Negate(is.na)))
+    # Keep only one gene's temporary values/mask, instead of two full lists.
+    total <- matrix(0, length(listsp), length(listsp), dimnames=list(listsp, listsp))
+    count <- total
+    for (mat in matrices.extended) {
+      present <- !is.na(mat)
+      mat[!present] <- 0
+      total <- total + mat
+      count <- count + present
+    }
+    MEANMAT <- total/count
     #If NA are present in this matrix, it means that some species were never found together in any tree. If so we need to find a way to imputethe distance by looking at the distance of their close neighbors (and print a warning). 
     if(anyNA(MEANMAT)) {
       tmpM<-melt(MEANMAT, as.is=TRUE) #as.is=TRUE prevents tip names to be considered integers (and creating bug afterwards).
@@ -85,4 +94,3 @@ impMean <- function(matrices) {
   names(ALL) = names(matrices)
   return(ALL)
 }
-

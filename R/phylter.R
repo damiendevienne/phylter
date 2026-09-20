@@ -201,7 +201,7 @@ phylter<-function(X, bvalue=0, distance="patristic", k=3, k2=k, Norm="median", N
 		else {
 			if (verbose) cat ("\n => No more outliers detected")
 			if (lastLoop) {
-				cat ("  ->  STOPPING OPTIMIZATION")
+					if (verbose) cat ("  ->  STOPPING OPTIMIZATION")
 				break ##usefull?
 				continue<-FALSE #c'est vraiment la fin
 			}

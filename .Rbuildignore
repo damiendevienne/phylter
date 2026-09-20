@@ -5,3 +5,9 @@
 ^\.github$
 _pkgdown.yml
 ^codemeta\.json$
+^\.audit$
+^tools$
+^PERFORMANCE\.md$
+^\.aider
+^\.agents$
+^\.codex$

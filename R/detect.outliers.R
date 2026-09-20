@@ -46,6 +46,17 @@ detect.outliers <- function(X, k = 3, test.island=TRUE, normalizeby="row") {
   # scan()
   MAT <- X
   detect.island <- function(arr) {
+    # Islands are consecutive flagged row positions. Keep multi-member islands
+    # before singletons, as in the original pairwise implementation. Fall back
+    # for unusual labels that interact with the legacy "out" sentinel.
+    if (!is.null(names(arr)) && !anyNA(arr) && !anyDuplicated(names(arr)) &&
+        !anyNA(names(arr)) && !any(names(arr) == "out")) {
+      positions <- which(arr == TRUE)
+      if (!length(positions)) return(NULL)
+      groups <- unname(split(names(arr)[positions], cumsum(c(TRUE, diff(positions) != 1L))))
+      multiple <- lengths(groups) > 1L
+      return(c(groups[multiple], groups[!multiple]))
+    }
     spi.names <- names(arr)
     spi <- 1:length(spi.names)
     names(spi) <- spi.names

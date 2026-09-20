@@ -18,7 +18,7 @@
 Dist2WR <- function(Distatis) {
   F<-Distatis$F
   PartialF<-Distatis$PartialF
-  DISTS<-lapply(PartialF, function(f,fbar) apply((f-fbar)^2,1,function(x) sqrt(sum(x))), fbar=F)
+  DISTS<-lapply(PartialF, function(f,fbar) sqrt(rowSums((f-fbar)^2)), fbar=F)
   matrixWR2<-do.call(cbind, DISTS)
   return(matrixWR2)
 }
