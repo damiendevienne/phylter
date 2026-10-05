@@ -50,8 +50,9 @@
 #' @export
 DistatisFast<-function(matrices, factorskept="auto", parallel=TRUE) {
 	GetCmat <- function(OrderedMatrices, RV = TRUE, parallel) {
+	    upper <- which(upper.tri(OrderedMatrices[[1]]))
 	    CP2.diag <-do.call(cbind, lapply(OrderedMatrices, diag))
-	    CP2.upper <- do.call(cbind, lapply(OrderedMatrices, function(x) x[upper.tri(x)]))
+	    CP2.upper <- do.call(cbind, lapply(OrderedMatrices, function(x) x[upper]))
 	    if (parallel) {
 		C <- Crossprod(CP2.diag,CP2.diag) + 2 * Crossprod(CP2.upper,CP2.upper)
 	    }
@@ -111,8 +112,8 @@ DistatisFast<-function(matrices, factorskept="auto", parallel=TRUE) {
 	alpha <- FirstEigenVector$vectors[, 1]/sum(FirstEigenVector$vectors[, 1])
 	quality<-FirstEigenVector$values/nbGn
 	### Compute compromise matrix (C) and its projection (Splus)
-	WeightedMatrices<-sapply(1:nbGn, function(x,MAT,weight) MAT[[x]]*weight[x],MAT=matrices.dblcent, weight=alpha, simplify=FALSE)
-	Splus<-Reduce('+',WeightedMatrices)
+	# Accumulate in gene order without allocating K weighted matrices.
+	Splus <- .Call("phylter_weighted_sum", matrices.dblcent, alpha, PACKAGE = "phylter")
 	# compromise<-Reduce('+',WeightedMatrices.initial)
 	dimnames(Splus)<-list(Sp,Sp)
 	s<-diag(Splus)
@@ -147,4 +148,3 @@ DistatisFast<-function(matrices, factorskept="auto", parallel=TRUE) {
 	PartialF = lapply(matrices.dblcent, function(x,y) x %*% y, y=Proj)
 	return(list(F=F, PartialF=PartialF, alpha=alpha, lambda=lambda, RVmat=RVmat, compromise=compromise, quality=quality, matrices.dblcent=matrices.dblcent))
 }
-

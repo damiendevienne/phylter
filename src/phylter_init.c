@@ -10,7 +10,12 @@
 extern void medcoupleC(void *, void *, void *, void *);
 
 /* .Call calls */
-extern SEXP dirOutl_cpp(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP phylter_weighted_sum(SEXP, SEXP);
+
+static const R_CallMethodDef CallEntries[] = {
+    {"phylter_weighted_sum", (DL_FUNC) &phylter_weighted_sum, 2},
+    {NULL, NULL, 0}
+};
 
 static const R_CMethodDef CEntries[] = {
     {"medcoupleC",       (DL_FUNC) &medcoupleC,        4},
@@ -19,6 +24,6 @@ static const R_CMethodDef CEntries[] = {
 
 void R_init_phylter(DllInfo *dll)
 {
-    R_registerRoutines(dll, CEntries, NULL, NULL, NULL);
+    R_registerRoutines(dll, CEntries, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

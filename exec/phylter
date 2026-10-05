@@ -1,0 +1,141 @@
+#!/usr/bin/env Rscript
+# A dependency-free command-line frontend to the installed R package.
+main <- function(args) {
+  help <- "Usage: phylter --trees FILE_OR_DIRECTORY --out PREFIX [options]
+
+Input: a multi-Newick file, or a directory of .nwk/.newick/.tre/.tree/.treefile
+files (one tree per file). Directory filenames become gene IDs, including extensions.
+
+  -t, --trees PATH       Input trees
+  -o, --out PREFIX       Output prefix (parent directory must exist)
+      --distance MODE   patristic (default) or nodal
+      --k NUMBER        Outlier threshold (default 3)
+      --k2 NUMBER       Whole-gene threshold (default: same as --k)
+      --norm MODE       median (default), mean, or none
+      --norm-cutoff N   Discard threshold (default 0.001)
+      --support N       Collapse nodes below this support (default 0)
+      --normalize-by M  row (default), col, or none
+      --stop-criteria N Minimum concordance gain (default 0.00001)
+      --no-islands      Disable island detection
+      --parallel        Enable Rfast parallel products (default: disabled)
+      --save-rds        Also save the full R result (can be large)
+      --report          Also generate a PDF report
+  -q, --quiet           Suppress progress messages
+  -h, --help            Show this help
+      --version         Show installed package version
+
+Writes PREFIX.outliers.tsv, PREFIX.discarded.tsv, PREFIX.summary.txt,
+and PREFIX.session.txt. Existing output files are never overwritten.
+Outliers and genes discarded during preparation are reported separately.
+Progress goes to stderr. Exit status: 0 success, 1 error.
+"
+  if (!length(args) || any(args %in% c("-h", "--help"))) {
+    cat(help)
+    return(invisible(NULL))
+  }
+  if (!requireNamespace("phylter", quietly = TRUE))
+    stop("Install the phylter R package before running this command.")
+  if (identical(args, "--version")) {
+    cat("phylter", as.character(utils::packageVersion("phylter")), "\n")
+    return(invisible(NULL))
+  }
+  aliases <- c("-t" = "--trees", "-o" = "--out", "-q" = "--quiet")
+  valued <- c("--trees", "--out", "--distance", "--k", "--k2", "--norm",
+              "--norm-cutoff", "--support", "--normalize-by", "--stop-criteria")
+  flags <- c("--no-islands", "--parallel", "--save-rds", "--report", "--quiet")
+  opts <- list()
+  while (length(args)) {
+    key <- args[1]
+    args <- args[-1]
+    if (key %in% names(aliases)) key <- unname(aliases[key])
+    if (!key %in% c(valued, flags)) stop("Unknown option: ", key, ". Use --help.")
+    if (!is.null(opts[[key]])) stop("Repeated option: ", key)
+    if (key %in% flags) opts[[key]] <- TRUE else {
+      if (!length(args) || startsWith(args[1], "--")) stop("Missing value for ", key)
+      opts[[key]] <- args[1]
+      args <- args[-1]
+    }
+  }
+  get <- function(key, default) if (is.null(opts[[key]])) default else opts[[key]]
+  number <- function(key, default, positive = FALSE) {
+    x <- suppressWarnings(as.numeric(get(key, default)))
+    if (length(x) != 1L || !is.finite(x) || x < 0 || (positive && x == 0))
+      stop(key, " must be a finite ", if (positive) "positive" else "nonnegative", " number")
+    x
+  }
+  choice <- function(key, values) {
+    x <- get(key, values[1])
+    if (!x %in% values) stop(key, " must be one of: ", paste(values, collapse = ", "))
+    x
+  }
+  input <- get("--trees", "")
+  prefix <- get("--out", "")
+  if (!nzchar(input) || !nzchar(prefix)) stop("Both --trees and --out are required. Use --help.")
+  parameters <- list(distance = choice("--distance", c("patristic", "nodal")),
+    k = number("--k", 3), Norm = choice("--norm", c("median", "mean", "none")),
+    Norm.cutoff = number("--norm-cutoff", 0.001), bvalue = number("--support", 0),
+    normalizeby = choice("--normalize-by", c("row", "col", "none")),
+    stop.criteria = number("--stop-criteria", 1e-5, TRUE),
+    test.island = !isTRUE(opts[["--no-islands"]]),
+    parallel = isTRUE(opts[["--parallel"]]), verbose = !isTRUE(opts[["--quiet"]]))
+  parameters$k2 <- number("--k2", parameters$k)
+  suffixes <- c(".outliers.tsv", ".discarded.tsv", ".summary.txt", ".session.txt",
+    if (isTRUE(opts[["--save-rds"]])) ".rds", if (isTRUE(opts[["--report"]])) ".pdf")
+  outputs <- paste0(prefix, suffixes)
+  if (!dir.exists(dirname(prefix))) stop("Output directory does not exist: ", dirname(prefix))
+  if (any(file.exists(outputs))) stop("Output already exists: ", outputs[which(file.exists(outputs))[1]])
+  if (dir.exists(input)) {
+    paths <- sort(list.files(input, pattern = "\\.(nwk|newick|tre|tree|treefile)$",
+                             full.names = TRUE, ignore.case = TRUE), method = "radix")
+    if (!length(paths)) stop("No supported tree files found in ", input)
+    trees <- lapply(paths, function(path) {
+      tr <- ape::read.tree(path)
+      if (!inherits(tr, "phylo")) stop("Expected exactly one tree in ", path)
+      tr
+    })
+    names(trees) <- basename(paths)
+  } else {
+    if (!file.exists(input)) stop("Input does not exist: ", input)
+    trees <- ape::read.tree(input)
+    if (inherits(trees, "phylo")) trees <- list(trees)
+    if (is.null(names(trees))) names(trees) <- as.character(seq_along(trees))
+  }
+  if (length(trees) < 2L) stop("At least two gene trees are required.")
+  valid_names <- function(x) !anyNA(x) && !anyDuplicated(x) && all(nzchar(x)) &&
+    !any(grepl("[\t\r\n]", x))
+  if (!valid_names(names(trees))) stop("Gene IDs must be nonempty, unique, and contain no tabs/newlines.")
+  for (i in seq_along(trees)) {
+    tr <- trees[[i]]
+    if (!valid_names(tr$tip.label) || length(tr$tip.label) < 3L)
+      stop("Gene ", names(trees)[i], ": at least three uniquely named taxa are required.")
+    if (parameters$distance == "patristic" &&
+        (is.null(tr$edge.length) || any(!is.finite(tr$edge.length)) || any(tr$edge.length < 0)))
+      stop("Gene ", names(trees)[i], ": patristic distances require finite nonnegative branch lengths.")
+    if (parameters$bvalue > 0 && (is.null(tr$node.label) ||
+        any(!is.finite(suppressWarnings(as.numeric(tr$node.label))))))
+      stop("Gene ", names(trees)[i], ": --support requires numeric node support labels.")
+  }
+  # Redirect the legacy cat()-based progress as well as the final stop message.
+  sink(stderr())
+  result <- tryCatch(do.call(phylter::phylter, c(list(X = trees), parameters)),
+                     finally = sink())
+  write_pairs <- function(x, path) {
+    if (is.null(x)) x <- matrix(character(), 0, 2)
+    x <- as.data.frame(x, stringsAsFactors = FALSE)
+    names(x) <- c("gene", "species")
+    utils::write.table(x, path, sep = "\t", quote = FALSE, row.names = FALSE)
+  }
+  write_pairs(result$Final$Outliers, outputs[1])
+  write_pairs(result$Final$Discarded, outputs[2])
+  phylter::write.phylter(result, file = outputs[3], pdfreport = isTRUE(opts[["--report"]]),
+                        pdfreport.file = paste0(prefix, ".pdf"))
+  writeLines(c(paste("Input:", normalizePath(input)),
+               paste("Options:", paste(names(opts), unlist(opts), collapse = " ")),
+               capture.output(sessionInfo())), outputs[4])
+  if (isTRUE(opts[["--save-rds"]])) saveRDS(result, paste0(prefix, ".rds"))
+  if (!isTRUE(opts[["--quiet"]])) message("Results written with prefix: ", prefix)
+}
+tryCatch(main(commandArgs(TRUE)), error = function(e) {
+  message("phylter: ", conditionMessage(e))
+  quit(status = 1L)
+})

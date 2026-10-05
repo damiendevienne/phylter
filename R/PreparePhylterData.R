@@ -82,11 +82,10 @@ PreparePhylterData<-function(X, bvalue=0, distance="patristic", Norm="median",No
 	if (Norm %in% c("median","mean")) {
 		if (Norm=="median") {
 			AllMe<-unlist(lapply(matrices, median))
-			matrices<-lapply(matrices, function(x) x/median(x))
 			} else if (Norm=="mean") {
 				AllMe<-unlist(lapply(matrices, mean))
-				matrices<-lapply(matrices, function(x) x/mean(x))
 			}	
+		matrices <- Map(function(x, scale) x/scale, matrices, AllMe)
 		#remove matrices with median or mean < Norm.cutoff
 		ZeroLengthMatrices<-which(AllMe<=Norm.cutoff)
 		if (length(ZeroLengthMatrices)>0) {
@@ -106,4 +105,3 @@ PreparePhylterData<-function(X, bvalue=0, distance="patristic", Norm="median",No
 
 	return(list(matrices=matrices, Xsave=Xsave, discardedgenes=discardedgenes, discardedmatrix=discardedmatrix))
 }
-
