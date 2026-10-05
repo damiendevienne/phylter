@@ -8,18 +8,21 @@ development version:
 1.  Install the release version of `remotes` from CRAN:
 
 ``` r
+
 install.packages("remotes")
 ```
 
 2.  Install the development version of `phylter` from GitHub:
 
 ``` r
+
 remotes::install_github("damiendevienne/phylter")
 ```
 
 3.  Once installed, the package can be loaded:
 
 ``` r
+
 library("phylter")
 ```
 
@@ -42,6 +45,7 @@ the `phylter` package is
 from external file and save as a list called `trees`.
 
 ``` r
+
 if (!requireNamespace("ape", quietly = TRUE))
    install.packages("ape")
 trees <- ape::read.tree("treefile.tre")
@@ -54,6 +58,7 @@ trees) and save it as a vector called `names`.
 options).
 
 ``` r
+
 results <- phylter(trees, gene.names = names)
 ```
 
@@ -61,6 +66,7 @@ The [`phylter()`](../reference/phylter.md) function is called as follows
 by default:
 
 ``` r
+
 phylter(X, bvalue = 0, distance = "patristic", k = 3, k2 = k, Norm = "median", 
   Norm.cutoff = 0.001, gene.names = NULL, test.island = TRUE, 
   verbose = TRUE, stop.criteria = 1e-5, InitialOnly = FALSE, 
@@ -109,7 +115,7 @@ Arguments are as follows:
   value. Default to 1e-5.
 - `InitialOnly`: Logical. If `TRUE`, only the Initial state of the data
   is computed.
-- `normalizeby`: Should the gene $\times$ species matrix be normalized
+- `normalizeby`: Should the gene $`\times`$ species matrix be normalized
   prior to outlier detection, and how.
 - `parallel`: Logical. Should the computations be parallelized when
   possible? Default to `TRUE`. Note that the number of threads cannot be
@@ -121,6 +127,7 @@ Arguments are as follows:
 You can get a list of outliers by simply typing:
 
 ``` r
+
 results$Final$Outliers
 ```
 
@@ -129,6 +136,7 @@ comparing before and after *phy*ltering. All these functions are
 detailed in the [Example](#example) section.
 
 ``` r
+
 # Get a summary: nb of outliers, gain in concordance, etc.
 summary(results)
 
@@ -158,6 +166,7 @@ to perform cleaning on raw alignments based on the results from
 `phylter`.
 
 ``` r
+
 write.phylter(results, file = "phylter.out")
 ```
 
@@ -210,10 +219,11 @@ it may have unblocked the detection of other gene outliers.
 ### Running phylter
 
 A `carnivora` dataset (small subset from Allio et al. 2021) comprised of
-125 gene families for 53 species (53 $\times$ 125 = 6625 genes in total)
-is included in the package. To load it and test `phylter` on it:
+125 gene families for 53 species (53 $`\times`$ 125 = 6625 genes in
+total) is included in the package. To load it and test `phylter` on it:
 
 ``` r
+
 data(carnivora, package = "phylter")
 results <- phylter(carnivora, parallel = FALSE) # for example
 ```
@@ -225,6 +235,7 @@ results <- phylter(carnivora, parallel = FALSE) # for example
 Typing `summary(results)` gives the following information:
 
 ``` r
+
 summary(results)
 ```
 
@@ -256,6 +267,7 @@ You can view the content of these lists and the description of each
 object it contains, like this:
 
 ``` r
+
 results$Initial
 ```
 
@@ -273,6 +285,7 @@ results$Initial
     ## 8 $PartialF   125       Species x Species gene matrices (list)
 
 ``` r
+
 results$Final
 ```
 
@@ -318,6 +331,7 @@ family were the outlier was found and the second column is the species
 identified as outlier in this gene family.
 
 ``` r
+
 results$Final$Outliers
 ```
 
@@ -442,7 +456,7 @@ were causing this loss of concordance.
 
 #### Visualize the 2-way reference matrix from which outliers are detected
 
-The 2WR matrix (see [Figure 1](#fig1-phyler)) is the species $\times$
+The 2WR matrix (see [Figure 1](#fig1-phyler)) is the species $`\times`$
 genes matrix computed at each loop of the `phylter` iterative process,
 from which outliers are detected. A large value in one cell of this
 matrix (light blue cells in the following figure) refers to one species
@@ -532,6 +546,7 @@ If no file name is given, the report is written to the console. Such an
 example is given below.
 
 ``` r
+
 write.phylter(results)
 ```
 

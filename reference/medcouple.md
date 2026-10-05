@@ -75,7 +75,7 @@ P. Segaert with original code from M. Maechler and G. Brys.
 # data are not skewed
 x<-rnorm(2000)
 medcouple(x) 
-#> [1] -0.0369128
+#> [1] -0.03818627
 #> attr(,"class")
 #> [1] "medcouple"
 # For 2000 values following a lognormal
@@ -83,12 +83,12 @@ medcouple(x)
 # because values are right-skewed
 y<-rnorm(2000)
 medcouple(y) 
-#> [1] 0.07324025
+#> [1] 0.07197037
 #> attr(,"class")
 #> [1] "medcouple"
 # Use the option do.reflect to increase expected accuracy. 
 medcouple(y, do.reflect = TRUE)
-#> [1] 0.07324025
+#> [1] 0.07197037
 #> attr(,"class")
 #> [1] "medcouple"
 ```

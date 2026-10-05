@@ -13,31 +13,95 @@ developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.re
 [![Conda
 version](https://anaconda.org/damiendevienne/r-phylter/badges/version.svg)](https://anaconda.org/damiendevienne/r-phylter)
 
-**`phylter`** is a tool that allows detecting, removing and visualizing
-outliers in phylogenomics dataset by iteratively removing taxa from gene
-families (gene trees) and optimizing a score of concordance between
-individual matrices.  
-**`phylter`** relies on DISTATIS (Abdi et al, 2005), an extension of
-multidimensional scaling to 3 dimensions to compare multiple distance
-matrices at once.  
-**`phylter`** builds on Phylo-MCOA (de Vienne et al. 2012) but is much
-faster and accurate.  
-**`phylter`** takes as input either a collection of phylogenetic trees
-(that are converted to distance matrices by `phylter`), or a collection
-of pairwise distance matrices (obtained from multiple sequence
-alignements, for instance).  
-**`phylter`** accepts data with missing values (missing taxa in some
-genes).  
-**`phylter`** detects outliers with a method proposed by Hubert &
-Vandervieren (2008) for skewed data.  
-**`phylter`** does not accept that the same taxa is present multiple
-times in the same gene.
+**PhylteR** detects, visualizes, and removes outlier sequences in
+phylogenomic datasets. An outlier is a taxon–gene association whose
+evolutionary distances are unusually discordant with the signal shared
+by the other genes. PhylteR can start from a collection of gene trees or
+directly from pairwise distance matrices, and it supports datasets in
+which some taxa are absent from some genes.
 
-**`phylter`** is written in R language.
+The package is designed for a common phylogenomic problem: a sequence
+may be misidentified, contaminated, paralogous, incorrectly aligned, or
+otherwise inconsistent with the dominant evolutionary signal. Instead of
+judging each gene tree in isolation or requiring a reference species
+tree, PhylteR compares all genes jointly and identifies the particular
+gene–taxon cells responsible for discordance.
 
-For details about the functions, their usage, and a in-depth description
-of the use of **phylter** on a biological dataset, step-by-step, please
-vist the phylter web page : <https://damiendevienne.github.io/phylter>.
+## How PhylteR works
+
+1.  Gene trees are converted to patristic or nodal distance matrices.
+    Users may also provide distance matrices directly through the R API.
+2.  Missing taxa are added and their pairwise distances are imputed from
+    the other genes. Each matrix can be normalized so that differences
+    in overall evolutionary rate do not dominate the comparison.
+3.  DISTATIS, an extension of multidimensional scaling for multiple
+    distance matrices (Abdi et al. 2005), estimates a weighted
+    compromise representing the signal shared across genes.
+4.  For every taxon in every gene, PhylteR measures the distance between
+    its gene-specific position and its position in the compromise. An
+    adjusted boxplot rule for skewed distributions (Hubert &
+    Vandervieren 2008) flags unusually large deviations. The optional
+    island rule avoids incorrectly flagging neighbouring taxa displaced
+    by a strong outlier.
+5.  Candidate outliers are removed and the analysis is repeated. A
+    proposed removal is retained only when it improves inter-gene
+    concordance; iteration stops when the improvement falls below
+    `stop.criteria`. Entire anomalous genes can also be detected using
+    the `k2` threshold.
+
+The result records the initial and final analyses, accepted outliers,
+discarded genes, concordance scores, and the objects needed by PhylteR’s
+summary and visualization functions. Taxon labels must be unique within
+each gene.
+
+## What is new in this version
+
+This branch preserves PhylteR’s statistical method and R API while
+making the existing algorithm faster, less memory-intensive, easier to
+run, and easier to validate:
+
+- a registered C++ kernel builds the weighted DISTATIS compromise
+  without allocating a complete list of weighted matrices;
+- vectorized distance calculations replace repeated row-wise R
+  callbacks;
+- matrix triangle indices and normalization factors are computed once
+  and reused;
+- missing-distance imputation accumulates values one gene at a time
+  instead of creating two additional full matrix collections;
+- outlier islands are detected with a linear scan for standard taxon
+  labels;
+- two native-array leaks and two bounds-check ordering issues in the
+  medcouple implementation are fixed;
+- a command-line interface makes the same implementation available to
+  users who do not want to write R code; and
+- reference fixtures, numerical regression tests, kernel tests, CLI
+  integration tests, and a reproducible performance audit now accompany
+  the code.
+
+On the audited Carnivora example (125 genes and 53 species), the default
+analysis was **2.43× faster** (median 0.586 s versus 1.425 s). Synthetic
+tests showed a **2.26×** speedup for missing-data imputation and a
+**39.81×** speedup for repeated gene-to-compromise distance
+calculations. At 400 species × 150 genes, peak resident memory fell by
+3.7% for DISTATIS and 7.2% for imputation. These measurements were made
+on one documented system and should not be read as universal performance
+guarantees. All reference comparisons preserved the outlier identities,
+their order, the optimization trajectory, and numerical results within
+tolerance. See [the performance and correctness audit](PERFORMANCE.md)
+for the environment, complete results, limitations, and optimization
+roadmap.
+
+The novelty of this release is therefore primarily computational and
+practical: it retains the published PhylteR procedure and results while
+reducing avoidable work, providing a non-interactive workflow, and
+adding an auditable correctness baseline for future optimization. The
+current implementation still holds dense distance matrices in memory and
+is not yet an out-of-core solution for very large datasets.
+
+PhylteR builds on Phylo-MCOA (de Vienne et al. 2012) and is implemented
+in R with a small native C++ numerical core. For function documentation
+and a step-by-step biological example, visit the [PhylteR
+website](https://damiendevienne.github.io/phylter).
 
 > Note: if you don’t use R or don’t want to use R, **containerized
 > versions of phylter** are also available (Docker and Singularity):
@@ -51,41 +115,63 @@ vist the phylter web page : <https://damiendevienne.github.io/phylter>.
 
 ## Installation
 
-**`phylter`** is now on CRAN.
+The current release of **PhylteR** is available on CRAN.
 
 Installation is as easy as typing what follows at the R command prompt:
 
 ``` r
+
 install.packages("phylter")
 ```
 
-If you want the latest version, you can also install the development
-version of **phylter**:
+To test the optimized version described above before it reaches CRAN,
+install this branch from GitHub:
 
 1.  Install the release version of `remotes` from CRAN:
 
 ``` r
+
 install.packages("remotes")
 ```
 
 2.  Install the development version of `phylter` from GitHub:
 
 ``` r
-remotes::install_github("damiendevienne/phylter")
+
+remotes::install_github(
+  "damiendevienne/phylter",
+  ref = "perf/matrix-optimizations-cli-audit"
+)
 ```
 
 3.  Once installed, the package can be loaded:
 
 ``` r
+
 library("phylter")
 ```
 
-> Note: phylter requires R version \> 4.0, otherwise it cannot be
-> installed. Also, R uses the GNU Scientific Library. On Ubuntu, this
-> can be installed prior to the installation of the phylter package by
-> typing `sudo apt install libgsl-dev` in a terminal.
+> PhylteR requires R 4.0 or later. Package installation also requires
+> the system libraries needed by its R dependencies.
 
 ## Usage
+
+A command-line frontend is included in `exec/phylter`. It accepts either
+a multi-Newick file or a directory containing one Newick tree per gene:
+
+``` sh
+phylter --trees gene_trees.nwk --out analysis
+phylter --trees gene_trees/ --out analysis --report --save-rds
+```
+
+The CLI uses the installed R package, so its scientific results are the
+same as those of the R API. It writes separate, headered TSV files for
+detected outliers and genes discarded during preparation, plus a text
+summary and session metadata. `--report` adds a PDF report and
+`--save-rds` saves the complete R result. Existing output files are not
+overwritten. Run `phylter --help` for all options, or see [local
+installation and CLI usage](tools/README.md) for setup and the complete
+output contract.
 
 Here is a brief introduction to the use `phylter` on a collection of
 gene trees. For more detailed explanations and a use case example,
@@ -95,6 +181,7 @@ please visit <https://damiendevienne.github.io/phylter/>.
 from external file and save as a list called `trees`.
 
 ``` r
+
 if (!requireNamespace("ape", quietly = TRUE))
    install.packages("ape")
 trees <- ape::read.tree("treefile.tre")
@@ -107,6 +194,7 @@ trees) and save it as a vector called `names`.
 options).
 
 ``` r
+
 results <- phylter(trees, gene.names = names)
 ```
 
@@ -115,6 +203,7 @@ results <- phylter(trees, gene.names = names)
 > The `phylter` function is called as follows by default:
 >
 > ``` r
+>
 > phylter(X, bvalue = 0, distance = "patristic", k = 3, k2 = k, Norm = "median", 
 >  Norm.cutoff = 0.001, gene.names = NULL, test.island = TRUE, 
 >  verbose = TRUE, stop.criteria = 1e-5, InitialOnly = FALSE, normalizeby = "row", 
@@ -176,6 +265,7 @@ results <- phylter(trees, gene.names = names)
 To get the list of outliers detected by `phylter`, simply type:
 
 ``` r
+
 results$Final$Outliers
 ```
 
@@ -183,6 +273,7 @@ In addition, many functions allow looking at the outliers detected and
 comparing before and after *phy*ltering.
 
 ``` r
+
 # Get a summary: nb of outliers, gain in concordance, etc.
 summary(results)
 
@@ -212,6 +303,7 @@ to perform cleaning on raw alignments or pruning gene trees based on the
 results from `phylter`.
 
 ``` r
+
 write.phylter(results, file = "phylter.out")
 ```
 

@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Detect and Remove Outliers in Phylogenomics Datasets • phylter</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Detect and Remove Outliers in Phylogenomics Datasets">
 <meta name="description" content="Analyzis and filtering of phylogenomics datasets. It takes an input either a collection of gene trees (then transformed to matrices) or directly a collection of gene matrices and performs an iterative process to identify what species in what genes are outliers, and whose elimination significantly improves the concordance between the input matrices. The methods builds upon the Distatis approach (Abdi et al. (2005) &lt;doi:10.1101/2021.09.08.459421&gt;), a generalization of classical multidimensional scaling to multiple distance matrices.">
@@ -56,23 +56,52 @@
 <div class="page-header"><h1 id="phylter-a-tool-for-analyzing-visualizing-and-filtering-phylogenomics-datasets-">PhylteR, a tool for analyzing, visualizing and filtering phylogenomics datasets <img src="reference/figures/logophylter.png" align="right" style="float:right; width:20%;"><a class="anchor" aria-label="anchor" href="#phylter-a-tool-for-analyzing-visualizing-and-filtering-phylogenomics-datasets-"></a>
 </h1></div>
 <p><a href="https://cran.r-project.org/package=phylter" class="external-link"><img src="https://www.r-pkg.org/badges/version-ago/phylter" alt="CRAN_Release_Badge"></a> <a href="https://cran.r-project.org/package=phylter" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/phylter" alt="CRAN Downloads"></a> <a href="https://github.com/damiendevienne/phylter/actions" class="external-link"><img src="https://github.com/damiendevienne/phylter/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a> <a href="https://www.gnu.org/licenses/gpl-3.0" class="external-link"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License: GPL v3"></a> <a href="https://www.repostatus.org/#active" class="external-link"><img src="https://www.repostatus.org/badges/latest/active.svg" alt="Project Status: Active – The project has reached a stable, usable state and is being actively developed."></a> <a href="https://archive.softwareheritage.org/browse/origin/?origin_url=https://github.com/damiendevienne/phylter" class="external-link"><img src="https://archive.softwareheritage.org/badge/origin/https://github.com/damiendevienne/phylter/" alt="SWH"></a> <a href="https://anaconda.org/damiendevienne/r-phylter" class="external-link"><img src="https://anaconda.org/damiendevienne/r-phylter/badges/version.svg" alt="Conda version"></a></p>
-<p><strong><code>phylter</code></strong> is a tool that allows detecting, removing and visualizing outliers in phylogenomics dataset by iteratively removing taxa from gene families (gene trees) and optimizing a score of concordance between individual matrices.<br><strong><code>phylter</code></strong> relies on DISTATIS (Abdi et al, 2005), an extension of multidimensional scaling to 3 dimensions to compare multiple distance matrices at once.<br><strong><code>phylter</code></strong> builds on Phylo-MCOA (de Vienne et al. 2012) but is much faster and accurate.<br><strong><code>phylter</code></strong> takes as input either a collection of phylogenetic trees (that are converted to distance matrices by <code>phylter</code>), or a collection of pairwise distance matrices (obtained from multiple sequence alignements, for instance).<br><strong><code>phylter</code></strong> accepts data with missing values (missing taxa in some genes).<br><strong><code>phylter</code></strong> detects outliers with a method proposed by Hubert &amp; Vandervieren (2008) for skewed data.<br><strong><code>phylter</code></strong> does not accept that the same taxa is present multiple times in the same gene.</p>
-<p><strong><code>phylter</code></strong> is written in R language.</p>
-<p>For details about the functions, their usage, and a in-depth description of the use of <strong>phylter</strong> on a biological dataset, step-by-step, please vist the phylter web page : <a href="https://damiendevienne.github.io/phylter" class="external-link uri">https://damiendevienne.github.io/phylter</a>.</p>
+<p><strong>PhylteR</strong> detects, visualizes, and removes outlier sequences in phylogenomic datasets. An outlier is a taxon–gene association whose evolutionary distances are unusually discordant with the signal shared by the other genes. PhylteR can start from a collection of gene trees or directly from pairwise distance matrices, and it supports datasets in which some taxa are absent from some genes.</p>
+<p>The package is designed for a common phylogenomic problem: a sequence may be misidentified, contaminated, paralogous, incorrectly aligned, or otherwise inconsistent with the dominant evolutionary signal. Instead of judging each gene tree in isolation or requiring a reference species tree, PhylteR compares all genes jointly and identifies the particular gene–taxon cells responsible for discordance.</p>
+<div class="section level2">
+<h2 id="how-phylter-works">How PhylteR works<a class="anchor" aria-label="anchor" href="#how-phylter-works"></a>
+</h2>
+<ol style="list-style-type: decimal">
+<li>Gene trees are converted to patristic or nodal distance matrices. Users may also provide distance matrices directly through the R API.</li>
+<li>Missing taxa are added and their pairwise distances are imputed from the other genes. Each matrix can be normalized so that differences in overall evolutionary rate do not dominate the comparison.</li>
+<li>DISTATIS, an extension of multidimensional scaling for multiple distance matrices (Abdi et al. 2005), estimates a weighted compromise representing the signal shared across genes.</li>
+<li>For every taxon in every gene, PhylteR measures the distance between its gene-specific position and its position in the compromise. An adjusted boxplot rule for skewed distributions (Hubert &amp; Vandervieren 2008) flags unusually large deviations. The optional island rule avoids incorrectly flagging neighbouring taxa displaced by a strong outlier.</li>
+<li>Candidate outliers are removed and the analysis is repeated. A proposed removal is retained only when it improves inter-gene concordance; iteration stops when the improvement falls below <code>stop.criteria</code>. Entire anomalous genes can also be detected using the <code>k2</code> threshold.</li>
+</ol>
+<p>The result records the initial and final analyses, accepted outliers, discarded genes, concordance scores, and the objects needed by PhylteR’s summary and visualization functions. Taxon labels must be unique within each gene.</p>
+</div>
+<div class="section level2">
+<h2 id="what-is-new-in-this-version">What is new in this version<a class="anchor" aria-label="anchor" href="#what-is-new-in-this-version"></a>
+</h2>
+<p>This branch preserves PhylteR’s statistical method and R API while making the existing algorithm faster, less memory-intensive, easier to run, and easier to validate:</p>
+<ul>
+<li>a registered C++ kernel builds the weighted DISTATIS compromise without allocating a complete list of weighted matrices;</li>
+<li>vectorized distance calculations replace repeated row-wise R callbacks;</li>
+<li>matrix triangle indices and normalization factors are computed once and reused;</li>
+<li>missing-distance imputation accumulates values one gene at a time instead of creating two additional full matrix collections;</li>
+<li>outlier islands are detected with a linear scan for standard taxon labels;</li>
+<li>two native-array leaks and two bounds-check ordering issues in the medcouple implementation are fixed;</li>
+<li>a command-line interface makes the same implementation available to users who do not want to write R code; and</li>
+<li>reference fixtures, numerical regression tests, kernel tests, CLI integration tests, and a reproducible performance audit now accompany the code.</li>
+</ul>
+<p>On the audited Carnivora example (125 genes and 53 species), the default analysis was <strong>2.43× faster</strong> (median 0.586 s versus 1.425 s). Synthetic tests showed a <strong>2.26×</strong> speedup for missing-data imputation and a <strong>39.81×</strong> speedup for repeated gene-to-compromise distance calculations. At 400 species × 150 genes, peak resident memory fell by 3.7% for DISTATIS and 7.2% for imputation. These measurements were made on one documented system and should not be read as universal performance guarantees. All reference comparisons preserved the outlier identities, their order, the optimization trajectory, and numerical results within tolerance. See <a href="PERFORMANCE.html">the performance and correctness audit</a> for the environment, complete results, limitations, and optimization roadmap.</p>
+<p>The novelty of this release is therefore primarily computational and practical: it retains the published PhylteR procedure and results while reducing avoidable work, providing a non-interactive workflow, and adding an auditable correctness baseline for future optimization. The current implementation still holds dense distance matrices in memory and is not yet an out-of-core solution for very large datasets.</p>
+<p>PhylteR builds on Phylo-MCOA (de Vienne et al. 2012) and is implemented in R with a small native C++ numerical core. For function documentation and a step-by-step biological example, visit the <a href="https://damiendevienne.github.io/phylter" class="external-link">PhylteR website</a>.</p>
 <blockquote>
 <p>Note: if you don’t use R or don’t want to use R, <strong>containerized versions of phylter</strong> are also available (Docker and Singularity): <a href="https://damiendevienne.github.io/phylter/articles/phyltercontainer.html" class="external-link">https://damiendevienne.github.io/phylter/articles/phyltercontainer.html</a></p>
 </blockquote>
 <blockquote>
 <p>if you use <strong>phylter</strong>, please cite: Comte, A., Tricou, T., Tannier, E., Joseph, J., Siberchicot, A., Penel, S., Allio, R., Delsuc, F., Dray, S., de Vienne, D.M. (2023). PhylteR: Efficient Identification of Outlier Sequences in Phylogenomic Datasets, Molecular Biology and Evolution, 40(11) msad234, <a href="https://doi.org/10.1093/molbev/msad234" class="external-link">https://doi.org/10.1093/molbev/msad234</a></p>
 </blockquote>
+</div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p><strong><code>phylter</code></strong> is now on CRAN.</p>
+<p>The current release of <strong>PhylteR</strong> is available on CRAN.</p>
 <p>Installation is as easy as typing what follows at the R command prompt:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"phylter"</span><span class="op">)</span></span></code></pre></div>
-<p>If you want the latest version, you can also install the development version of <strong>phylter</strong>:</p>
+<p>To test the optimized version described above before it reaches CRAN, install this branch from GitHub:</p>
 <ol style="list-style-type: decimal">
 <li>Install the release version of <code>remotes</code> from CRAN:</li>
 </ol>
@@ -82,33 +111,40 @@
 <li>Install the development version of <code>phylter</code> from GitHub:</li>
 </ol>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"damiendevienne/phylter"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span></span>
+<span>  <span class="st">"damiendevienne/phylter"</span>,</span>
+<span>  ref <span class="op">=</span> <span class="st">"perf/matrix-optimizations-cli-audit"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <ol start="3" style="list-style-type: decimal">
 <li>Once installed, the package can be loaded:</li>
 </ol>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/damiendevienne/phylter" class="external-link">"phylter"</a></span><span class="op">)</span></span></code></pre></div>
 <blockquote>
-<p>Note: phylter requires R version &gt; 4.0, otherwise it cannot be installed. Also, R uses the GNU Scientific Library. On Ubuntu, this can be installed prior to the installation of the phylter package by typing <code>sudo apt install libgsl-dev</code> in a terminal.</p>
+<p>PhylteR requires R 4.0 or later. Package installation also requires the system libraries needed by its R dependencies.</p>
 </blockquote>
 </div>
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h2>
+<p>A command-line frontend is included in <code>exec/phylter</code>. It accepts either a multi-Newick file or a directory containing one Newick tree per gene:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="ex">phylter</span> <span class="at">--trees</span> gene_trees.nwk <span class="at">--out</span> analysis</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="ex">phylter</span> <span class="at">--trees</span> gene_trees/ <span class="at">--out</span> analysis <span class="at">--report</span> <span class="at">--save-rds</span></span></code></pre></div>
+<p>The CLI uses the installed R package, so its scientific results are the same as those of the R API. It writes separate, headered TSV files for detected outliers and genes discarded during preparation, plus a text summary and session metadata. <code>--report</code> adds a PDF report and <code>--save-rds</code> saves the complete R result. Existing output files are not overwritten. Run <code>phylter --help</code> for all options, or see <a href="tools/README.html">local installation and CLI usage</a> for setup and the complete output contract.</p>
 <p>Here is a brief introduction to the use <code>phylter</code> on a collection of gene trees. For more detailed explanations and a use case example, please visit <a href="https://damiendevienne.github.io/phylter/" class="external-link uri">https://damiendevienne.github.io/phylter/</a>. <!-- For more more detailed examples, please go to [ADD LINK TO THE AUTOMATICALLY GENERATED WEBSITEWEB](ADD LINK TO THE AUTOMATICALLY GENERATED WEBSITEWEB). --></p>
 <p><strong>1.</strong> With the <code>read.tree</code> function from the <code>ape</code> package, read trees from external file and save as a list called <code>trees</code>.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"ape"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span>   <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"ape"</span><span class="op">)</span></span>
 <span><span class="va">trees</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html" class="external-link">read.tree</a></span><span class="op">(</span><span class="st">"treefile.tre"</span><span class="op">)</span></span></code></pre></div>
 <p><strong>2.</strong> (optional) Read or get gene names somewhere (same order as the trees) and save it as a vector called <code>names</code>.</p>
 <p><strong>3.</strong> Run <code>phylter</code> on your trees (see details below for possible options).</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/phylter.html">phylter</a></span><span class="op">(</span><span class="va">trees</span>, gene.names <span class="op">=</span> <span class="va">names</span><span class="op">)</span></span></code></pre></div>
 <blockquote>
 <h4 id="options">Options</h4>
 <p>The <code>phylter</code> function is called as follows by default:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/phylter.html">phylter</a></span><span class="op">(</span><span class="va">X</span>, bvalue <span class="op">=</span> <span class="fl">0</span>, distance <span class="op">=</span> <span class="st">"patristic"</span>, k <span class="op">=</span> <span class="fl">3</span>, k2 <span class="op">=</span> <span class="va">k</span>, Norm <span class="op">=</span> <span class="st">"median"</span>, </span>
 <span> Norm.cutoff <span class="op">=</span> <span class="fl">0.001</span>, gene.names <span class="op">=</span> <span class="cn">NULL</span>, test.island <span class="op">=</span> <span class="cn">TRUE</span>, </span>
 <span> verbose <span class="op">=</span> <span class="cn">TRUE</span>, stop.criteria <span class="op">=</span> <span class="fl">1e-5</span>, InitialOnly <span class="op">=</span> <span class="cn">FALSE</span>, normalizeby <span class="op">=</span> <span class="st">"row"</span>, </span>
@@ -147,10 +183,10 @@
 </blockquote>
 <p><strong>4.</strong> Analyze the results</p>
 <p>To get the list of outliers detected by <code>phylter</code>, simply type:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">results</span><span class="op">$</span><span class="va">Final</span><span class="op">$</span><span class="va">Outliers</span></span></code></pre></div>
 <p>In addition, many functions allow looking at the outliers detected and comparing before and after <em>phy</em>ltering.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get a summary: nb of outliers, gain in concordance, etc.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">results</span><span class="op">)</span></span>
 <span></span>
@@ -174,7 +210,7 @@
 <span><span class="co"># Plot optimization scores during optimization</span></span>
 <span><span class="fu"><a href="reference/plot.phylter.html">plotopti</a></span><span class="op">(</span><span class="va">results</span><span class="op">)</span> </span></code></pre></div>
 <p><strong>5.</strong> Save the results of the analysis to an external file, for example to perform cleaning on raw alignments or pruning gene trees based on the results from <code>phylter</code>.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/write.phylter.html">write.phylter</a></span><span class="op">(</span><span class="va">results</span>, file <span class="op">=</span> <span class="st">"phylter.out"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -236,7 +272,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>
