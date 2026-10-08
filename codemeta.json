@@ -4,15 +4,16 @@
   "identifier": "phylter",
   "description": "Analyzis and filtering of phylogenomics datasets. It takes an input either a collection of gene trees (then transformed to matrices) or directly a collection of gene matrices and performs an iterative process to identify what species in what genes are outliers, and whose elimination significantly improves the concordance between the input matrices. The methods builds upon the Distatis approach (Abdi et al. (2005) <doi:10.1101/2021.09.08.459421>), a generalization of classical multidimensional scaling to multiple distance matrices.",
   "name": "phylter: Detect and Remove Outliers in Phylogenomics Datasets",
+  "codeRepository": "https://github.com/damiendevienne/phylter",
   "issueTracker": "https://github.com/damiendevienne/phylter/issues",
   "license": "https://spdx.org/licenses/GPL-2.0",
-  "version": "0.9.12",
+  "version": "1.0.0",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.4.3 (2025-02-28)",
+  "runtimePlatform": "R version 4.6.1 (2026-06-24)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -165,11 +166,78 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "3564.616KB",
-  "codeRepository": "https://github.com/damiendevienne/phylter",
-  "readme": "https://github.com/damiendevienne/phylter/blob/master/README.md",
-  "contIntegration": "https://github.com/damiendevienne/phylter/actions",
-  "developmentStatus": "https://www.repostatus.org/#active",
-  "keywords": ["phylogenetic-trees", "phylogenetics", "phylogenomics"],
-  "relatedLink": "https://CRAN.R-project.org/package=phylter"
+  "fileSize": "3886.639KB",
+  "citation": [
+    {
+      "@type": "ScholarlyArticle",
+      "datePublished": "2023",
+      "author": [
+        {
+          "@type": "Person",
+          "givenName": "Aurore",
+          "familyName": "Comte"
+        },
+        {
+          "@type": "Person",
+          "givenName": "Th\\'eo",
+          "familyName": "Tricou"
+        },
+        {
+          "@type": "Person",
+          "givenName": "Eric",
+          "familyName": "Tannier"
+        },
+        {
+          "@type": "Person",
+          "givenName": "Julien",
+          "familyName": "Joseph"
+        },
+        {
+          "@type": "Person",
+          "givenName": "Aur\\'elie",
+          "familyName": "Siberchicot"
+        },
+        {
+          "@type": "Person",
+          "givenName": "Simon",
+          "familyName": "Penel"
+        },
+        {
+          "@type": "Person",
+          "givenName": "R\\'emi",
+          "familyName": "Allio"
+        },
+        {
+          "@type": "Person",
+          "givenName": "Fr\\'ed\\'eric",
+          "familyName": "Delsuc"
+        },
+        {
+          "@type": "Person",
+          "givenName": "St\\'ephane",
+          "familyName": "Dray"
+        },
+        {
+          "@type": "Person",
+          "givenName": "Damien M",
+          "familyName": "de Vienne"
+        }
+      ],
+      "name": "{PhylteR}: Efficient Identification of Outlier Sequences in Phylogenomic Datasets",
+      "identifier": "10.1093/molbev/msad234",
+      "pagination": "msad234",
+      "@id": "https://doi.org/10.1093/molbev/msad234",
+      "sameAs": "https://doi.org/10.1093/molbev/msad234",
+      "isPartOf": {
+        "@type": "PublicationIssue",
+        "issueNumber": "11",
+        "datePublished": "2023",
+        "isPartOf": {
+          "@type": ["PublicationVolume", "Periodical"],
+          "volumeNumber": "40",
+          "name": "Molecular Biology and Evolution"
+        }
+      }
+    }
+  ]
 }
