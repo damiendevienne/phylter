@@ -2,28 +2,25 @@
 
 ## Installation
 
-**`phylter`** is not yet on CRAN (deposit in process). To install the
-development version:
-
-1.  Install the release version of `remotes` from CRAN:
+To install the stable version of `phylter` from CRAN:
 
 ``` r
 
-install.packages("remotes")
+install.packages("phylter")
 ```
 
-2.  Install the development version of `phylter` from GitHub:
+To install the development version of `phylter` from GitHub:
 
 ``` r
 
-remotes::install_github("damiendevienne/phylter")
+pak::pak("damiendevienne/phylter")
 ```
 
-3.  Once installed, the package can be loaded:
+Once installed, the package can be loaded:
 
 ``` r
 
-library("phylter")
+require("phylter")
 ```
 
 Note that `phylter` requires R version \> 4.0, otherwise it cannot be
