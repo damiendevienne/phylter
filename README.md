@@ -8,7 +8,6 @@
 [![SWH](https://archive.softwareheritage.org/badge/origin/https://github.com/damiendevienne/phylter/)](https://archive.softwareheritage.org/browse/origin/?origin_url=https://github.com/damiendevienne/phylter)
 [![Conda version](https://anaconda.org/damiendevienne/r-phylter/badges/version.svg)](https://anaconda.org/damiendevienne/r-phylter)
 
-> [!NOTE]
 > A new version of **phylter**, entirely written in C++, is now available for testing: https://github.com/damiendevienne/phylter-dev/.
 > It is roughly 10 times faster than this R version and uses around 6 times less memory. 
 
@@ -50,9 +49,9 @@ The result records the initial and final analyses, accepted outliers, discarded
 genes, concordance scores, and the objects needed by PhylteR's summary and
 visualization functions. Taxon labels must be unique within each gene.
 
-## What is new in this version
+## What is new in the version 1.0.0
 
-This branch preserves PhylteR's statistical method and R API while making the
+The version 1.0.0 preserves PhylteR's statistical method and R API while making the
 existing algorithm faster, less memory-intensive, easier to run, and easier to
 validate:
 
@@ -94,40 +93,26 @@ with a small native C++ numerical core. For function documentation and a
 step-by-step biological example, visit the
 [PhylteR website](https://damiendevienne.github.io/phylter).
 
-> Note: if you don't use R or don't want to use R, **containerized versions of phylter** are also available (Docker and Singularity): [https://damiendevienne.github.io/phylter/articles/phyltercontainer.html](https://damiendevienne.github.io/phylter/articles/phyltercontainer.html)
+> Note that if you don't use R or don't want to use R, **containerized versions of phylter** are also available (Docker and Singularity): [https://damiendevienne.github.io/phylter/articles/phyltercontainer.html](https://damiendevienne.github.io/phylter/articles/phyltercontainer.html)
 
-> if you use **phylter**, please cite: Comte, A., Tricou, T., Tannier, E., Joseph, J., Siberchicot, A., Penel, S., Allio, R., Delsuc, F., Dray, S., de Vienne, D.M. (2023). PhylteR: Efficient Identification of Outlier Sequences in Phylogenomic Datasets, Molecular Biology and Evolution, 40(11) msad234, [https://doi.org/10.1093/molbev/msad234](https://doi.org/10.1093/molbev/msad234)
+> If you use **phylter**, please cite: Comte, A., Tricou, T., Tannier, E., Joseph, J., Siberchicot, A., Penel, S., Allio, R., Delsuc, F., Dray, S., de Vienne, D.M. (2023). PhylteR: Efficient Identification of Outlier Sequences in Phylogenomic Datasets, Molecular Biology and Evolution, 40(11) msad234, [https://doi.org/10.1093/molbev/msad234](https://doi.org/10.1093/molbev/msad234)
 
 
 ## Installation
 
-The current release of **PhylteR** is available on CRAN.
-
-
-Installation is as easy as typing what follows at the R command prompt: 
+To install the stable version of `phylter` from CRAN: 
 ```R
 install.packages("phylter")
 ```
 
-To test the optimized version described above before it reaches CRAN, install
-this branch from GitHub:
-
-1. Install the release version of `remotes` from CRAN:
+To install the development version of `phylter` from GitHub:
 ```R
-install.packages("remotes")
+pak::pak("damiendevienne/phylter")
 ```
 
-2. Install the development version of `phylter` from GitHub:
+ Once installed, the package can be loaded:
 ```R
-remotes::install_github(
-  "damiendevienne/phylter",
-  ref = "perf/matrix-optimizations-cli-audit"
-)
-
-```
-3. Once installed, the package can be loaded:
-```R
-library("phylter")
+require("phylter")
 ```
 
 > PhylteR requires R 4.0 or later. Package installation also requires the

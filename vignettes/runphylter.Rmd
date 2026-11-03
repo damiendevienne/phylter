@@ -27,21 +27,19 @@ require(ape)
 
 # Installation
 
-**`phylter`** is not yet on CRAN (deposit in process). To install the development version:    
-
-1. Install the release version of `remotes` from CRAN:
-```{r, eval = FALSE}
-install.packages("remotes")
+To install the stable version of `phylter` from CRAN: 
+```R
+install.packages("phylter")
 ```
 
-2. Install the development version of `phylter` from GitHub:
-```{r, eval = FALSE}
-remotes::install_github("damiendevienne/phylter")
+To install the development version of `phylter` from GitHub:
+```R
+pak::pak("damiendevienne/phylter")
 ```
 
-3. Once installed, the package can be loaded:
-```{r, eval = FALSE}
-library("phylter")
+ Once installed, the package can be loaded:
+```R
+require("phylter")
 ```
 
 Note that `phylter` requires R version > 4.0, otherwise it cannot be installed. 
