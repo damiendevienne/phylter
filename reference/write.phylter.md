@@ -80,7 +80,7 @@ res <- phylter(carnivora, parallel = FALSE)
 write.phylter(res) 
 #> # 
 #> # -- phylter v. 1.0.0 -- 
-#> # Thu Oct  8 07:04:26 2026
+#> # Tue Nov  3 09:56:17 2026
 #> # 
 #> # 
 #> # 
@@ -111,7 +111,7 @@ write.phylter(res)
 #> # Total number of outliers detected: 94
 #> # Number of complete gene outliers : 0
 #> # Number of complete species outliers : 0
-#> # Initial score of the compromise: 0.862353534028202
+#> # Initial score of the compromise: 0.862353534028201
 #> # Final score of the compromise: 0.944259987303489
 #> # Gain: 8.19% 
 #> # Loss (data filtering): 1.42% 
