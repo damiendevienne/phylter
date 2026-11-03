@@ -108,10 +108,6 @@ in R with a small native C++ numerical core. For function documentation
 and a step-by-step biological example, visit the [PhylteR
 website](https://damiendevienne.github.io/phylter).
 
-> Note that if you don’t use R or don’t want to use R, **containerized
-> versions of phylter** are also available (Docker and Singularity):
-> <https://damiendevienne.github.io/phylter/articles/phyltercontainer.html>
-
 > If you use **phylter**, please cite: Comte, A., Tricou, T., Tannier,
 > E., Joseph, J., Siberchicot, A., Penel, S., Allio, R., Delsuc, F.,
 > Dray, S., de Vienne, D.M. (2023). PhylteR: Efficient Identification of
@@ -381,4 +377,3 @@ repository.
 ### Articles
 
 - [1-Use of phylter](runphylter.md):
-- [2-PhylteR in a container](phyltercontainer.md):

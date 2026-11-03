@@ -21,7 +21,7 @@
 
     <a class="navbar-brand me-2" href="index.html">phylter</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,7 +35,6 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="articles/runphylter.html">1-Use of phylter</a></li>
-    <li><a class="dropdown-item" href="articles/phyltercontainer.html">2-PhylteR in a container</a></li>
   </ul>
 </li>
       </ul>
@@ -89,9 +88,6 @@
 <p>On the audited Carnivora example (125 genes and 53 species), the default analysis was <strong>2.43× faster</strong> (median 0.586 s versus 1.425 s). Synthetic tests showed a <strong>2.26×</strong> speedup for missing-data imputation and a <strong>39.81×</strong> speedup for repeated gene-to-compromise distance calculations. At 400 species × 150 genes, peak resident memory fell by 3.7% for DISTATIS and 7.2% for imputation. These measurements were made on one documented system and should not be read as universal performance guarantees. All reference comparisons preserved the outlier identities, their order, the optimization trajectory, and numerical results within tolerance. See <a href="PERFORMANCE.html">the performance and correctness audit</a> for the environment, complete results, limitations, and optimization roadmap.</p>
 <p>The novelty of this release is therefore primarily computational and practical: it retains the published PhylteR procedure and results while reducing avoidable work, providing a non-interactive workflow, and adding an auditable correctness baseline for future optimization. The current implementation still holds dense distance matrices in memory and is not yet an out-of-core solution for very large datasets.</p>
 <p>PhylteR builds on Phylo-MCOA (de Vienne et al. 2012) and is implemented in R with a small native C++ numerical core. For function documentation and a step-by-step biological example, visit the <a href="https://damiendevienne.github.io/phylter" class="external-link">PhylteR website</a>.</p>
-<blockquote>
-<p>Note that if you don’t use R or don’t want to use R, <strong>containerized versions of phylter</strong> are also available (Docker and Singularity): <a href="https://damiendevienne.github.io/phylter/articles/phyltercontainer.html" class="external-link">https://damiendevienne.github.io/phylter/articles/phyltercontainer.html</a></p>
-</blockquote>
 <blockquote>
 <p>If you use <strong>phylter</strong>, please cite: Comte, A., Tricou, T., Tannier, E., Joseph, J., Siberchicot, A., Penel, S., Allio, R., Delsuc, F., Dray, S., de Vienne, D.M. (2023). PhylteR: Efficient Identification of Outlier Sequences in Phylogenomic Datasets, Molecular Biology and Evolution, 40(11) msad234, <a href="https://doi.org/10.1093/molbev/msad234" class="external-link">https://doi.org/10.1093/molbev/msad234</a></p>
 </blockquote>
