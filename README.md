@@ -8,7 +8,7 @@
 [![SWH](https://archive.softwareheritage.org/badge/origin/https://github.com/damiendevienne/phylter/)](https://archive.softwareheritage.org/browse/origin/?origin_url=https://github.com/damiendevienne/phylter)
 [![Conda version](https://anaconda.org/damiendevienne/r-phylter/badges/version.svg)](https://anaconda.org/damiendevienne/r-phylter)
 
-
+> NOTE: A new verison of phylter, entirely written in C++, is now available for testing: https://github.com/damiendevienne/phylter-dev/. It is roughly 10 times faster than the R version and uses around 6 times less memory. 
 
 **PhylteR** detects, visualizes, and removes outlier sequences in phylogenomic
 datasets. An outlier is a taxon–gene association whose evolutionary distances
