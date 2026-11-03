@@ -93,7 +93,6 @@ with a small native C++ numerical core. For function documentation and a
 step-by-step biological example, visit the
 [PhylteR website](https://damiendevienne.github.io/phylter).
 
-> Note that if you don't use R or don't want to use R, **containerized versions of phylter** are also available (Docker and Singularity): [https://damiendevienne.github.io/phylter/articles/phyltercontainer.html](https://damiendevienne.github.io/phylter/articles/phyltercontainer.html)
 
 > If you use **phylter**, please cite: Comte, A., Tricou, T., Tannier, E., Joseph, J., Siberchicot, A., Penel, S., Allio, R., Delsuc, F., Dray, S., de Vienne, D.M. (2023). PhylteR: Efficient Identification of Outlier Sequences in Phylogenomic Datasets, Molecular Biology and Evolution, 40(11) msad234, [https://doi.org/10.1093/molbev/msad234](https://doi.org/10.1093/molbev/msad234)
 
