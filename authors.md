@@ -15,7 +15,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/damiendevienne/phylter/blob/master/inst/CITATION)
+[`inst/CITATION`](https://github.com/damiendevienne/phylter/blob/v1.0.1/inst/CITATION)
 
 Comte A, Tricou T, Tannier E, Joseph J, Siberchicot A, Penel S, Allio R,
 Delsuc F, Dray S, de Vienne D (2023). “PhylteR: Efficient Identification
